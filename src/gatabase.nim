@@ -14,8 +14,8 @@ const
   query_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
   query_allTables = sql"SELECT tablename FROM pg_catalog.pg_tables;"
   query_currentDatabase = sql"SELECT current_database();"
-  pg_restore = "pg_restore --verbose --no-password --if-exists --encoding=UTF8 "
-  pg_dump = "pg_dump --verbose --no-password --if-exists --encoding=UTF8 "
+  pg_restore = "pg_restore --verbose --no-password "
+  pg_dump = "pg_dump --verbose --no-password --encoding=UTF8 "
 
 type Gatabase* = object  ## Postgres database object type.
   user*, password*, host*, dbname*, uri*, encoding*: string
@@ -138,34 +138,16 @@ func changeAutoVacuumTable*(this: Gatabase, tablename: string, autovacuum_enable
   ## Change the Auto-Vacuum setting for a table.
   this.db.tryExec(sql(fmt"ALTER TABLE {tablename} SET (autovacuum_enabled = {autovacuum_enabled});"))
 
-proc backupDatabase(this: Gatabase, dbname, filename: string, compress=false,
-                    dataOnly=false, inserts=false, comments=true): tuple[output: TaintedString, exitCode: int] =
+proc backupDatabase(this: Gatabase, dbname, filename: string, dataOnly=false,
+                    inserts=false, comments=true): tuple[output: TaintedString, exitCode: int] =
   ## Backup the whole Database to a file with optional Compression.
   let
-    a = if compress: "--format=t --compress=9 " else: ""
-    b = if dataOnly: "--data-only " else: ""
-    c = if inserts: "--inserts " else: ""
-    d = if comments: "" else: "--no-comments "
-    e = "--lock-wait-timeout=" & $this.timeout
-    f = "--host=" & this.host & " --port=" & $this.port & " --username=" & this.user
-    cmd = fmt"{pg_dump}{a}{b}{c}{d}{e}{f} --file={filename.quoteShell} --dbname={dbname} {dbname}"
-  echo cmd
-  execCmdEx(cmd)
-
-proc restoreDatabase(this: Gatabase, dbname, filename: string, dataOnly=false,
-                     exitOnError=false, singleTransaction=false, noDataIfFail=false,
-                     clean=false, create=false, comments=true): tuple[output: TaintedString, exitCode: int] =
-  ## Restore the whole Database from a file.
-  let
     a = if dataOnly: "--data-only " else: ""
-    b = if exitOnError: "--exit-on-error " else: ""
-    c = if singleTransaction: "--single-transaction " else: ""
-    d = if noDataIfFail: "--no-data-for-failed-tables " else: ""
-    e = if clean: "--clean " else: ""
-    f = if create: "--create " else: ""
-    g = if comments: "" else: "--no-comments "
-    h = "--host=" & this.host & " --port=" & $this.port & " --username=" & this.user
-    cmd = fmt"{pg_restore}{a}{b}{c}{d}{e}{f}{g}{h} --dbname={dbname} --file={filename.quoteShell}"
+    b = if inserts: "--inserts " else: ""
+    c = if comments: "" else: "--no-comments "
+    d = fmt"--lock-wait-timeout={this.timeout * 2} "
+    e = "--host=" & this.host & " --port=" & $this.port & " --username=" & this.user
+    cmd = fmt"{pg_dump}{a}{b}{c}{d}{e} --file={filename.quoteShell} --dbname={dbname}"
   echo cmd
   execCmdEx(cmd)
 
@@ -204,6 +186,7 @@ when isMainModule:
   echo database.dropTable("cats")
   echo database.changeAutoVacuumTable("sometable", true)
   # Backups
-  echo database.backupDatabase("database", "backup.sql")
+  echo database.backupDatabase("database", "backup0.sql").output
+  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, comments=false).output
 
   database.close()
