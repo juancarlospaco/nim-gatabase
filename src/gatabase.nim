@@ -14,7 +14,6 @@ const
   query_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
   query_allTables = sql"SELECT tablename FROM pg_catalog.pg_tables;"
   query_currentDatabase = sql"SELECT current_database();"
-  pg_restore = "pg_restore --verbose --no-password "
   pg_dump = "pg_dump --verbose --no-password --encoding=UTF8 "
 
 type Gatabase* = object  ## Postgres database object type.
