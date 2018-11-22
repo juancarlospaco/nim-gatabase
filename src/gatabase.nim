@@ -2,7 +2,7 @@
 ## ========
 ##
 ## - Postgres >= 11.
-## - Encoding is UTF-8.
+## - UTF-8 encoding.
 ## - Database user must have a password.
 ## - Database connection is to hostname not unix socket.
 ## - Self-Documentation Comments supported.
