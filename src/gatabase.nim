@@ -110,12 +110,21 @@ func getLoggedInUsers*(this: Gatabase): seq[Row] =
   ## Return all active logged-in users.
   this.db.getAllRows(query_LoggedInUsers)
 
-template document(this: Gatabase, what, target, comment: string): untyped =
+template document*(this: Gatabase, what, target, comment: string): untyped =
   ## Document target with comment. Postgres Comment is like Self-Documentation.
   assert what.strip.len > 1, "'what' must not be an empty string."
   assert target.strip.len > 1, "'target' must not an be empty string."
+  doAssert what.normalize != "column", "Comments on columns are not allowed."
   if comment.strip.len > 0:
     discard this.db.tryExec(sql("COMMENT ON $1 $2 IS ?;".format(what, target)), comment.strip)
+
+template writeMetadata(this: Gatabase, target, comment: string): untyped =
+  ## Field Metadata is converted to JSON & stored as Postgres Comment. Know a better way?, send Pull Request!.
+  discard this.db.tryExec(sql("COMMENT ON COLUMN $2 IS ?;".format(target)), comment.strip)
+
+template readMetadata(this: Gatabase, target, comment: string): untyped =
+  ## Field Metadata is JSON read from Postgres Comment. Know a better way?, send Pull Request!.
+  discard this.db.tryExec(sql("COMMENT ON COLUMN $2 IS ?;".format(target)), comment.strip)
 
 func getVersion*(this: Gatabase): Row =
   ## Return the Postgres database server Version (SemVer).
@@ -296,7 +305,7 @@ when isMainModule:
     c = newInt32Field(int32.high, "c")
     d = newIntField(int.high, "d")
     e = newFloat32Field(42.0.float32, "e")
-    f = newFloatField(666.0, "f")
+    f = newFloatField(666.0.float64, "f")
     g = newBoolField(true, "g")
   echo database.createTable("cats", @[a, b, c, d, e, f, g],
                             "This is a Documentation Comment", debug=true)
