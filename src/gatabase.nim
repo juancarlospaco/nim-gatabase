@@ -7,19 +7,19 @@ import
   hashes, httpcore, nativesockets, pegs, subexes
 
 const
-  query_LoggedInUsers = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
-  query_Version = sql"SHOW SERVER_VERSION;"
+  query_begin = sql"BEGIN;"
   query_Env = sql"SHOW ALL;"
   query_commit = sql"COMMIT;"
-  query_begin = sql"BEGIN;"
   query_rollback = sql"ROLLBACK;"
+  query_Version = sql"SHOW SERVER_VERSION;"
   query_currentUser = sql"SELECT current_user;"
   query_allUsers = sql"SELECT rolname FROM pg_roles;"
-  query_allDatabases = sql"SELECT datname FROM pg_database WHERE datistemplate = false;"
-  query_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
-  query_allTables = sql"SELECT tablename FROM pg_catalog.pg_tables;"
   query_currentDatabase = sql"SELECT current_database();"
   pg_dump = "pg_dump --verbose --no-password --encoding=UTF8 "
+  query_allTables = sql"SELECT tablename FROM pg_catalog.pg_tables;"
+  query_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
+  query_allDatabases = sql"SELECT datname FROM pg_database WHERE datistemplate = false;"
+  query_LoggedInUsers = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
   nimTypes2pgTypes = {
     "int8":      "smallint",
     "int16":     "smallint",
