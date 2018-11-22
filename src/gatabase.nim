@@ -259,7 +259,8 @@ func dropSchema*(this: Gatabase, schemaname: string): bool =
   this.db.tryExec(sql(fmt"DROP SCHEMA IF EXISTS {schemaname} CASCADE;"))
 
 proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, debug=false, autocommit=true): bool =
-  ## Create a new Table with Columns.
+  ## Create a new Table with Columns, Values, Comments, Metadata, etc.
+  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
   doAssert fields.len > 0, "'fields' must be a non-empty seq[Field]"
   if not autocommit: this.db.exec(query_begin)
   var columns = "\n  id SERIAL PRIMARY KEY"
@@ -280,18 +281,24 @@ proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment
 
 func dropTable*(this: Gatabase, tablename: string): bool =
   ## Drop a table if exists.
+  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
   this.db.tryExec(sql(fmt"DROP TABLE IF EXISTS {tablename} CASCADE;"))
 
 func renameTable*(this: Gatabase, old_name, new_name: string): bool =
   ## Rename a table.
+  assert old_name.strip.len > 1, "'old_name' must not be an empty string."
+  assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   this.db.tryExec(sql(fmt"ALTER TABLE {old_name} RENAME TO {new_name};"))
 
-func changeAutoVacuumTable*(this: Gatabase, tablename: string, autovacuum_enabled: bool): bool =
+func changeAutoVacuumTable*(this: Gatabase, tablename: string, enabled: bool): bool =
   ## Change the Auto-Vacuum setting for a table.
-  this.db.tryExec(sql(fmt"ALTER TABLE {tablename} SET (autovacuum_enabled = {autovacuum_enabled});"))
+  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+  this.db.tryExec(sql(fmt"ALTER TABLE {tablename} SET (autovacuum_enabled = {enabled});"))
 
 proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, inserts=false, debug=false): tuple[output: TaintedString, exitCode: int] =
   ## Backup the whole Database to a plain-text Raw SQL Query human-readable file.
+  assert dbname.strip.len > 1, "'dbname' must not be an empty string."
+  assert filename.strip.len > 5, "'filename' must not be an empty string."
   let
     a = if dataOnly: "--data-only " else: ""
     b = if inserts: "--inserts " else: ""
