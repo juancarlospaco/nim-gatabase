@@ -47,6 +47,7 @@ var database = Gatabase(user: "MyUserHere", password: "Passw0rd!", host: "localh
 database.connect(debug=true)
 
 # Engine
+echo database.uri
 echo database.getVersion()
 echo database.getEnv()
 echo database.listAllUsers()
