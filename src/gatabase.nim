@@ -209,16 +209,14 @@ func changeAutoVacuumTable*(this: Gatabase, tablename: string, autovacuum_enable
   ## Change the Auto-Vacuum setting for a table.
   this.db.tryExec(sql(fmt"ALTER TABLE {tablename} SET (autovacuum_enabled = {autovacuum_enabled});"))
 
-proc backupDatabase(this: Gatabase, dbname, filename: string, dataOnly=false,
-                    inserts=false, comments=true): tuple[output: TaintedString, exitCode: int] =
+proc backupDatabase(this: Gatabase, dbname, filename: string, dataOnly=false, inserts=false): tuple[output: TaintedString, exitCode: int] =
   ## Backup the whole Database to a file with optional Compression.
   let
     a = if dataOnly: "--data-only " else: ""
     b = if inserts: "--inserts " else: ""
-    c = if comments: "" else: "--no-comments "
-    d = fmt"--lock-wait-timeout={this.timeout * 2} "
-    e = "--host=" & this.host & " --port=" & $this.port & " --username=" & this.user
-    cmd = fmt"{pg_dump}{a}{b}{c}{d}{e} --file={filename.quoteShell} --dbname={dbname}"
+    c = fmt"--lock-wait-timeout={this.timeout * 2} "
+    d = "--host=" & this.host & " --port=" & $this.port & " --username=" & this.user
+    cmd = fmt"{pg_dump}{a}{b}{c}{d} --file={filename.quoteShell} --dbname={dbname}"
   echo cmd
   execCmdEx(cmd)
 
@@ -269,6 +267,6 @@ when isMainModule:
   echo database.dropTable("dogs")
   # Backups
   echo database.backupDatabase("database", "backup0.sql").output
-  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, comments=false).output
+  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true).output
 
   database.close()
