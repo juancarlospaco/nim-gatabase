@@ -18,6 +18,7 @@ const
   query_commit = sql"COMMIT;"
   query_rollback = sql"ROLLBACK;"
   query_pid = sql"select pg_backend_pid();"
+  query_schema = sql"select current_schema();"
   query_Version = sql"SHOW SERVER_VERSION;"
   query_currentUser = sql"SELECT current_user;"
   query_allUsers = sql"SELECT rolname FROM pg_roles;"
@@ -207,6 +208,10 @@ func getCurrentDatabase*(this: Gatabase): Row =
   ## Return the current database.
   this.db.getRow(query_currentDatabase)
 
+func getCurrentSchema*(this: Gatabase): Row =
+  ## Return the current schema.
+  this.db.getRow(query_schema)
+
 func createDatabase*(this: Gatabase, dbname, comment: string, owner=this.user, autocommit=true): bool =
   ## Create a new database, with optional comment.
   if not autocommit: this.db.exec(query_begin)
@@ -358,6 +363,7 @@ when isMainModule:
   echo database.listAllTables()
   echo database.getCurrentUser()
   echo database.getCurrentDatabase()
+  echo database.getCurrentSchema()
   echo database.getLoggedInUsers()
   echo database.forceCommit()
   echo database.forceRollback()
