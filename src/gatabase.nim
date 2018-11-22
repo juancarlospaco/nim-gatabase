@@ -26,6 +26,10 @@ const
   query_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
   query_allDatabases = sql"SELECT datname FROM pg_database WHERE datistemplate = false;"
   query_LoggedInUsers = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
+  html_table_header = """<!DOCTYPE html><html style="background-color:lightcyan">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+  </head><body><br><br><div class="container is-fluid"><table class="table is-bordered is-striped is-hoverable is-fullwidth">"""
   nimTypes2pgTypes = {
     "int8":      "smallint",
     "int16":     "smallint",
@@ -39,6 +43,7 @@ const
     "JsonNode":  "json",
     "PDocument": "xml",
   }.toTable
+
 
 type
   Gatabase* = object  ## Postgres database object type.
@@ -283,6 +288,22 @@ proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment
     else:
       this.db.exec(query_rollback)
 
+func getAllRows*(this: Gatabase, tablename: string, limit: byte): seq[Row] =
+  ## Get all Rows from table.
+  this.db.getAllRows(sql(fmt"select * from {tablename} limit {limit};"))
+
+func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit: byte): seq[Row] =
+  ## Get all Rows from table.
+  this.db.getAllRows(sql(fmt"SELECT * FROM {tablename} WHERE {columnname} = {value};"))
+
+func deleteAllFromTable*(this: Gatabase, tablename: string): bool =
+  ## Delete all from table.
+  this.db.tryExec(sql(fmt"DELETE FROM {tablename};"))
+
+func deleteValueFromTable*(this: Gatabase, tablename, columnname, value: string,): bool =
+  ## Delete all from table.
+  this.db.tryExec(sql(fmt"DELETE FROM {tablename} WHERE {columnname} = {value};"))
+
 func dropTable*(this: Gatabase, tablename: string): bool =
   ## Drop a table if exists.
   assert tablename.strip.len > 0, "'tablename' must not be an empty string."
@@ -357,6 +378,8 @@ when isMainModule:
   # Tables
   echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
                             "This is a Documentation Comment", debug=true)
+  echo database.getAllRows("table_name", limit=255)
+  echo database.searchColumns("table_name", "name0", $int8.high, 255)
   echo database.changeAutoVacuumTable("table_name", true)
   echo database.renameTable("table_name", "cats")
   echo database.dropTable("cats")
