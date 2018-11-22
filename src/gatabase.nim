@@ -91,6 +91,10 @@ func renameDatabase*(this: Gatabase, old_name, new_name: string): bool =
   ## Rename a database.
   this.db.tryExec(sql(fmt"ALTER DATABASE {old_name} RENAME TO {new_name};"))
 
+func getTop(this: Gatabase, limit: byte): seq[Row] =
+  ## Get Top from current database with limit.
+  this.db.getAllRows(sql(fmt"SELECT * FROM current_database() LIMIT {limit};"))
+
 func grantSelect*(this: Gatabase, dbname: string, user="PUBLIC"): bool =
   ## Grant select privileges to a user on a database.
   this.db.tryExec(sql(fmt"GRANT SELECT ON {dbname} TO {user};"))
@@ -171,6 +175,7 @@ when isMainModule:
   echo database.grantSelect("testing")
   echo database.grantAll("testing")
   echo database.renameDatabase("testing", "testing2")
+  echo database.getTop(3.byte)
   echo database.dropDatabase("testing2")
   # User
   echo database.createUser("pepe", "s3cr3t", "This is a Documentation Comment")
