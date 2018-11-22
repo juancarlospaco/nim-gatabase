@@ -147,7 +147,7 @@ func writeMetadata(this: Gatabase, field: Field, columnname, tablename: string):
   this.db.tryExec(sql(fmt"COMMENT ON COLUMN {tablename}.{columnname} IS '{meta}';"))
 
 proc readMetadata(this: Gatabase, field: Field, columnname, tablename: string): JsonNode =
-  ## Field Metadata is JSON read from Postgres Comment. Know a better way?, send Pull Request!.
+  ## Field Metadata is JSON read from Postgres Comment.
   ## https://www.postgresql.org/message-id/28332.1074527643%40sss.pgh.pa.us
   assert tablename.strip.len > 0, "'tablename' must not be an empty string."
   assert columnname.strip.len > 0, "'columnname' must not be an empty string."
