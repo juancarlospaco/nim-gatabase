@@ -49,44 +49,57 @@ type
 
   Field* = JsonNode  ## Gatabase Field.
 
-func newInt8Field(value: int8, name: string): Field =
-  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int8"], "pgName": name.normalize})
+func newInt8Field(value: int8, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value, "help": help.normalize, "error": error.normalize, "nimType": "int8",
+                    "pgType": nimTypes2pgTypes["int8"], "pgName": name.normalize})
 
-func newInt16Field(value: int16, name: string): Field =
-  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+func newInt16Field(value: int16, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value,  "help": help.normalize, "error": error.normalize, "nimType": "int16",
+                    "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
 
-func newInt32Field(value: int32, name: string): Field =
-  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int32"], "pgName": name.normalize})
+func newInt32Field(value: int32, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value, "help": help.normalize, "error": error.normalize, "nimType": "int32",
+                    "pgType": nimTypes2pgTypes["int32"], "pgName": name.normalize})
 
-func newIntField(value: int, name: string): Field =
-  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+func newIntField(value: int, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value, "help": help.normalize, "error": error.normalize, "nimType": "int",
+                    "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
 
-func newFloat32Field(value: float32, name: string): Field =
-  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["float32"], "pgName": name.normalize})
+func newFloat32Field(value: float32, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value, "help": help.normalize, "error": error.normalize, "nimType": "float32",
+                    "pgType": nimTypes2pgTypes["float32"], "pgName": name.normalize})
 
-func newFloatField(value: float32, name: string): Field =
-  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["float"], "pgName": name.normalize})
+func newFloatField(value: float, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value, "help": help.normalize, "error": error.normalize, "nimType": "float",
+                    "pgType": nimTypes2pgTypes["float"], "pgName": name.normalize})
 
-func newBoolField(value: bool, name: string): Field =
-  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["bool"], "pgName": name.normalize})
+func newBoolField(value: bool, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value, "help": help.normalize, "error": error.normalize, "nimType": "bool",
+                    "pgType": nimTypes2pgTypes["bool"], "pgName": name.normalize})
 
-func newPDocumentField(value: PDocument, name: string): Field =
-  result = Field(%*{"value": $value, "pgType": nimTypes2pgTypes["PDocument"], "pgName": name.normalize})
+func newPDocumentField(value: PDocument, name: string, help="", error=""): Field =
+  result = Field(%*{"value": $value, "help": help.normalize, "error": error.normalize, "nimType": "PDocument",
+                    "pgType": nimTypes2pgTypes["PDocument"], "pgName": name.normalize})
 
-func newColorField(value: Color, name: string): Field =
-  result = Field(%*{"value": value.int, "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+func newColorField(value: Color, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value.int, "help": help.normalize, "error": error.normalize, "nimType": "Color",
+                    "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
 
-func newHashField(value: Hash, name: string): Field =
-  result = Field(%*{"value": value.int, "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+func newHashField(value: Hash, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value.int,  "help": help.normalize, "error": error.normalize, "nimType": "Hash",
+                    "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
 
-func newHttpCodeField(value: HttpCode, name: string): Field =
-  result = Field(%*{"value": value.int16, "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+func newHttpCodeField(value: HttpCode, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value.int16, "help": help.normalize, "error": error.normalize, "nimType": "HttpCode",
+                    "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
 
-func newPortField(value: Port, name: string): Field =
-  result = Field(%*{"value": value.int16, "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+func newPortField(value: Port, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value.int16, "help": help.normalize, "error": error.normalize, "nimType": "Port",
+                    "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
 
-func newPegField(value: Peg, name: string): Field =
-  result = Field(%*{"value": $value, "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
+func newPegField(value: Peg, name: string, help="", error=""): Field =
+  result = Field(%*{"value": $value, "help": help.normalize, "error": error.normalize, "nimType": "Peg",
+                    "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
 
 proc connect*(this: var Gatabase, debug=false) {.discardable.} =
   ## Open the Database connection, set Encoding to UTF-8, set URI, debug URI.
@@ -119,13 +132,30 @@ template document*(this: Gatabase, what, target, comment: string): untyped =
   if comment.strip.len > 0:
     discard this.db.tryExec(sql("COMMENT ON $1 $2 IS ?;".format(what, target)), comment.strip)
 
-template writeMetadata(this: Gatabase, target, comment: string): untyped =
+func writeMetadata(this: Gatabase, field: Field, columnname, tablename: string): bool =
   ## Field Metadata is converted to JSON & stored as Postgres Comment. Know a better way?, send Pull Request!.
-  discard this.db.tryExec(sql("COMMENT ON COLUMN $2 IS ?;".format(target)), comment.strip)
+  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+  assert columnname.strip.len > 0, "'columnname' must not be an empty string."
+  var meta: string
+  meta.toUgly(%*{
+    "help":    field["help"],
+    "error":   field["error"],
+    "pgType":  field["pgType"],
+    "nimType": field["nimType"],
+    "pgName":  field["pgName"]
+  })
+  this.db.tryExec(sql(fmt"COMMENT ON COLUMN {tablename}.{columnname} IS '{meta}';"))
 
-template readMetadata(this: Gatabase, target, comment: string): untyped =
+proc readMetadata(this: Gatabase, field: Field, columnname, tablename: string): JsonNode =
   ## Field Metadata is JSON read from Postgres Comment. Know a better way?, send Pull Request!.
-  discard this.db.tryExec(sql("COMMENT ON COLUMN $2 IS ?;".format(target)), comment.strip)
+  ## https://www.postgresql.org/message-id/28332.1074527643%40sss.pgh.pa.us
+  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+  assert columnname.strip.len > 0, "'columnname' must not be an empty string."
+  let
+    col_query = fmt"select ordinal_position from information_schema.columns where table_name = '{tablename}' and column_name = '{columnname}';"
+    col_num = this.db.getRow(sql(col_query))[0]
+    meta = this.db.getRow(sql(fmt"select col_description('{tablename}'::regclass, {col_num});"))[0]
+  result = meta.parseJson
 
 func getVersion*(this: Gatabase): Row =
   ## Return the Postgres database server Version (SemVer).
@@ -238,6 +268,9 @@ proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment
   let query = fmt"CREATE TABLE IF NOT EXISTS {tablename}({columns}); /* {comment} */"
   if debug: echo query
   result = this.db.tryExec(sql(query))
+  for field in fields:
+    discard this.writeMetadata(field, field["pgName"].getStr, tablename)
+    # echo this.readMetadata(field, field["pgName"].getStr, tablename)
   document(this, "TABLE", tablename, comment)
   if not autocommit:
     if result:
@@ -270,6 +303,7 @@ proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, i
 
 
 when isMainModule:
+  # Database init (change to your user and password).
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
                           dbname: "database", port: 5432, timeout: 10)
   database.connect(debug=true)
@@ -291,27 +325,28 @@ when isMainModule:
   echo database.getTop(3.byte)
   echo database.dropDatabase("testing2")
   # User
-  echo database.createUser("pepe", "s3cr3t", "This is a Documentation Comment")
-  echo database.changePasswordUser("pepe", "passw0rd")
+  echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
+  echo database.changePasswordUser("pepe", "p@ssw0rd")
   echo database.renameUser("pepe", "pepe2")
   echo database.dropUser("pepe2")
   # Schema
   echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
   echo database.dropSchema("memes")  # AFAIK Postgres Schemas cant be Renamed?.
-  # Tables
+  # Fields
   let
-    a = newInt8Field(int8.high, "a")
-    b = newInt16Field(int16.high, "b")
-    c = newInt32Field(int32.high, "c")
-    d = newIntField(int.high, "d")
-    e = newFloat32Field(42.0.float32, "e")
-    f = newFloatField(666.0.float64, "f")
-    g = newBoolField(true, "g")
-  echo database.createTable("cats", @[a, b, c, d, e, f, g],
+    a = newInt8Field(int8.high, "name0", "Help here", "Error here")
+    b = newInt16Field(int16.high, "name1", "Help here", "Error here")
+    c = newInt32Field(int32.high, "name2", "Help here", "Error here")
+    d = newIntField(int.high, "name3", "Help here", "Error here")
+    e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
+    f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
+    g = newBoolField(true, "name6", "Help here", "Error here")
+  # Tables
+  echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
                             "This is a Documentation Comment", debug=true)
-  echo database.changeAutoVacuumTable("cats", true)
-  echo database.renameTable("cats", "dogs")
-  echo database.dropTable("dogs")
+  echo database.changeAutoVacuumTable("table_name", true)
+  echo database.renameTable("table_name", "cats")
+  echo database.dropTable("cats")
   # Backups
   echo database.backupDatabase("database", "backup0.sql", debug=true).output
   echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, debug=true).output
