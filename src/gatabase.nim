@@ -1,7 +1,7 @@
 ## - Encoding is UTF-8.
 ## - Database user must have a password.
 ## - Database connection is to hostname not unix socket.
-## - Comments for Self-Documentation are supported on everything.
+## - Comments for Self-Documentation are supported.
 import
   db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables, colors,
   hashes, httpcore, nativesockets, pegs, subexes
@@ -18,7 +18,7 @@ const
   query_currentDatabase = sql"SELECT current_database();"
   pg_dump = "pg_dump --verbose --no-password --encoding=UTF8 "
   nimTypes2pgTypes = {
-    "int8":      "smallint", # Theres no int8 of 1 byte on Postgres.
+    "int8":      "smallint",
     "int16":     "smallint",
     "int32":     "integer",
     "int":       "bigint",
@@ -186,7 +186,7 @@ func dropSchema*(this: Gatabase, schemaname: string): bool =
   ## Drop an schema if exists.
   this.db.tryExec(sql(fmt"DROP SCHEMA IF EXISTS {schemaname} CASCADE;"))
 
-proc createTable*(this: Gatabase, tablename, comment: string, fields: seq[Field], debug=false): bool =
+proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, debug=false): bool =
   ## Create a new schema.
   doAssert fields.len > 0, "'fields' must be a non-empty seq[Field]"
   var columns = "\n  id SERIAL PRIMARY KEY"
@@ -262,8 +262,8 @@ when isMainModule:
     e = newFloat32Field(42.0.float32, "e")
     f = newFloatField(666.0, "f")
     g = newBoolField(true, "g")
-  echo database.createTable("cats", "This is a Documentation Comment",
-                            @[a, b, c, d, e, f, g], debug=true)
+  echo database.createTable("cats", @[a, b, c, d, e, f, g],
+                            "This is a Documentation Comment", debug=true)
   echo database.changeAutoVacuumTable("cats", true)
   echo database.renameTable("cats", "dogs")
   echo database.dropTable("dogs")
