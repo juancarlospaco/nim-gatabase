@@ -85,6 +85,7 @@ let
   e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
   f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
   g = newBoolField(true, "name6", "Help here", "Error here")
+  # fails = newInt8Field(int64.high, "name9", "Input an int8", "Integer overflow error")
 assert a is Field
 assert b is Field
 
