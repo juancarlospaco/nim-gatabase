@@ -5,7 +5,7 @@
 
 # API
 
-- Postgres >= 10.
+- [Postgres >= 10.](https://www.postgresql.org)
 - UTF-8 encoding.
 - Database user must have a password.
 - Database connection is to hostname.
