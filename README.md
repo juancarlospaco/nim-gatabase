@@ -1,6 +1,6 @@
 # Nim-Gatabase
 
-![screenshot](https://source.unsplash.com/yMSecCHsIBc/800x480 "Postgres high-level ORM for Nim")
+![screenshot](https://source.unsplash.com/yMSecCHsIBc/800x600 "Postgres high-level ORM for Nim")
 
 
 # API
