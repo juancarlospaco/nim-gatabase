@@ -355,7 +355,7 @@ when isMainModule:
   echo database.renameTable("table_name", "cats")
   echo database.dropTable("cats")
   # Backups
-  echo database.backupDatabase("database", "backup0.sql", debug=true).output
+  echo database.backupDatabase("database", "backup0.sql").output
   echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, debug=true).output
 
   database.close()
