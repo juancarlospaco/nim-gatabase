@@ -26,10 +26,6 @@ const
   query_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
   query_allDatabases = sql"SELECT datname FROM pg_database WHERE datistemplate = false;"
   query_LoggedInUsers = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
-  html_table_header = """<!DOCTYPE html><html style="background-color:lightcyan">
-  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
-  </head><body><br><br><div class="container is-fluid"><table class="table is-bordered is-striped is-hoverable is-fullwidth">"""
   nimTypes2pgTypes = {
     "int8":      "smallint",
     "int16":     "smallint",
