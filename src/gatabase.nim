@@ -94,7 +94,7 @@ func connect*(this: var Gatabase) {.discardable.} =
   assert this.password.len > 1, "Postgres 'password' must be a non-empty string"
   assert this.host.len > 1, "Postgres hostname 'host' must be a non-empty string"
   assert this.dbname.len > 1, "Postgres DB 'dbname' must be a non-empty string"
-  assert this.timeout.int > 1, "Postgres 'timeout' must be a non-zero byte (>1)"
+  assert this.timeout.int > 3, "Postgres 'timeout' must be a non-zero byte (>3)"
   this.encoding = "UTF8"
   this.uri = fmt"postgresql://{this.user}:{this.password}@{this.host}:{this.port}/{this.dbname}?connect_timeout={this.timeout}"
   this.db = db_postgres.open(
