@@ -329,7 +329,7 @@ when isMainModule:
   echo database.grantSelect("testing")
   echo database.grantAll("testing")
   echo database.renameDatabase("testing", "testing2")
-  echo database.getTop(3.byte)
+  echo database.getTop(3)
   echo database.dropDatabase("testing2")
   # User
   echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
