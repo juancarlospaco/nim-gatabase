@@ -257,8 +257,8 @@ func changeAutoVacuumTable*(this: Gatabase, tablename: string, autovacuum_enable
   ## Change the Auto-Vacuum setting for a table.
   this.db.tryExec(sql(fmt"ALTER TABLE {tablename} SET (autovacuum_enabled = {autovacuum_enabled});"))
 
-proc backupDatabase(this: Gatabase, dbname, filename: string, dataOnly=false, inserts=false, debug=false): tuple[output: TaintedString, exitCode: int] =
-  ## Backup the whole Database to a file with optional Compression.
+proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, inserts=false, debug=false): tuple[output: TaintedString, exitCode: int] =
+  ## Backup the whole Database to a plain-text Raw SQL Query human-readable file.
   let
     a = if dataOnly: "--data-only " else: ""
     b = if inserts: "--inserts " else: ""
