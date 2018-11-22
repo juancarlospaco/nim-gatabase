@@ -84,6 +84,8 @@ let
   e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
   f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
   g = newBoolField(true, "name6", "Help here", "Error here")
+assert a is Field
+assert b is Field
 
 # Tables
 echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
