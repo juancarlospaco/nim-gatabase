@@ -2,7 +2,7 @@
 ## - Database user must have a password.
 ## - Database connection is to hostname not unix socket.
 ## - Comments for Self-Documentation are supported on everything.
-import db_postgres, strformat, strutils, osproc
+import db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables
 
 const
   query_LoggedInUsers = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
@@ -15,12 +15,101 @@ const
   query_allTables = sql"SELECT tablename FROM pg_catalog.pg_tables;"
   query_currentDatabase = sql"SELECT current_database();"
   pg_dump = "pg_dump --verbose --no-password --encoding=UTF8 "
+  nimTypes2pgTypes = {
+    "int8":      "smallint", # Theres no int8 of 1 byte on Postgres.
+    "int16":     "smallint",
+    "int32":     "integer",
+    "int":       "bigint",
+    "float32":   "decimal",
+    "float":     "decimal",
+    "char":      "char(1)",
+    "bool":      "boolean",
+    "string":    "text",
+    "JsonNode":  "json",
+    "PDocument": "xml",
+  }.toTable
 
-type Gatabase* = object  ## Postgres database object type.
-  user*, password*, host*, dbname*, uri*, encoding*: string
-  timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
-  port: int16     ## Database port, int16 type, Postgres default is 5432.
-  db*: DbConn   ## Database connection instance.
+type
+  Gatabase* = object  ## Postgres database object type.
+    user*, password*, host*, dbname*, uri*, encoding*: string
+    timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
+    port: int16     ## Database port, int16 type, Postgres default is 5432.
+    db*: DbConn   ## Database connection instance.
+
+  Field* = JsonNode  ## Gatabase Field.
+
+  # Float32Field* = object of FieldBase     ## Field representing an float32
+  #   value: float32
+  # FloatField* = object of FieldBase       ## Field representing an float (float64)
+  #   value: float
+  #
+  # BoolField* = object of FieldBase        ## Field representing an bool
+  #   value: bool
+  #
+  # CharField* = object of FieldBase        ## Field representing an char
+  #   value: char
+  #
+  # StringField* = object of FieldBase      ## Field representing an string
+  #   value: string
+  #
+  # JsonNodeField* = object of FieldBase    ## Field representing an JsonNode
+  #   value: JsonNode
+  #
+  # PDocumentField* = object of FieldBase   ## Field representing an PDocument (XML)
+  #   value: PDocument
+  #
+  # ColorField* = object of FieldBase       ## Field representing an Color
+  #   value: int
+  #
+  # HashField* = object of FieldBase        ## Field representing an Hash
+  #   value: int
+  #
+  # HttpCodeField* = object of FieldBase    ## Field representing an HTTP Code
+  #   value: int16  # 0..599
+  #
+  # PortField* = object of FieldBase        ## Field representing an Port
+  #   value: int16
+  #
+  # MD5DigestField* = object of FieldBase   ## Field representing an MD5 Digest
+  #   value: int
+  #
+  # PegField* = object of FieldBase         ## Field representing an PEG
+  #   value: string
+  #
+  # PRstNodeField* = object of FieldBase    ## Field representing an RST Markup text
+  #   value: string
+  #
+  # subexField* = object of FieldBase       ## Field representing an Subex
+  #   value: string
+  #
+  # TableField* = object of FieldBase       ## Field representing an Table
+  #   value: JsonNode
+  #
+  # HttpHeadersField* = object of FieldBase ## Field representing an HTTPS Headers
+  #   value: string  # table
+  #
+  # TimestampField* = object of FieldBase   ## Field representing an Timestamp
+  #   value: int
+  #
+  # PrimaryKeyField* = object of FieldBase   ## Field representing a Primary Key
+  #   value: int
+  #
+  # AnyField* = Int8Field | Int16Field | Int32Field | IntField
+
+#  ForeignKeyField* = object of FieldBase   ## Field representing an ForeignKey
+#    value: int
+
+func newInt8Field(value: int8, name: string): Field =
+  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int8"], "pgName": name.normalize})
+
+func newInt16Field(value: int16, name: string): Field =
+  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+
+func newInt32Field(value: int32, name: string): Field =
+  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int32"], "pgName": name.normalize})
+
+func newIntField(value: int, name: string): Field =
+  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
 
 func connect*(this: var Gatabase) {.discardable.} =
   ## Open the Database connection, set Encoding to UTF-8, set URI.
@@ -41,8 +130,8 @@ func getLoggedInUsers*(this: Gatabase): seq[Row] =
 
 template document(this: Gatabase, what, target, comment: string): untyped =
   ## Document target with comment. Postgres Comment is like Self-Documentation.
-  assert what.strip.len > 1, "what must not be an empty string."
-  assert target.strip.len > 1, "target must not an be empty string."
+  assert what.strip.len > 1, "'what' must not be an empty string."
+  assert target.strip.len > 1, "'target' must not an be empty string."
   if comment.strip.len > 0:
     discard this.db.tryExec(sql("COMMENT ON $1 $2 IS ?;".format(what, target)), comment.strip)
 
@@ -129,6 +218,17 @@ func dropSchema*(this: Gatabase, schemaname: string): bool =
   ## Drop an schema if exists.
   this.db.tryExec(sql(fmt"DROP SCHEMA IF EXISTS {schemaname} CASCADE;"))
 
+proc createTable*(this: Gatabase, tablename, comment: string, fields: seq[Field], debug=false): bool =
+  ## Create a new schema.
+  doAssert fields.len > 0, "'fields' must be a non-empty seq[Field]"
+  var columns = "\n  id SERIAL PRIMARY KEY"
+  for column in fields:
+    columns &= ",\n  " & column["pgName"].getStr & " " & column["pgType"].getStr
+  let query = fmt"CREATE TABLE IF NOT EXISTS {tablename}({columns}); /* {comment} */"
+  if debug: echo query
+  result = this.db.tryExec(sql(query))
+  document(this, "TABLE", tablename, comment)
+
 func dropTable*(this: Gatabase, tablename: string): bool =
   ## Drop a table if exists.
   this.db.tryExec(sql(fmt"DROP TABLE IF EXISTS {tablename} CASCADE;"))
@@ -186,9 +286,15 @@ when isMainModule:
   echo database.createSchema("memes", "This is a Documentation Comment")
   echo database.dropSchema("memes")  # AFAIK Postgres Schemas cant be Renamed?.
   # Tables
-  echo database.renameTable("dogs", "cats")
-  echo database.dropTable("cats")
-  echo database.changeAutoVacuumTable("sometable", true)
+  let
+    a = newInt8Field(int8.high, "a")
+    b = newInt16Field(int16.high, "b")
+    c = newInt32Field(int32.high, "c")
+    d = newIntField(int.high, "d")
+  echo database.createTable("cats", "This is a Documentation Comment", @[a, b, c, d], debug=true)
+  echo database.changeAutoVacuumTable("cats", true)
+  echo database.renameTable("cats", "dogs")
+  echo database.dropTable("dogs")
   # Backups
   echo database.backupDatabase("database", "backup0.sql").output
   echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, comments=false).output
