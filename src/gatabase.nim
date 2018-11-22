@@ -89,7 +89,7 @@ func newPegField(value: Peg, name: string): Field =
   result = Field(%*{"value": $value, "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
 
 proc connect*(this: var Gatabase, debug=false) {.discardable.} =
-  ## Open the Database connection, set Encoding to UTF-8, set URI.
+  ## Open the Database connection, set Encoding to UTF-8, set URI, debug URI.
   assert this.user.len > 1, "Postgres username 'user' must be a non-empty string"
   assert this.password.len > 1, "Postgres 'password' must be a non-empty string"
   assert this.host.len > 1, "Postgres hostname 'host' must be a non-empty string"
@@ -229,7 +229,7 @@ func dropSchema*(this: Gatabase, schemaname: string): bool =
   this.db.tryExec(sql(fmt"DROP SCHEMA IF EXISTS {schemaname} CASCADE;"))
 
 proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, debug=false, autocommit=true): bool =
-  ## Create a new schema.
+  ## Create a new Table with Columns.
   doAssert fields.len > 0, "'fields' must be a non-empty seq[Field]"
   if not autocommit: this.db.exec(query_begin)
   var columns = "\n  id SERIAL PRIMARY KEY"
