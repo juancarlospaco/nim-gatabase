@@ -1,7 +1,7 @@
 # Package
 
 version       = "0.1.0"
-author        = "juancarlospaco"
+author        = "Juan Carlos"
 description   = "Gatabase"
 license       = "MIT"
 srcDir        = "src"
