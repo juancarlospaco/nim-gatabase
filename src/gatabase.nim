@@ -1,7 +1,9 @@
 ## - Encoding is UTF-8.
 ## - Database user must have a password.
 ## - Database connection is to hostname not unix socket.
-## - Comments for Self-Documentation are supported.
+## - Self-Documentation Comments supported.
+## - AutoVacuum for Tables supported.
+## - Backups for Databases supported.
 import
   db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables, colors,
   hashes, httpcore, nativesockets, pegs, subexes
