@@ -252,7 +252,7 @@ proc backupDatabase(this: Gatabase, dbname, filename: string, dataOnly=false, in
 
 when isMainModule:
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
-                          dbname: "database", port: 5432.int16, timeout: 10)
+                          dbname: "database", port: 5432, timeout: 10)
   database.connect()
   # Engine
   echo database.uri
