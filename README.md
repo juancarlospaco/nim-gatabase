@@ -19,6 +19,24 @@
 - Run `nim doc gatabase.nim` for more Documentation.
 
 
+# Fields
+
+- `StringField`
+- `Int8Field`
+- `Int16Field`
+- `Int32Field`
+- `IntField`
+- `Float32Field`
+- `FloatField`
+- `BoolField`
+- `PDocumentField`
+- `ColorField`
+- `HashField`
+- `HttpCodeField`
+- `PortField`
+- `PegField`
+
+
 # FAQ
 
 - Supports SQLite ?.
