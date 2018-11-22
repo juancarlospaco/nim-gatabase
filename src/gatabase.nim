@@ -17,6 +17,7 @@ const
   query_Env = sql"SHOW ALL;"
   query_commit = sql"COMMIT;"
   query_rollback = sql"ROLLBACK;"
+  query_pid = sql"select pg_backend_pid();"
   query_Version = sql"SHOW SERVER_VERSION;"
   query_currentUser = sql"SELECT current_user;"
   query_allUsers = sql"SELECT rolname FROM pg_roles;"
@@ -177,6 +178,10 @@ func getVersion*(this: Gatabase): Row =
 func getEnv*(this: Gatabase): Row =
   ## Return the Postgres database server environtment variables.
   this.db.getRow(query_Env)
+
+func getPid*(this: Gatabase): Row =
+  ## Return the Postgres database server Process ID.
+  this.db.getRow(query_pid)
 
 func getCurrentUser*(this: Gatabase): Row =
   ## Return the current Postgres database user.
@@ -346,6 +351,7 @@ when isMainModule:
   # Engine
   echo database.getVersion()
   echo database.getEnv()
+  echo database.getPid()
   echo database.listAllUsers()
   echo database.listAllDatabases()
   echo database.listAllSchemas()

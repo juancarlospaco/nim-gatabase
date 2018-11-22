@@ -50,6 +50,7 @@ database.connect(debug=true)
 echo database.uri
 echo database.getVersion()
 echo database.getEnv()
+echo database.getPid()
 echo database.listAllUsers()
 echo database.listAllDatabases()
 echo database.listAllSchemas()
