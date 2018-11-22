@@ -88,7 +88,7 @@ func newPortField(value: Port, name: string): Field =
 func newPegField(value: Peg, name: string): Field =
   result = Field(%*{"value": $value, "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
 
-func connect*(this: var Gatabase) {.discardable.} =
+proc connect*(this: var Gatabase, debug=false) {.discardable.} =
   ## Open the Database connection, set Encoding to UTF-8, set URI.
   assert this.user.len > 1, "Postgres username 'user' must be a non-empty string"
   assert this.password.len > 1, "Postgres 'password' must be a non-empty string"
@@ -101,6 +101,7 @@ func connect*(this: var Gatabase) {.discardable.} =
     "", "", "",
     fmt"host={this.host} port={this.port} dbname={this.dbname} user={this.user} password={this.password} connect_timeout={this.timeout}")
   doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
+  if debug: echo this.uri
 
 func close*(this: Gatabase) {.discardable, inline.} =
   ## Close the Database connection.
@@ -271,9 +272,8 @@ proc backupDatabase(this: Gatabase, dbname, filename: string, dataOnly=false, in
 when isMainModule:
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
                           dbname: "database", port: 5432, timeout: 10)
-  database.connect()
+  database.connect(debug=true)
   # Engine
-  echo database.uri
   echo database.getVersion()
   echo database.getEnv()
   echo database.listAllUsers()
