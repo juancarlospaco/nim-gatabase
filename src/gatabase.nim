@@ -2,7 +2,9 @@
 ## - Database user must have a password.
 ## - Database connection is to hostname not unix socket.
 ## - Comments for Self-Documentation are supported on everything.
-import db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables
+import
+  db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables, colors,
+  hashes, httpcore, nativesockets, pegs, subexes
 
 const
   query_LoggedInUsers = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
@@ -38,67 +40,6 @@ type
 
   Field* = JsonNode  ## Gatabase Field.
 
-  # Float32Field* = object of FieldBase     ## Field representing an float32
-  #   value: float32
-  # FloatField* = object of FieldBase       ## Field representing an float (float64)
-  #   value: float
-  #
-  # BoolField* = object of FieldBase        ## Field representing an bool
-  #   value: bool
-  #
-  # CharField* = object of FieldBase        ## Field representing an char
-  #   value: char
-  #
-  # StringField* = object of FieldBase      ## Field representing an string
-  #   value: string
-  #
-  # JsonNodeField* = object of FieldBase    ## Field representing an JsonNode
-  #   value: JsonNode
-  #
-  # PDocumentField* = object of FieldBase   ## Field representing an PDocument (XML)
-  #   value: PDocument
-  #
-  # ColorField* = object of FieldBase       ## Field representing an Color
-  #   value: int
-  #
-  # HashField* = object of FieldBase        ## Field representing an Hash
-  #   value: int
-  #
-  # HttpCodeField* = object of FieldBase    ## Field representing an HTTP Code
-  #   value: int16  # 0..599
-  #
-  # PortField* = object of FieldBase        ## Field representing an Port
-  #   value: int16
-  #
-  # MD5DigestField* = object of FieldBase   ## Field representing an MD5 Digest
-  #   value: int
-  #
-  # PegField* = object of FieldBase         ## Field representing an PEG
-  #   value: string
-  #
-  # PRstNodeField* = object of FieldBase    ## Field representing an RST Markup text
-  #   value: string
-  #
-  # subexField* = object of FieldBase       ## Field representing an Subex
-  #   value: string
-  #
-  # TableField* = object of FieldBase       ## Field representing an Table
-  #   value: JsonNode
-  #
-  # HttpHeadersField* = object of FieldBase ## Field representing an HTTPS Headers
-  #   value: string  # table
-  #
-  # TimestampField* = object of FieldBase   ## Field representing an Timestamp
-  #   value: int
-  #
-  # PrimaryKeyField* = object of FieldBase   ## Field representing a Primary Key
-  #   value: int
-  #
-  # AnyField* = Int8Field | Int16Field | Int32Field | IntField
-
-#  ForeignKeyField* = object of FieldBase   ## Field representing an ForeignKey
-#    value: int
-
 func newInt8Field(value: int8, name: string): Field =
   result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int8"], "pgName": name.normalize})
 
@@ -110,6 +51,33 @@ func newInt32Field(value: int32, name: string): Field =
 
 func newIntField(value: int, name: string): Field =
   result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+
+func newFloat32Field(value: float32, name: string): Field =
+  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["float32"], "pgName": name.normalize})
+
+func newFloatField(value: float32, name: string): Field =
+  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["float"], "pgName": name.normalize})
+
+func newBoolField(value: bool, name: string): Field =
+  result = Field(%*{"value": value, "pgType": nimTypes2pgTypes["bool"], "pgName": name.normalize})
+
+func newPDocumentField(value: PDocument, name: string): Field =
+  result = Field(%*{"value": $value, "pgType": nimTypes2pgTypes["PDocument"], "pgName": name.normalize})
+
+func newColorField(value: Color, name: string): Field =
+  result = Field(%*{"value": value.int, "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+
+func newHashField(value: Hash, name: string): Field =
+  result = Field(%*{"value": value.int, "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+
+func newHttpCodeField(value: HttpCode, name: string): Field =
+  result = Field(%*{"value": value.int16, "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+
+func newPortField(value: Port, name: string): Field =
+  result = Field(%*{"value": value.int16, "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+
+func newPegField(value: Peg, name: string): Field =
+  result = Field(%*{"value": $value, "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
 
 func connect*(this: var Gatabase) {.discardable.} =
   ## Open the Database connection, set Encoding to UTF-8, set URI.
@@ -222,8 +190,8 @@ proc createTable*(this: Gatabase, tablename, comment: string, fields: seq[Field]
   ## Create a new schema.
   doAssert fields.len > 0, "'fields' must be a non-empty seq[Field]"
   var columns = "\n  id SERIAL PRIMARY KEY"
-  for column in fields:
-    columns &= ",\n  " & column["pgName"].getStr & " " & column["pgType"].getStr
+  for c in fields:
+    columns &= ",\n  " & fmt"""{c["pgName"].getStr} {c["pgType"].getStr} DEFAULT {c["value"]}"""
   let query = fmt"CREATE TABLE IF NOT EXISTS {tablename}({columns}); /* {comment} */"
   if debug: echo query
   result = this.db.tryExec(sql(query))
@@ -291,7 +259,11 @@ when isMainModule:
     b = newInt16Field(int16.high, "b")
     c = newInt32Field(int32.high, "c")
     d = newIntField(int.high, "d")
-  echo database.createTable("cats", "This is a Documentation Comment", @[a, b, c, d], debug=true)
+    e = newFloat32Field(42.0.float32, "e")
+    f = newFloatField(666.0, "f")
+    g = newBoolField(true, "g")
+  echo database.createTable("cats", "This is a Documentation Comment",
+                            @[a, b, c, d, e, f, g], debug=true)
   echo database.changeAutoVacuumTable("cats", true)
   echo database.renameTable("cats", "dogs")
   echo database.dropTable("dogs")
