@@ -287,7 +287,7 @@ when isMainModule:
   echo database.renameUser("pepe", "pepe2")
   echo database.dropUser("pepe2")
   # Schema
-  echo database.createSchema("memes", "This is a Documentation Comment")
+  echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
   echo database.dropSchema("memes")  # AFAIK Postgres Schemas cant be Renamed?.
   # Tables
   let
