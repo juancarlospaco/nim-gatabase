@@ -1,7 +1,7 @@
 ## Gatabase
 ## ========
 ##
-## - Postgres >= 11.
+## - Postgres >= 10.
 ## - UTF-8 encoding.
 ## - Database user must have a password.
 ## - Database connection is to hostname not unix socket.
@@ -99,6 +99,10 @@ func newPortField(value: Port, name: string, help="", error=""): Field =
 
 func newPegField(value: Peg, name: string, help="", error=""): Field =
   result = Field(%*{"value": $value, "help": help.normalize, "error": error.normalize, "nimType": "Peg",
+                    "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
+
+func newStringField(value: string, name: string, help="", error=""): Field =
+  result = Field(%*{"value": value, "help": help.normalize, "error": error.normalize, "nimType": "string",
                     "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
 
 proc connect*(this: var Gatabase, debug=false) {.discardable.} =
