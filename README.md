@@ -57,6 +57,8 @@ echo database.listAllTables()
 echo database.getCurrentUser()
 echo database.getCurrentDatabase()
 echo database.getLoggedInUsers()
+echo database.forceCommit()
+echo database.forceRollback()
 
 # Database
 echo database.createDatabase("testing", "This is a Documentation Comment")

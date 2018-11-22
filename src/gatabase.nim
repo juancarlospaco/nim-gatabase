@@ -133,6 +133,14 @@ func getLoggedInUsers*(this: Gatabase): seq[Row] =
   ## Return all active logged-in users.
   this.db.getAllRows(query_LoggedInUsers)
 
+func forceCommit*(this: Gatabase): bool =
+  ## Delete all from table.
+  this.db.tryExec(query_commit)
+
+func forceRollback*(this: Gatabase): bool =
+  ## Delete all from table.
+  this.db.tryExec(query_rollback)
+
 template document*(this: Gatabase, what, target, comment: string): untyped =
   ## Document target with comment. Postgres Comment is like Self-Documentation.
   assert what.strip.len > 1, "'what' must not be an empty string."
@@ -349,6 +357,8 @@ when isMainModule:
   echo database.getCurrentUser()
   echo database.getCurrentDatabase()
   echo database.getLoggedInUsers()
+  echo database.forceCommit()
+  echo database.forceRollback()
   # Database
   echo database.createDatabase("testing", "This is a Documentation Comment")
   echo database.grantSelect("testing")
