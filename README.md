@@ -7,6 +7,7 @@
 
 - [Postgres >= 10.](https://www.postgresql.org)
 - UTF-8 encoding.
+- All SQL are `const`.
 - Database user must have a password.
 - Database connection is to hostname.
 - Self-Documentation Comments supported.
@@ -78,7 +79,8 @@ echo database.dropUser("BongoCat")
 
 # Schema
 echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
-echo database.dropSchema("memes")
+echo database.renameSchema("memes", "foo")
+echo database.dropSchema("foo")
 
 # Fields
 let
