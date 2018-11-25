@@ -108,6 +108,9 @@ echo database.dropTable("cats")
 echo database.backupDatabase("database", "backup0.sql").output
 echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, debug=true).output
 
+# db_postgres compatible
+echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
+
 database.close()
 
 # Check the Docs for more...
