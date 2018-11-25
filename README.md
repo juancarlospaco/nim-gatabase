@@ -19,6 +19,7 @@
 - You can still use Ormin as normal.
 - You can still use std lib `db_postgres` as normal.
 - You can write with Gatabase and read with Ormin.
+- Each Field has its own Metadata.
 - Run the module itself for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
 
