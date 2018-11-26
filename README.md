@@ -123,6 +123,27 @@ database.close()
 # Check the Docs for more...
 ```
 
+**Creating a Table with Fields:**
+
+```nim
+echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
+                          "This is a Documentation Comment", debug=true)
+```
+
+**Produces the SQL:**
+
+```sql
+CREATE TABLE IF NOT EXISTS table_name(
+  id SERIAL PRIMARY KEY,
+  name0 smallint DEFAULT 127,
+  name1 smallint DEFAULT 32767,
+  name2 integer DEFAULT 2147483647,
+  name3 bigint DEFAULT 9223372036854775807,
+  name4 decimal DEFAULT 42.0,
+  name5 decimal DEFAULT 666.0,
+  name6 boolean DEFAULT true); /* This is a Documentation Comment */
+```
+
 
 # FAQ
 
