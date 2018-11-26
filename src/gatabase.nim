@@ -47,7 +47,7 @@ const
   sql_document = "COMMENT ON $1 $2 IS ?;"
   sql_dropDatabase = "DROP DATABASE IF EXISTS $1;"
   sql_renameDatabase = "ALTER DATABASE $1 RENAME TO $2;"
-  sql_getTop = "SELECT * FROM current_database() LIMIT $1;"
+  sql_getTop = "SELECT * FROM current_database() LIMIT $1 OFFSET $2;"
   sql_grantSelect = "GRANT SELECT ON $1 TO $2;"
   sql_writeMetadata = "COMMENT ON COLUMN $1.$2 IS '$3';"
   sql_ordinalPosition = "select ordinal_position from information_schema.columns where table_name = '$1' and column_name = '$2';"
@@ -62,10 +62,10 @@ const
   sql_renameSchema = "ALTER SCHEMA $1 RENAME TO $2;"
   sql_dropSchema = "DROP SCHEMA IF EXISTS $1 CASCADE;"
   sql_createTable = "CREATE TABLE IF NOT EXISTS $1($2); /* $3 */"
-  sql_getAllRows = "select * from $1 limit $2;"
-  sql_searchColumns = "SELECT * FROM $1 WHERE $2 = $3;"
-  sql_deleteAll = "DELETE FROM $1;"
-  sql_deleteValue = "DELETE FROM $1 WHERE $2 = $3;"
+  sql_getAllRows = "select * from $1 limit $2 offset $3;"
+  sql_searchColumns = "SELECT * FROM $1 WHERE $2 = $3 limit $4 offset $5;"
+  sql_deleteAll = "DELETE FROM $1 limit $2 offset $3;"
+  sql_deleteValue = "DELETE FROM $1 WHERE $2 = $3 limit $4 offset $5;"
   sql_dropTable = "DROP TABLE IF EXISTS $1 CASCADE;"
   sql_renameTable = "ALTER TABLE $1 RENAME TO $2;"
   sql_autoVacuum = "ALTER TABLE $1 SET (autovacuum_enabled = $2);"
@@ -314,9 +314,9 @@ func renameDatabase*(this: Gatabase, old_name, new_name: string): bool =
   assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   this.db.tryExec(sql(sql_renameDatabase.format(old_name, new_name)))
 
-func getTop(this: Gatabase, limit: byte): seq[Row] =
+func getTop(this: Gatabase, limit: int, offset=0): seq[Row] =
   ## Get Top from current database with limit.
-  this.db.getAllRows(sql(sql_getTop.format(limit)))
+  this.db.getAllRows(sql(sql_getTop.format(limit, offset)))
 
 func grantSelect*(this: Gatabase, dbname: string, user="PUBLIC"): bool =
   ## Grant select privileges to a user on a database.
@@ -393,21 +393,21 @@ proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment
     else:
       this.db.exec(sql_rollback)
 
-func getAllRows*(this: Gatabase, tablename: string, limit: byte): seq[Row] =
+func getAllRows*(this: Gatabase, tablename: string, limit: int, offset=0): seq[Row] =
   ## Get all Rows from table.
-  this.db.getAllRows(sql(sql_getAllRows.format(tablename, limit)))
+  this.db.getAllRows(sql(sql_getAllRows.format(tablename, limit, offset)))
 
-func searchColumns*(this: Gatabase, tablename, columnname, value: string): seq[Row] =
+func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit: int, offset=0): seq[Row] =
   ## Get all Rows from table.
-  this.db.getAllRows(sql(sql_searchColumns.format(tablename, columnname, value)))
+  this.db.getAllRows(sql(sql_searchColumns.format(tablename, columnname, value, limit, offset)))
 
-func deleteAllFromTable*(this: Gatabase, tablename: string): bool =
+func deleteAllFromTable*(this: Gatabase, tablename: string, limit: int, offset=0): bool =
   ## Delete all from table.
-  this.db.tryExec(sql(sql_deleteAll.format(tablename)))
+  this.db.tryExec(sql(sql_deleteAll.format(tablename, limit, offset)))
 
-func deleteValueFromTable*(this: Gatabase, tablename, columnname, value: string,): bool =
+func deleteValueFromTable*(this: Gatabase, tablename, columnname, value: string, limit: int, offset=0): bool =
   ## Delete all from table.
-  this.db.tryExec(sql(sql_deleteValue.format(tablename, columnname, value)))
+  this.db.tryExec(sql(sql_deleteValue.format(tablename, columnname, value, limit, offset)))
 
 func dropTable*(this: Gatabase, tablename: string): bool =
   ## Drop a table if exists.
@@ -443,6 +443,7 @@ when isMainModule:
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
                           dbname: "database", port: 5432, timeout: 10)
   database.connect(debug=true)
+
   # Engine
   echo database.getVersion()
   echo database.getEnv()
@@ -457,6 +458,7 @@ when isMainModule:
   echo database.getLoggedInUsers()
   echo database.forceCommit()
   echo database.forceRollback()
+
   # Database
   echo database.createDatabase("testing", "This is a Documentation Comment")
   echo database.grantSelect("testing")
@@ -464,15 +466,18 @@ when isMainModule:
   echo database.renameDatabase("testing", "testing2")
   echo database.getTop(3)
   echo database.dropDatabase("testing2")
+
   # User
   echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
   echo database.changePasswordUser("pepe", "p@ssw0rd")
   echo database.renameUser("pepe", "pepe2")
   echo database.dropUser("pepe2")
+
   # Schema
   echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
   echo database.renameSchema("memes", "foo")
   echo database.dropSchema("foo")
+
   # Fields
   let
     a = newInt8Field(int8.high, "name0", "Help here", "Error here")
@@ -484,6 +489,7 @@ when isMainModule:
     g = newBoolField(true, "name6", "Help here", "Error here")
   assert a is Field
   assert b is Field
+
   # Tables
   echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
                             "This is a Documentation Comment", debug=true)
@@ -492,6 +498,7 @@ when isMainModule:
   echo database.changeAutoVacuumTable("table_name", true)
   echo database.renameTable("table_name", "cats")
   echo database.dropTable("cats")
+
   # Backups
   echo database.backupDatabase("database", "backup0.sql").output
   echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, debug=true).output
