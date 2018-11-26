@@ -7,7 +7,7 @@
 
 - [Postgres >= 10.](https://www.postgresql.org)
 - UTF-8 encoding.
-- All SQL are `const`.
+- [All SQL are `const`.](https://nim-lang.org/docs/manual.html#statements-and-expressions-const-section)
 - Database user must have a password.
 - Database connection is to hostname.
 - [Self-Documentation Comments supported.](https://www.postgresql.org/docs/11/sql-comment.html)
