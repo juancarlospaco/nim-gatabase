@@ -14,6 +14,9 @@
 - AutoVacuum for Tables supported.
 - Backups for Databases supported.
 - The `timeout` argument is on Seconds.
+- `DISTINCT` supported on SQL, `bool` type, `false` by default.
+- `LIMIT` supported on SQL, `int` type, `int.high` by default.
+- `OFFSET` supported on SQL, `int` type, `0` by default.
 - No OS-specific code, so it should work on Linux, Windows and Mac.
 - Compatible with `db_postgres` and Ormin.
 - You can still use Ormin as normal (separate connection).
