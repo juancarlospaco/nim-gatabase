@@ -314,7 +314,7 @@ func renameDatabase*(this: Gatabase, old_name, new_name: string): bool =
   assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   this.db.tryExec(sql(sql_renameDatabase.format(old_name, new_name)))
 
-func getTop(this: Gatabase, limit: int, offset=0): seq[Row] =
+func getTop(this: Gatabase, limit=int.high, offset=0): seq[Row] =
   ## Get Top from current database with limit.
   this.db.getAllRows(sql(sql_getTop.format(limit, offset)))
 
@@ -393,19 +393,19 @@ proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment
     else:
       this.db.exec(sql_rollback)
 
-func getAllRows*(this: Gatabase, tablename: string, limit: int, offset=0): seq[Row] =
+func getAllRows*(this: Gatabase, tablename: string, limit=int.high, offset=0): seq[Row] =
   ## Get all Rows from table.
   this.db.getAllRows(sql(sql_getAllRows.format(tablename, limit, offset)))
 
-func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit: int, offset=0): seq[Row] =
+func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0): seq[Row] =
   ## Get all Rows from table.
   this.db.getAllRows(sql(sql_searchColumns.format(tablename, columnname, value, limit, offset)))
 
-func deleteAllFromTable*(this: Gatabase, tablename: string, limit: int, offset=0): bool =
+func deleteAllFromTable*(this: Gatabase, tablename: string, limit=int.high, offset=0): bool =
   ## Delete all from table.
   this.db.tryExec(sql(sql_deleteAll.format(tablename, limit, offset)))
 
-func deleteValueFromTable*(this: Gatabase, tablename, columnname, value: string, limit: int, offset=0): bool =
+func deleteValueFromTable*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0): bool =
   ## Delete all from table.
   this.db.tryExec(sql(sql_deleteValue.format(tablename, columnname, value, limit, offset)))
 
