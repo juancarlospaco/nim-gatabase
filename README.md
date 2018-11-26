@@ -10,19 +10,19 @@
 - All SQL are `const`.
 - Database user must have a password.
 - Database connection is to hostname.
-- Self-Documentation Comments supported.
-- AutoVacuum for Tables supported.
+- [Self-Documentation Comments supported.](https://www.postgresql.org/docs/11/sql-comment.html)
+- [Configurable AutoVacuum supported.](https://www.postgresql.org/docs/11/runtime-config-autovacuum.html)
 - Backups for Databases supported.
 - The `timeout` argument is on Seconds.
 - `DISTINCT` supported on SQL, `bool` type, `false` by default.
 - `LIMIT` supported on SQL, `int` type, `int.high` by default.
 - `OFFSET` supported on SQL, `int` type, `0` by default.
 - No OS-specific code, so it should work on Linux, Windows and Mac.
-- Compatible with `db_postgres` and Ormin.
+- Compatible with [`db_postgres`](https://nim-lang.org/docs/db_postgres.html) and [Ormin](https://github.com/Araq/ormin).
 - You can still use Ormin as normal (separate connection).
 - You can still use std lib `db_postgres` as normal (same connection).
 - You can write with Gatabase and read with Ormin.
-- Functional, all functions are `func` (Effects free).
+- [Functional, all functions are `func` (Effects free).](https://nim-lang.org/docs/manual.html#procedures-func)
 - Run the module itself for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
 
