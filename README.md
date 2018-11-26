@@ -53,7 +53,7 @@ import gatabase
 # Database init (change to your user and password).
 var database = Gatabase(user: "MyUserHere", password: "Passw0rd!", host: "localhost",
                         dbname: "database", port: 5432, timeout: 42)
-database.connect(debug=true)
+database.connect()
 
 # Engine
 echo database.uri
@@ -105,7 +105,7 @@ assert b is Field
 
 # Tables
 echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
-                          "This is a Documentation Comment", debug=true)
+                          "This is a Documentation Comment")
 echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
 echo database.searchColumns("table_name", "name0", $int8.high, 255)
 echo database.changeAutoVacuumTable("table_name", true)
@@ -114,7 +114,7 @@ echo database.dropTable("cats")
 
 # Backups
 echo database.backupDatabase("database", "backup0.sql").output
-echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true, debug=true).output
+echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true).output
 
 # db_postgres compatible
 echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
@@ -127,7 +127,7 @@ database.close()
 **Creating a Table with Fields:**
 
 ```nim
-echo database.createTable(tablename="table_name", fields = @[a, b, c, d, e, f, g], comment="This is a Documentation Comment", debug=true, autocommit=true)
+echo database.createTable(tablename="table_name", fields = @[a, b, c, d, e, f, g], comment="This is a Documentation Comment", autocommit=true)
 ```
 
 **Produces the SQL:**
