@@ -19,10 +19,10 @@
 - `OFFSET` supported on SQL, `int` type, `0` by default.
 - No OS-specific code, so it should work on Linux, Windows and Mac.
 - Compatible with [`db_postgres`](https://nim-lang.org/docs/db_postgres.html) and [Ormin](https://github.com/Araq/ormin).
-- You can still use Ormin as normal (separate connection).
 - You can still use std lib `db_postgres` as normal (same connection).
 - You can write with Gatabase and read with Ormin.
 - [Functional, all functions are `func` (Effects free).](https://nim-lang.org/docs/manual.html#procedures-func)
+- Debug raw SQL when not build for Release.
 - Run the module itself for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
 
