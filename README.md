@@ -16,8 +16,8 @@
 - The `timeout` argument is on Seconds.
 - No OS-specific code, so it should work on Linux, Windows and Mac.
 - Compatible with `db_postgres` and Ormin.
-- You can still use Ormin as normal.
-- You can still use std lib `db_postgres` as normal.
+- You can still use Ormin as normal (separate connection).
+- You can still use std lib `db_postgres` as normal (same connection).
 - You can write with Gatabase and read with Ormin.
 - Run the module itself for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
