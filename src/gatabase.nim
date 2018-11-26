@@ -302,6 +302,8 @@ func dropDatabase*(this: Gatabase, dbname: string): bool =
 
 func renameDatabase*(this: Gatabase, old_name, new_name: string): bool =
   ## Rename a database.
+  assert old_name.strip.len > 1, "'old_name' must not be an empty string."
+  assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   this.db.tryExec(sql(sql_renameDatabase.format(old_name, new_name)))
 
 func getTop(this: Gatabase, limit: byte): seq[Row] =
@@ -337,6 +339,8 @@ func dropUser*(this: Gatabase, user: string): bool =
 
 func renameUser*(this: Gatabase, old_name, new_name: string): bool =
   ## Rename a user.
+  assert old_name.strip.len > 1, "'old_name' must not be an empty string."
+  assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   this.db.tryExec(sql(sql_renameUser.format(old_name, new_name)))
 
 func createSchema*(this: Gatabase, schemaname, comment: string, autocommit=true): bool =
@@ -352,6 +356,8 @@ func createSchema*(this: Gatabase, schemaname, comment: string, autocommit=true)
 
 func renameSchema*(this: Gatabase, old_name, new_name: string): bool =
   ## Rename an schema.
+  assert old_name.strip.len > 1, "'old_name' must not be an empty string."
+  assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   this.db.tryExec(sql(sql_renameSchema.format(old_name, new_name)))
 
 func dropSchema*(this: Gatabase, schemaname: string): bool =
