@@ -438,8 +438,6 @@ proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, i
   execCmdEx(cmd)
 
 
-
-
 when isMainModule:
   # Database init (change to your user and password).
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
