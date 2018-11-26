@@ -62,7 +62,7 @@ const
   sql_renameTable = "ALTER TABLE $1 RENAME TO $2;"
   sql_autoVacuum = "ALTER TABLE $1 SET (autovacuum_enabled = $2);"
 
-  cmd_pgdump = "pg_dump --verbose --no-password --encoding=UTF8 "
+  cmd_pgdump = "pg_dump --verbose --no-password --encoding=UTF8 " ## Command to Backup a Database.
 
   nimTypes2pgTypes = {
     "int8":      "smallint",
@@ -76,7 +76,7 @@ const
     "string":    "text",
     "JsonNode":  "json",
     "PDocument": "xml",
-  }.toTable
+  }.toTable  ## Nim Types to Postgres Types "conversion" table.
 
 
 type
