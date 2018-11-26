@@ -105,7 +105,7 @@ assert b is Field
 # Tables
 echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
                           "This is a Documentation Comment", debug=true)
-echo database.getAllRows("table_name", limit=255)
+echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
 echo database.searchColumns("table_name", "name0", $int8.high, 255)
 echo database.changeAutoVacuumTable("table_name", true)
 echo database.renameTable("table_name", "cats")
