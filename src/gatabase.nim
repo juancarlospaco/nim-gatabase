@@ -15,6 +15,7 @@
 # https://github.com/coleifer/peewee/blob/2.1.3/peewee.py
 # http://docs.peewee-orm.com/en/2.10.2/peewee/querying.html
 # https://github.com/Araq/blog/blob/master/ormin.rst#ormin
+# https://nim-lang.org/docs/db_postgres.html
 
 import
   db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables, colors,
