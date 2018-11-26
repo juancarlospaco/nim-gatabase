@@ -145,6 +145,11 @@ CREATE TABLE IF NOT EXISTS table_name(
 ```
 
 
+# Install
+
+- `nimble install gatabase`
+
+
 # FAQ
 
 - Supports SQLite ?.
