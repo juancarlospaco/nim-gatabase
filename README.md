@@ -22,6 +22,7 @@
 - You can still use Ormin as normal (separate connection).
 - You can still use std lib `db_postgres` as normal (same connection).
 - You can write with Gatabase and read with Ormin.
+- Functional, all functions are `func` (Effects free).
 - Run the module itself for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
 
