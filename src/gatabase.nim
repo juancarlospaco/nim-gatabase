@@ -3,11 +3,18 @@
 ##
 ## - Postgres >= 10.
 ## - UTF-8 encoding.
+## - All SQL are `const`.
 ## - Database user must have a password.
-## - Database connection is to hostname not unix socket.
+## - Database connection is to hostname.
 ## - Self-Documentation Comments supported.
 ## - AutoVacuum for Tables supported.
 ## - Backups for Databases supported.
+## - The `timeout` argument is on Seconds.
+## - No OS-specific code, so it should work on Linux, Windows and Mac.
+# https://github.com/coleifer/peewee/blob/035b7b55a80dc70a3f27dd5f2a4900908e541c49/peewee.py
+# https://github.com/coleifer/peewee/blob/2.1.3/peewee.py
+# http://docs.peewee-orm.com/en/2.10.2/peewee/querying.html
+# https://github.com/Araq/blog/blob/master/ormin.rst#ormin
 
 import
   db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables, colors,
