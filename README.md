@@ -126,8 +126,7 @@ database.close()
 **Creating a Table with Fields:**
 
 ```nim
-echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
-                          "This is a Documentation Comment", debug=true)
+echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g], "This is a Documentation Comment", debug=true, autocommit=true)
 ```
 
 **Produces the SQL:**
