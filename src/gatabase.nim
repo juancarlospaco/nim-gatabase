@@ -47,7 +47,7 @@ const
   sql_document = "COMMENT ON $1 $2 IS ?;"
   sql_dropDatabase = "DROP DATABASE IF EXISTS $1;"
   sql_renameDatabase = "ALTER DATABASE $1 RENAME TO $2;"
-  sql_getTop = "SELECT * FROM current_database() LIMIT $1 OFFSET $2;"
+  sql_getTop = "SELECT $1 * FROM current_database() LIMIT $2 OFFSET $3;"
   sql_grantSelect = "GRANT SELECT ON $1 TO $2;"
   sql_writeMetadata = "COMMENT ON COLUMN $1.$2 IS '$3';"
   sql_ordinalPosition = "select ordinal_position from information_schema.columns where table_name = '$1' and column_name = '$2';"
@@ -62,8 +62,8 @@ const
   sql_renameSchema = "ALTER SCHEMA $1 RENAME TO $2;"
   sql_dropSchema = "DROP SCHEMA IF EXISTS $1 CASCADE;"
   sql_createTable = "CREATE TABLE IF NOT EXISTS $1($2); /* $3 */"
-  sql_getAllRows = "select * from $1 limit $2 offset $3;"
-  sql_searchColumns = "SELECT * FROM $1 WHERE $2 = $3 limit $4 offset $5;"
+  sql_getAllRows = "select $1 * from $2 limit $3 offset $4;"
+  sql_searchColumns = "SELECT $1 * FROM $2 WHERE $3 = $4 limit $5 offset $6;"
   sql_deleteAll = "DELETE FROM $1 limit $2 offset $3;"
   sql_deleteValue = "DELETE FROM $1 WHERE $2 = $3 limit $4 offset $5;"
   sql_dropTable = "DROP TABLE IF EXISTS $1 CASCADE;"
@@ -314,9 +314,9 @@ func renameDatabase*(this: Gatabase, old_name, new_name: string): bool =
   assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   this.db.tryExec(sql(sql_renameDatabase.format(old_name, new_name)))
 
-func getTop(this: Gatabase, limit=int.high, offset=0): seq[Row] =
+func getTop(this: Gatabase, limit=int.high, offset=0, `distinct`=false): seq[Row] =
   ## Get Top from current database with limit.
-  this.db.getAllRows(sql(sql_getTop.format(limit, offset)))
+  this.db.getAllRows(sql(sql_getTop.format(if `distinct`: "distinct" else: "", limit, offset)))
 
 func grantSelect*(this: Gatabase, dbname: string, user="PUBLIC"): bool =
   ## Grant select privileges to a user on a database.
@@ -393,13 +393,13 @@ proc createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment
     else:
       this.db.exec(sql_rollback)
 
-func getAllRows*(this: Gatabase, tablename: string, limit=int.high, offset=0): seq[Row] =
+func getAllRows*(this: Gatabase, tablename: string, limit=int.high, offset=0, `distinct`=false): seq[Row] =
   ## Get all Rows from table.
-  this.db.getAllRows(sql(sql_getAllRows.format(tablename, limit, offset)))
+  this.db.getAllRows(sql(sql_getAllRows.format(if `distinct`: "distinct" else: "", tablename, limit, offset)))
 
-func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0): seq[Row] =
+func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0, `distinct`=false): seq[Row] =
   ## Get all Rows from table.
-  this.db.getAllRows(sql(sql_searchColumns.format(tablename, columnname, value, limit, offset)))
+  this.db.getAllRows(sql(sql_searchColumns.format(if `distinct`: "distinct" else: "", tablename, columnname, value, limit, offset)))
 
 func deleteAllFromTable*(this: Gatabase, tablename: string, limit=int.high, offset=0): bool =
   ## Delete all from table.
@@ -507,3 +507,6 @@ when isMainModule:
   echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
   database.close()
+
+
+# distinct
