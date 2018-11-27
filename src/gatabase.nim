@@ -17,9 +17,12 @@
 # https://github.com/Araq/blog/blob/master/ormin.rst#ormin
 # https://nim-lang.org/docs/db_postgres.html
 
-import
-  db_postgres, strformat, strutils, osproc, json, xmldom, uri, tables, colors,
-  hashes, httpcore, nativesockets, pegs, subexes
+import strformat, strutils, json, xmldom, uri, tables, colors, hashes, httpcore, pegs, subexes
+
+when defined(js):
+  template sql(sql_string: string): string = sql_string
+else:
+  import db_postgres, osproc
 
 
 const
@@ -92,7 +95,8 @@ type
     user*, password*, host*, dbname*, uri*, encoding*: string
     timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
     port: int16     ## Database port, int16 type, Postgres default is 5432.
-    db*: DbConn   ## Database connection instance.
+    when not defined(js):
+      db*: DbConn   ## Database connection instance.
 
   Field* = JsonNode  ## Gatabase Field.
 
@@ -152,11 +156,6 @@ func newHttpCodeField*(value: HttpCode, name: string, help="", error=""): Field 
   Field(%*{"value": value.int16, "help": help.normalize, "error": error.normalize,
            "nimType": "HttpCode", "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
 
-func newPortField*(value: Port, name: string, help="", error=""): Field =
-  ## Database field for an TCP/UDP Port value, with help and error messages.
-  Field(%*{"value": value.int16, "help": help.normalize, "error": error.normalize,
-           "nimType": "Port", "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
-
 func newPegField*(value: Peg, name: string, help="", error=""): Field =
   ## Database field for an PEG value, with help and error messages.
   Field(%*{"value": $value, "help": help.normalize, "error": error.normalize,
@@ -176,61 +175,62 @@ proc connect*(this: var Gatabase) {.discardable.} =
   assert this.dbname.len > 1, "Postgres DB 'dbname' must be a non-empty string"
   assert this.timeout.int > 3, "Postgres 'timeout' must be a non-zero byte (>3)"
   this.encoding = "UTF8"
-  this.uri = fmt"postgresql://{this.user}:{this.password}@{this.host}:{this.port}/{this.dbname}?connect_timeout={this.timeout}"
-  this.db = db_postgres.open(
-    "", "", "",
-    fmt"host={this.host} port={this.port} dbname={this.dbname} user={this.user} password={this.password} connect_timeout={this.timeout}")
-  doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
+  this.uri = fmt"postgresql://{this.user}:{this.password}@{this.host}:{this.port}/{this.dbname}?connect_timeout={this.timeout.int16}"
+  when not defined(js):
+    this.db = db_postgres.open(
+      "", "", "",
+      fmt"host={this.host} port={this.port} dbname={this.dbname} user={this.user} password={this.password} connect_timeout={this.timeout.int16}")
+    doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
   when not defined(release): echo this.uri
 
 func close*(this: Gatabase) {.discardable, inline.} =
   ## Close the Database connection.
-  this.db.close()
+  when not defined(js): this.db.close()
 
-func getLoggedInUsers*(this: Gatabase): seq[Row] =
+func getLoggedInUsers*(this: Gatabase): auto =
   ## Return all active logged-in users.
   when not defined(release): debugEcho sql_LoggedInUsers.repr
-  this.db.getAllRows(sql_LoggedInUsers)
+  when not defined(js): this.db.getAllRows(sql_LoggedInUsers) else: sql_LoggedInUsers
 
-func getCaches*(this: Gatabase): seq[Row] =
+func getCaches*(this: Gatabase): auto =
   ## Return all the Caches.
   when not defined(release): debugEcho sql_caches.repr
-  this.db.getAllRows(sql_caches)
+  when not defined(js): this.db.getAllRows(sql_caches) else: sql_caches
 
-func killCurrentQuery*(this: Gatabase): seq[Row] =
+func killCurrentQuery*(this: Gatabase): auto =
   ## Kill all the active running Queries.
   when not defined(release): debugEcho sql_killActive.repr
-  this.db.getAllRows(sql_killActive)
+  when not defined(js): this.db.getAllRows(sql_killActive) else: sql_killActive
 
-func killIdleQuery*(this: Gatabase): seq[Row] =
+func killIdleQuery*(this: Gatabase): auto =
   ## Kill all the diel non-running Queries.
   when not defined(release): debugEcho sql_killIdle.repr
-  this.db.getAllRows(sql_killIdle)
+  when not defined(js): this.db.getAllRows(sql_killIdle) else: sql_killIdle
 
-func forceVacuum*(this: Gatabase): seq[Row] =
+func forceVacuum*(this: Gatabase): auto =
   ## Kill all the diel non-running Queries.
   when not defined(release): debugEcho sql_vacuum.repr
-  this.db.getAllRows(sql_vacuum)
+  when not defined(js): this.db.getAllRows(sql_vacuum) else: sql_vacuum
 
-func cpuTop*(this: Gatabase): seq[Row] =
+func cpuTop*(this: Gatabase): auto =
   ## Return Top most CPU intensive queries.
   when not defined(release): debugEcho sql_cpuTop.repr
-  this.db.getAllRows(sql_cpuTop)
+  when not defined(js): this.db.getAllRows(sql_cpuTop) else: sql_cpuTop
 
-func slowTop*(this: Gatabase): seq[Row] =
+func slowTop*(this: Gatabase): auto =
   ## Return Top most time consuming slow queries.
   when not defined(release): debugEcho sql_slowTop.repr
-  this.db.getAllRows(sql_slowTop)
+  when not defined(js): this.db.getAllRows(sql_slowTop) else: sql_slowTop
 
-func forceCommit*(this: Gatabase): bool =
+func forceCommit*(this: Gatabase): auto =
   ## Delete all from table.
   when not defined(release): debugEcho sql_commit.repr
-  this.db.tryExec(sql_commit)
+  when not defined(js): this.db.tryExec(sql_commit) else: sql_commit
 
-func forceRollback*(this: Gatabase): bool =
+func forceRollback*(this: Gatabase): auto =
   ## Delete all from table.
   when not defined(release): debugEcho sql_rollback.repr
-  this.db.tryExec(sql_rollback)
+  when not defined(js): this.db.tryExec(sql_rollback) else: sql_rollback
 
 template document*(this: Gatabase, what, target, comment: string): untyped =
   ## Document target with comment. Postgres Comment is like Self-Documentation.
@@ -239,243 +239,279 @@ template document*(this: Gatabase, what, target, comment: string): untyped =
   doAssert what.normalize != "column", "Comments on columns are not allowed."
   if comment.strip.len > 0:
     when not defined(release): debugEcho sql_document.format(what, target)
-    discard this.db.tryExec(sql(sql_document.format(what, target)), comment.strip)
+    when not defined(js): discard this.db.tryExec(sql(sql_document.format(what, target)), comment.strip)
 
-func writeMetadata(this: Gatabase, field: Field, columnname, tablename: string): bool =
-  ## Field Metadata is converted to JSON & stored as Postgres Comment. Know a better way?, send Pull Request!.
-  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
-  assert columnname.strip.len > 0, "'columnname' must not be an empty string."
-  var meta: string
-  meta.toUgly(%*{
-    "help":    field["help"],
-    "error":   field["error"],
-    "pgType":  field["pgType"],
-    "nimType": field["nimType"],
-    "pgName":  field["pgName"]
-  })
-  this.db.tryExec(sql(sql_writeMetadata.format(tablename, columnname, meta)))
+when not defined(js):
+  func writeMetadata(this: Gatabase, field: Field, columnname, tablename: string): auto =
+    ## Field Metadata is converted to JSON & stored as Postgres Comment. Know a better way?, send Pull Request!.
+    assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+    assert columnname.strip.len > 0, "'columnname' must not be an empty string."
+    var meta: string
+    meta.toUgly(%*{
+      "help":    field["help"],
+      "error":   field["error"],
+      "pgType":  field["pgType"],
+      "nimType": field["nimType"],
+      "pgName":  field["pgName"]
+    })
+    this.db.tryExec(sql(sql_writeMetadata.format(tablename, columnname, meta)))
 
-proc readMetadata(this: Gatabase, field: Field, columnname, tablename: string): JsonNode =
-  ## Field Metadata is JSON read from Postgres Comment.
-  ## https://www.postgresql.org/message-id/28332.1074527643%40sss.pgh.pa.us
-  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
-  assert columnname.strip.len > 0, "'columnname' must not be an empty string."
-  let col_num = this.db.getRow(sql(sql_ordinalPosition.format(tablename, columnname)))[0]
-  this.db.getRow(sql(sql_description.format(tablename, col_num)))[0].parseJson
+  proc readMetadata(this: Gatabase, field: Field, columnname, tablename: string): JsonNode =
+    ## Field Metadata is JSON read from Postgres Comment.
+    ## https://www.postgresql.org/message-id/28332.1074527643%40sss.pgh.pa.us
+    assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+    assert columnname.strip.len > 0, "'columnname' must not be an empty string."
+    let col_num = this.db.getRow(sql(sql_ordinalPosition.format(tablename, columnname)))[0]
+    this.db.getRow(sql(sql_description.format(tablename, col_num)))[0].parseJson
 
-func getVersion*(this: Gatabase): Row =
+func getVersion*(this: Gatabase): auto =
   ## Return the Postgres database server Version (SemVer).
   when not defined(release): debugEcho sql_Version.repr
-  this.db.getRow(sql_Version)
+  when not defined(js): this.db.getRow(sql_Version) else: sql_Version
 
-func getEnv*(this: Gatabase): Row =
+func getEnv*(this: Gatabase): auto =
   ## Return the Postgres database server environtment variables.
   when not defined(release): debugEcho sql_Env.repr
-  this.db.getRow(sql_Env)
+  when not defined(js): this.db.getRow(sql_Env) else: sql_Env
 
-func getPid*(this: Gatabase): Row =
+func getPid*(this: Gatabase): auto =
   ## Return the Postgres database server Process ID.
   when not defined(release): debugEcho sql_pid.repr
-  this.db.getRow(sql_pid)
+  when not defined(js): this.db.getRow(sql_pid) else: sql_pid
 
-func getCurrentUser*(this: Gatabase): Row =
+func getCurrentUser*(this: Gatabase): auto =
   ## Return the current Postgres database user.
   when not defined(release): debugEcho sql_currentUser.repr
-  this.db.getRow(sql_currentUser)
+  when not defined(js): this.db.getRow(sql_currentUser) else: sql_currentUser
 
-func listAllUsers*(this: Gatabase): seq[Row] =
+func listAllUsers*(this: Gatabase): auto =
   ## Return all users on the Postgres database server.
   when not defined(release): debugEcho sql_allUsers.repr
-  this.db.getAllRows(sql_allUsers)
+  when not defined(js): this.db.getAllRows(sql_allUsers) else: sql_allUsers
 
-func listAllDatabases*(this: Gatabase): seq[Row] =
+func listAllDatabases*(this: Gatabase): auto =
   ## Return all databases on the Postgres database server.
   when not defined(release): debugEcho sql_allDatabases.repr
-  this.db.getAllRows(sql_allDatabases)
+  when not defined(js): this.db.getAllRows(sql_allDatabases) else: sql_allDatabases
 
-func listAllSchemas*(this: Gatabase): seq[Row] =
+func listAllSchemas*(this: Gatabase): auto =
   ## Return all schemas on the Postgres database server.
   when not defined(release): debugEcho sql_allSchemas.repr
-  this.db.getAllRows(sql_allSchemas)
+  when not defined(js): this.db.getAllRows(sql_allSchemas) else: sql_allSchemas
 
-func listAllTables*(this: Gatabase): seq[Row] =
+func listAllTables*(this: Gatabase): auto =
   ## Return all tables on the Postgres database server.
   when not defined(release): debugEcho sql_allTables.repr
-  this.db.getAllRows(sql_allTables)
+  when not defined(js): this.db.getAllRows(sql_allTables) else: sql_allTables
 
-func getCurrentDatabase*(this: Gatabase): Row =
+func getCurrentDatabase*(this: Gatabase): auto =
   ## Return the current database.
   when not defined(release): debugEcho sql_currentDatabase.repr
-  this.db.getRow(sql_currentDatabase)
+  when not defined(js): this.db.getRow(sql_currentDatabase) else: sql_currentDatabase
 
-func getCurrentSchema*(this: Gatabase): Row =
+func getCurrentSchema*(this: Gatabase): auto =
   ## Return the current schema.
   when not defined(release): debugEcho sql_schema.repr
-  this.db.getRow(sql_schema)
+  when not defined(js): this.db.getRow(sql_schema) else: sql_schema
 
-func createDatabase*(this: Gatabase, dbname, comment: string, owner=this.user, autocommit=true): bool =
+func createDatabase*(this: Gatabase, dbname, comment: string, owner=this.user, autocommit=true): auto =
   ## Create a new database, with optional comment.
-  if not autocommit: this.db.exec(sql_begin)
+  when not defined(js):
+    if not autocommit: this.db.exec(sql_begin)
   when not defined(release): debugEcho sql_createDatabase.format(dbname, owner)
-  result = this.db.tryExec(sql(sql_createDatabase.format(dbname, owner)))
-  document(this, "DATABASE", dbname, comment)
-  if not autocommit:
-    if result:
-      this.db.exec(sql_commit)
-    else:
-      this.db.exec(sql_rollback)
+  result =
+    when not defined(js): this.db.tryExec(sql(sql_createDatabase.format(dbname, owner)))
+    else: sql_createDatabase.format(dbname, owner)
+  when not defined(js):
+    document(this, "DATABASE", dbname, comment)
+    if not autocommit:
+      if result:
+        this.db.exec(sql_commit)
+      else:
+        this.db.exec(sql_rollback)
 
-func dropDatabase*(this: Gatabase, dbname: string): bool =
+func dropDatabase*(this: Gatabase, dbname: string): auto =
   ## Drop a database if exists.
   when not defined(release): debugEcho sql_dropDatabase.format(dbname)
-  this.db.tryExec(sql(sql_dropDatabase.format(dbname)))
+  when not defined(js): this.db.tryExec(sql(sql_dropDatabase.format(dbname)))
+  else: return sql_dropDatabase.format(dbname)
 
-func renameDatabase*(this: Gatabase, old_name, new_name: string): bool =
+func renameDatabase*(this: Gatabase, old_name, new_name: string): auto =
   ## Rename a database.
   assert old_name.strip.len > 1, "'old_name' must not be an empty string."
   assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   when not defined(release): debugEcho sql_renameDatabase.format(old_name, new_name)
-  this.db.tryExec(sql(sql_renameDatabase.format(old_name, new_name)))
+  when not defined(js): this.db.tryExec(sql(sql_renameDatabase.format(old_name, new_name)))
+  else: return sql_renameDatabase.format(old_name, new_name)
 
-func getTop(this: Gatabase, limit=int.high, offset=0, `distinct`=false): seq[Row] =
-  ## Get Top from current database with limit.
-  when not defined(release): debugEcho sql_getTop.format(if `distinct`: "distinct" else: "", limit, offset)
-  this.db.getAllRows(sql(sql_getTop.format(if `distinct`: "distinct" else: "", limit, offset)))
-
-func grantSelect*(this: Gatabase, dbname: string, user="PUBLIC"): bool =
+func grantSelect*(this: Gatabase, dbname: string, user="PUBLIC"): auto =
   ## Grant select privileges to a user on a database.
   when not defined(release): debugEcho sql_grantSelect.format(dbname, user)
-  this.db.tryExec(sql(sql_grantSelect.format(dbname, user)))
+  when not defined(js): this.db.tryExec(sql(sql_grantSelect.format(dbname, user)))
+  else: return sql_grantSelect.format(dbname, user)
 
-func grantAll*(this: Gatabase, dbname: string, user="PUBLIC"): bool =
+func grantAll*(this: Gatabase, dbname: string, user="PUBLIC"): auto =
   ## Grant all privileges to a user on a database.
   when not defined(release): debugEcho sql_grantAll.format(dbname, user)
-  this.db.tryExec(sql(sql_grantAll.format(dbname, user)))
+  when not defined(js): this.db.tryExec(sql(sql_grantAll.format(dbname, user)))
+  else: return sql_grantAll.format(dbname, user)
 
-func createUser*(this: Gatabase, user, password, comment: string, autocommit=true): bool =
+func createUser*(this: Gatabase, user, password, comment: string, autocommit=true): auto =
   ## Create a new user.
-  if not autocommit: this.db.exec(sql_begin)
+  when not defined(js):
+    if not autocommit: this.db.exec(sql_begin)
   when not defined(release): debugEcho sql_createUser.format(user)
-  result = this.db.tryExec(sql(sql_createUser.format(user)), password)
-  document(this, "USER", user, comment)
-  if not autocommit:
-    if result:
-      this.db.exec(sql_commit)
-    else:
-      this.db.exec(sql_rollback)
+  result =
+    when not defined(js): this.db.tryExec(sql(sql_createUser.format(user)), password)
+    else: sql_createUser.format(user)
+  when not defined(js):
+    document(this, "USER", user, comment)
+    if not autocommit:
+      if result:
+        this.db.exec(sql_commit)
+      else:
+        this.db.exec(sql_rollback)
 
-func changePasswordUser*(this: Gatabase, user, password: string): bool =
+func changePasswordUser*(this: Gatabase, user, password: string): auto =
   ## Change the password of a user.
   when not defined(release): debugEcho sql_changePasswordUser.format(user)
-  this.db.tryExec(sql(sql_changePasswordUser.format(user)), password)
+  when not defined(js): this.db.tryExec(sql(sql_changePasswordUser.format(user)), password)
+  else: return sql_changePasswordUser.format(user)
 
-func dropUser*(this: Gatabase, user: string): bool =
+func dropUser*(this: Gatabase, user: string): auto =
   ## Drop a user if exists.
   when not defined(release): debugEcho sql_dropUser.format(user)
-  this.db.tryExec(sql(sql_dropUser.format(user)))
+  when not defined(js): this.db.tryExec(sql(sql_dropUser.format(user)))
+  else: return sql_dropUser.format(user)
 
-func renameUser*(this: Gatabase, old_name, new_name: string): bool =
+func renameUser*(this: Gatabase, old_name, new_name: string): auto =
   ## Rename a user.
   assert old_name.strip.len > 1, "'old_name' must not be an empty string."
   assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   when not defined(release): debugEcho sql_renameUser.format(old_name, new_name)
-  this.db.tryExec(sql(sql_renameUser.format(old_name, new_name)))
+  when not defined(js): this.db.tryExec(sql(sql_renameUser.format(old_name, new_name)))
+  else: return sql_renameUser.format(old_name, new_name)
 
-func createSchema*(this: Gatabase, schemaname, comment: string, autocommit=true): bool =
+func createSchema*(this: Gatabase, schemaname, comment: string, autocommit=true): auto =
   ## Create a new schema.
-  if not autocommit: this.db.exec(sql_begin)
+  when not defined(js):
+    if not autocommit: this.db.exec(sql_begin)
   when not defined(release): debugEcho sql_createSchema.format(schemaname)
-  result = this.db.tryExec(sql(sql_createSchema.format(schemaname)))
-  document(this, "SCHEMA", schemaname, comment)
-  if not autocommit:
-    if result:
-      this.db.exec(sql_commit)
-    else:
-      this.db.exec(sql_rollback)
+  result =
+    when not defined(js): this.db.tryExec(sql(sql_createSchema.format(schemaname)))
+    else: sql_createSchema.format(schemaname)
+  when not defined(js):
+    document(this, "SCHEMA", schemaname, comment)
+    if not autocommit:
+      if result:
+        this.db.exec(sql_commit)
+      else:
+        this.db.exec(sql_rollback)
 
-func renameSchema*(this: Gatabase, old_name, new_name: string): bool =
+func renameSchema*(this: Gatabase, old_name, new_name: string): auto =
   ## Rename an schema.
   assert old_name.strip.len > 1, "'old_name' must not be an empty string."
   assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   when not defined(release): debugEcho sql_renameSchema.format(old_name, new_name)
-  this.db.tryExec(sql(sql_renameSchema.format(old_name, new_name)))
+  when not defined(js): this.db.tryExec(sql(sql_renameSchema.format(old_name, new_name)))
+  else: return sql_renameSchema.format(old_name, new_name)
 
-func dropSchema*(this: Gatabase, schemaname: string): bool =
+func dropSchema*(this: Gatabase, schemaname: string): auto =
   ## Drop an schema if exists.
   when not defined(release): debugEcho sql_dropSchema.format(schemaname)
-  this.db.tryExec(sql(sql_dropSchema.format(schemaname)))
+  when not defined(js): this.db.tryExec(sql(sql_dropSchema.format(schemaname)))
+  else: return sql_dropSchema.format(schemaname)
 
-func createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, autocommit=true): bool =
+func createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, autocommit=true): auto =
   ## Create a new Table with Columns, Values, Comments, Metadata, etc.
   assert tablename.strip.len > 0, "'tablename' must not be an empty string."
   doAssert fields.len > 0, "'fields' must be a non-empty seq[Field]"
-  if not autocommit: this.db.exec(sql_begin)
+  when not defined(js):
+    if not autocommit: this.db.exec(sql_begin)
   var columns = "\n  id SERIAL PRIMARY KEY"
   for c in fields:
     columns &= ",\n  " & fmt"""{c["pgName"].getStr} {c["pgType"].getStr} DEFAULT {c["value"]}"""
   let query = sql_createTable.format(tablename, columns, comment)
   when not defined(release): debugEcho query
-  result = this.db.tryExec(sql(query))
-  for field in fields:
-    discard this.writeMetadata(field, field["pgName"].getStr, tablename)
-    # echo this.readMetadata(field, field["pgName"].getStr, tablename)
-  document(this, "TABLE", tablename, comment)
-  if not autocommit:
-    if result:
-      this.db.exec(sql_commit)
-    else:
-      this.db.exec(sql_rollback)
+  result =
+    when not defined(js): this.db.tryExec(sql(query))
+    else: query
+  when not defined(js):
+    for field in fields:
+      discard this.writeMetadata(field, field["pgName"].getStr, tablename)
+      # echo this.readMetadata(field, field["pgName"].getStr, tablename)
+    document(this, "TABLE", tablename, comment)
+    if not autocommit:
+      if result:
+        this.db.exec(sql_commit)
+      else:
+        this.db.exec(sql_rollback)
 
-func getAllRows*(this: Gatabase, tablename: string, limit=int.high, offset=0, `distinct`=false): seq[Row] =
+
+func getTop(this: Gatabase, limit=int.high, offset=0, `distinct`=false): auto =
+  ## Get Top from current database with limit.
+  when not defined(release): debugEcho sql_getTop.format(if `distinct`: "distinct" else: "", limit, offset)
+  when not defined(js): this.db.getAllRows(sql(sql_getTop.format(if `distinct`: "distinct" else: "", limit, offset)))
+  else: return sql_getTop.format(if `distinct`: "distinct" else: "", limit, offset)
+
+func getAllRows*(this: Gatabase, tablename: string, limit=int.high, offset=0, `distinct`=false): auto =
   ## Get all Rows from table.
   when not defined(release): debugEcho sql_getAllRows.format(if `distinct`: "distinct" else: "", tablename, limit, offset)
-  this.db.getAllRows(sql(sql_getAllRows.format(if `distinct`: "distinct" else: "", tablename, limit, offset)))
+  when not defined(js): this.db.getAllRows(sql(sql_getAllRows.format(if `distinct`: "distinct" else: "", tablename, limit, offset)))
+  else: return sql_getAllRows.format(if `distinct`: "distinct" else: "", tablename, limit, offset)
 
-func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0, `distinct`=false): seq[Row] =
+func searchColumns*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0, `distinct`=false): auto =
   ## Get all Rows from table.
   when not defined(release): debugEcho sql_searchColumns.format(if `distinct`: "distinct" else: "", tablename, columnname, value, limit, offset)
-  this.db.getAllRows(sql(sql_searchColumns.format(if `distinct`: "distinct" else: "", tablename, columnname, value, limit, offset)))
+  when not defined(js): this.db.getAllRows(sql(sql_searchColumns.format(if `distinct`: "distinct" else: "", tablename, columnname, value, limit, offset)))
+  else: return sql_searchColumns.format(if `distinct`: "distinct" else: "", tablename, columnname, value, limit, offset)
 
-func deleteAllFromTable*(this: Gatabase, tablename: string, limit=int.high, offset=0): bool =
+func deleteAllFromTable*(this: Gatabase, tablename: string, limit=int.high, offset=0): auto =
   ## Delete all from table.
   when not defined(release): debugEcho sql_deleteAll.format(tablename, limit, offset)
-  this.db.tryExec(sql(sql_deleteAll.format(tablename, limit, offset)))
+  when not defined(js): this.db.tryExec(sql(sql_deleteAll.format(tablename, limit, offset)))
+  else: return sql_deleteAll.format(tablename, limit, offset)
 
-func deleteValueFromTable*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0): bool =
+func deleteValueFromTable*(this: Gatabase, tablename, columnname, value: string, limit=int.high, offset=0): auto =
   ## Delete all from table.
   when not defined(release): debugEcho sql_deleteValue.format(tablename, columnname, value, limit, offset)
-  this.db.tryExec(sql(sql_deleteValue.format(tablename, columnname, value, limit, offset)))
+  when not defined(js): this.db.tryExec(sql(sql_deleteValue.format(tablename, columnname, value, limit, offset)))
+  else: return sql_deleteValue.format(tablename, columnname, value, limit, offset)
 
-func dropTable*(this: Gatabase, tablename: string): bool =
+func dropTable*(this: Gatabase, tablename: string): auto =
   ## Drop a table if exists.
   when not defined(release): debugEcho sql_dropTable.format(tablename)
-  this.db.tryExec(sql(sql_dropTable.format(tablename)))
+  when not defined(js): this.db.tryExec(sql(sql_dropTable.format(tablename)))
+  else: return sql_dropTable.format(tablename)
 
-func renameTable*(this: Gatabase, old_name, new_name: string): bool =
+func renameTable*(this: Gatabase, old_name, new_name: string): auto =
   ## Rename a table.
   assert old_name.strip.len > 1, "'old_name' must not be an empty string."
   assert new_name.strip.len > 1, "'new_name' must not be an empty string."
   when not defined(release): debugEcho sql_renameTable.format(old_name, new_name)
-  this.db.tryExec(sql(sql_renameTable.format(old_name, new_name)))
+  when not defined(js): this.db.tryExec(sql(sql_renameTable.format(old_name, new_name)))
+  else: return sql_renameTable.format(old_name, new_name)
 
-func changeAutoVacuumTable*(this: Gatabase, tablename: string, enabled: bool): bool =
+func changeAutoVacuumTable*(this: Gatabase, tablename: string, enabled: bool): auto =
   ## Change the Auto-Vacuum setting for a table.
   assert tablename.strip.len > 0, "'tablename' must not be an empty string."
   when not defined(release): debugEcho sql_autoVacuum.format(tablename, enabled)
-  this.db.tryExec(sql(sql_autoVacuum.format(tablename, enabled)))
+  when not defined(js): this.db.tryExec(sql(sql_autoVacuum.format(tablename, enabled)))
+  else: return sql_autoVacuum.format(tablename, enabled)
 
-proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, inserts=false): tuple[output: TaintedString, exitCode: int] =
+proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, inserts=false): auto =
   ## Backup the whole Database to a plain-text Raw SQL Query human-readable file.
   assert dbname.strip.len > 1, "'dbname' must not be an empty string."
   assert filename.strip.len > 5, "'filename' must not be an empty string."
   let
     a = if dataOnly: "--data-only " else: ""
     b = if inserts: "--inserts " else: ""
-    c = fmt"--lock-wait-timeout={this.timeout * 2} "
+    c = fmt"--lock-wait-timeout={this.timeout.int * 2} "
     d = "--host=" & this.host & " --port=" & $this.port & " --username=" & this.user
-    cmd = fmt"{cmd_pgdump}{a}{b}{c}{d} --file={filename.quoteShell} --dbname={dbname}"
+    e = when not defined(js): filename.quoteShell else: filename
+    cmd = fmt"{cmd_pgdump}{a}{b}{c}{d} --file={e} --dbname={dbname}"
   when not defined(release): echo cmd
-  execCmdEx(cmd)
+  when not defined(js): execCmdEx(cmd) else: cmd
 
 
 when isMainModule:
@@ -540,10 +576,10 @@ when isMainModule:
   echo database.dropTable("cats")
 
   # Backups
-  echo database.backupDatabase("database", "backup0.sql").output
-  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true).output
+  echo database.backupDatabase("database", "backup0.sql")
+  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
 
   # db_postgres compatible
-  echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
+  when not defined(js): echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
   database.close()
