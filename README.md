@@ -141,7 +141,10 @@ CREATE TABLE IF NOT EXISTS table_name(
   name3 bigint DEFAULT 9223372036854775807,
   name4 decimal DEFAULT 42.0,
   name5 decimal DEFAULT 666.0,
-  name6 boolean DEFAULT true); /* This is a Documentation Comment */
+  name6 boolean DEFAULT true
+); /* This is a Documentation Comment */
+
+COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 ```
 
 
