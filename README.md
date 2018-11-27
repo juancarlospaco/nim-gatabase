@@ -116,7 +116,7 @@ echo database.dropTable("cats")
 echo database.backupDatabase("database", "backup0.sql").output
 echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true).output
 
-# db_postgres compatible
+# db_postgres compatible (Raw Queries)
 echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
 database.close()
@@ -167,4 +167,6 @@ https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
 
 # Requisites
 
-- None. _(You need a working Postgres server up & running to use it, but not to install it)_
+- None.
+
+_(You need a working Postgres server up & running to use it, but not to install it)_
