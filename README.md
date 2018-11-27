@@ -18,7 +18,6 @@
 - `LIMIT` supported on SQL, `int` type, `int.high` by default.
 - `OFFSET` supported on SQL, `int` type, `0` by default.
 - No OS-specific code, so it should work on Linux, Windows and Mac.
-- This ORM can run on the Browser _(since you can not run Postgres on the Browser, it returns the Raw SQL Query instead of executing it)_
 - Compatible with [`db_postgres`](https://nim-lang.org/docs/db_postgres.html) and [Ormin](https://github.com/Araq/ormin).
 - You can still use std lib `db_postgres` as normal (same connection).
 - You can write with Gatabase and read with Ormin.
@@ -152,6 +151,15 @@ COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 # Install
 
 - `nimble install gatabase`
+
+
+# Frontend
+
+- This ORM can run on the Browser.
+
+Since you can not run a full Postgres Server on the Browser,
+it returns the Raw SQL Query string instead of executing it.
+Also runs on NodeJS too. Just use Nims JavaScript target.
 
 
 # FAQ
