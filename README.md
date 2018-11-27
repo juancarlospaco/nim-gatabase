@@ -179,4 +179,4 @@ _(You need a working Postgres server up & running to use it, but not to install 
 #### Alternatives
 
 - [For a faster but lower-level ORM see ORMin.](https://github.com/Araq/blog/blob/master/ormin.rst#ormin)
-(DSL ORM, Raw SQL Performance, can export your database fields via JSON WebSockets automagically)
+(DSL ORM, Raw SQL Performance, can expose your database fields via JSON WebSockets automagically)
