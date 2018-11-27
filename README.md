@@ -183,6 +183,7 @@ _Since you can not run a full Postgres Server on the Browser,
 it returns the Raw SQL Query string instead of executing it.
 [Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)_
 
+Example:
 ```sql
 $ nim js -r gatabase.nim
 Hint: /usr/bin/node nimcache/gatabase.js  [Exec]
