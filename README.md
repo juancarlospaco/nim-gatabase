@@ -184,7 +184,7 @@ it returns the Raw SQL Query string instead of executing it.
 [Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)_
 
 ```sql
-$ nim js -d:release -r gatabase.nim
+$ nim js -r gatabase.nim
 Hint: /usr/bin/node nimcache/gatabase.js  [Exec]
 
 SHOW SERVER_VERSION;
