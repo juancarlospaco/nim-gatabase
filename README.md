@@ -181,7 +181,7 @@ _(You need a working Postgres server up & running to use it, but not to install 
 
 _Since you can not run a full Postgres Server on the Browser,
 it returns the Raw SQL Query string instead of executing it.
-Also runs on NodeJS too. [Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)_
+[Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)_
 
 
 #### Alternatives
