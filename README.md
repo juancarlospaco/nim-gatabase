@@ -183,6 +183,43 @@ _Since you can not run a full Postgres Server on the Browser,
 it returns the Raw SQL Query string instead of executing it.
 [Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)_
 
+```sql
+$ nim js -d:release -r gatabase.nim
+Hint: /usr/bin/node nimcache/gatabase.js  [Exec]
+
+SHOW SERVER_VERSION;
+SHOW ALL;
+select pg_backend_pid();
+SELECT rolname FROM pg_roles;
+SELECT nspname FROM pg_catalog.pg_namespace;
+SELECT tablename FROM pg_catalog.pg_tables;
+SELECT current_user;
+SELECT current_database();
+select current_schema();
+GRANT SELECT ON testing TO PUBLIC;
+GRANT ALL PRIVILEGES ON DATABASE testing TO PUBLIC;
+ALTER DATABASE testing RENAME TO testing2;
+SELECT  * FROM current_database() LIMIT 3 OFFSET 0;
+DROP DATABASE IF EXISTS testing2;
+ALTER USER pepe RENAME TO pepe2;
+DROP USER IF EXISTS pepe2;
+CREATE SCHEMA IF NOT EXISTS memes;
+ALTER SCHEMA memes RENAME TO foo;
+DROP SCHEMA IF EXISTS foo CASCADE;
+CREATE TABLE IF NOT EXISTS table_name(
+  id SERIAL PRIMARY KEY,
+  name0 smallint DEFAULT 127,
+  name1 smallint DEFAULT 32767,
+  name2 integer DEFAULT 2147483647,
+  name3 bigint DEFAULT 2147483647,
+  name4 decimal DEFAULT 42,
+  name5 decimal DEFAULT 666,
+  name6 boolean DEFAULT true); /* This is a Documentation Comment */
+select distinct * from table_name limit 255 offset 2;
+ALTER TABLE table_name RENAME TO cats;
+DROP TABLE IF EXISTS cats CASCADE;
+```
+
 
 #### Alternatives
 
