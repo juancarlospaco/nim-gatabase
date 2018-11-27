@@ -177,7 +177,7 @@ _(You need a working Postgres server up & running to use it, but not to install 
 
 ## Frontend
 
-- **This ORM can run on the Browser.**
+- **This ORM can run on the Browser.** `nim js gatabase.nim`
 
 _Since you can not run a full Postgres Server on the Browser,
 it returns the Raw SQL Query string instead of executing it.
