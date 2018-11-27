@@ -153,15 +153,6 @@ COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 - `nimble install gatabase`
 
 
-# Frontend
-
-- This ORM can run on the Browser.
-
-Since you can not run a full Postgres Server on the Browser,
-it returns the Raw SQL Query string instead of executing it.
-Also runs on NodeJS too. [Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)
-
-
 # FAQ
 
 - Supports SQLite ?.
@@ -182,6 +173,15 @@ https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
 - None.
 
 _(You need a working Postgres server up & running to use it, but not to install it)_
+
+
+# Frontend
+
+- **This ORM can run on the Browser.**
+
+_Since you can not run a full Postgres Server on the Browser,
+it returns the Raw SQL Query string instead of executing it.
+Also runs on NodeJS too. [Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)_
 
 
 #### Alternatives
