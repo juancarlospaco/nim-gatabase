@@ -170,3 +170,8 @@ https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
 - None.
 
 _(You need a working Postgres server up & running to use it, but not to install it)_
+
+
+# Alternatives
+
+- [For a faster but lower-level ORM see ORMin.](https://github.com/Araq/blog/blob/master/ormin.rst#ormin)
