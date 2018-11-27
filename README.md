@@ -175,7 +175,7 @@ https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
 _(You need a working Postgres server up & running to use it, but not to install it)_
 
 
-# Frontend
+### Frontend
 
 - **This ORM can run on the Browser.**
 
