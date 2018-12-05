@@ -70,6 +70,9 @@ echo database.getCurrentSchema()
 echo database.getLoggedInUsers()
 echo database.forceCommit()
 echo database.forceRollback()
+echo database.forceReloadConfig()
+echo database.isUserConnected(username = "juan")
+echo database.getDatabaseSize(databasename = "database")  # .getTableSize(tablename)
 
 # Database
 echo database.createDatabase("testing", "This is a Documentation Comment")
