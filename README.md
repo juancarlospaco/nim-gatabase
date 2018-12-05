@@ -1,6 +1,6 @@
 # Nim-Gatabase
 
-![screenshot](temp.jpg "Postgres high-level ORM for Nim")
+![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Postgres high-level ORM for Nim")
 
 
 # API
