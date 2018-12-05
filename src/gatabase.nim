@@ -31,14 +31,13 @@ const
   sql_commit = sql"COMMIT;"
   sql_rollback = sql"ROLLBACK;"
   sql_pid = sql"select pg_backend_pid();"
-  sql_schema = sql"select current_schema();"
   sql_Version = sql"SHOW SERVER_VERSION;"
+  sql_schema = sql"select current_schema();"
   sql_currentUser = sql"SELECT current_user;"
   sql_vacuum = sql"VACUUM (VERBOSE, ANALYZE);"
   sql_allUsers = sql"SELECT rolname FROM pg_roles;"
   sql_currentDatabase = sql"SELECT current_database();"
-  sql_killActive = sql"SELECT pg_cancel_backend(procpid);"
-  sql_killIdle = sql"SELECT pg_terminate_backend(procpid);"
+  sql_forceReloadConfig = sql"select pg_reload_conf();"
   sql_allTables = sql"SELECT tablename FROM pg_catalog.pg_tables;"
   sql_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
   sql_allDatabases = sql"SELECT datname FROM pg_database WHERE datistemplate = false;"
@@ -47,6 +46,11 @@ const
   sql_cpuTop = sql"SELECT substring(query, 1, 50) AS short_query, round(total_time::numeric, 2) AS total_time, calls, rows, round(total_time::numeric / calls, 2) AS avg_time, round((100 * total_time / sum(total_time::numeric) OVER ())::numeric, 2) AS percentage_cpu FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;"
   sql_slowTop = sql"SELECT substring(query, 1, 100) AS short_query, round(total_time::numeric, 2) AS total_time, calls, rows, round(total_time::numeric / calls, 2) AS avg_time, round((100 * total_time / sum(total_time::numeric) OVER ())::numeric, 2) AS percentage_cpu FROM pg_stat_statements ORDER BY avg_time DESC LIMIT 10;"
 
+  sql_IsUserConnected = "SELECT datname FROM pg_stat_activity WHERE usename = '$1';"
+  sql_DatabaseSize = "SELECT pg_database_size($1);"
+  sql_TableSize = "select pg_relation_size('$1');"
+  sql_killActive = "SELECT pg_cancel_backend($1);"
+  sql_killIdle = "SELECT pg_terminate_backend($1);"
   sql_document = "COMMENT ON $1 $2 IS ?;"
   sql_dropDatabase = "DROP DATABASE IF EXISTS $1;"
   sql_renameDatabase = "ALTER DATABASE $1 RENAME TO $2;"
@@ -197,15 +201,15 @@ func getCaches*(this: Gatabase): auto =
   when not defined(release): debugEcho sql_caches.repr
   when not defined(js): this.db.getAllRows(sql_caches) else: sql_caches
 
-func killCurrentQuery*(this: Gatabase): auto =
+func killQuery*(this: Gatabase, pid: string): auto =
   ## Kill all the active running Queries.
-  when not defined(release): debugEcho sql_killActive.repr
-  when not defined(js): this.db.getAllRows(sql_killActive) else: sql_killActive
+  when not defined(release): debugEcho sql_killActive.format(pid)
+  when not defined(js): this.db.getAllRows(sql_killActive.format(pid)) else: sql_killActive.format(pid)
 
-func killIdleQuery*(this: Gatabase): auto =
+func killIdleQuery*(this: Gatabase, pid: string): auto =
   ## Kill all the diel non-running Queries.
-  when not defined(release): debugEcho sql_killIdle.repr
-  when not defined(js): this.db.getAllRows(sql_killIdle) else: sql_killIdle
+  when not defined(release): debugEcho sql_killIdle.format(pid)
+  when not defined(js): this.db.getAllRows(sql_killIdle.format(pid)) else: sql_killIdle.format(pid)
 
 func forceVacuum*(this: Gatabase): auto =
   ## Kill all the diel non-running Queries.
@@ -283,6 +287,26 @@ func getCurrentUser*(this: Gatabase): auto =
   ## Return the current Postgres database user.
   when not defined(release): debugEcho sql_currentUser.repr
   when not defined(js): this.db.getRow(sql_currentUser) else: sql_currentUser
+
+func forceReloadConfig*(this: Gatabase): auto =
+  ## Force reloading PostgreSQL configuration files without Restarting the Server.
+  when not defined(release): debugEcho sql_forceReloadConfig.repr
+  when not defined(js): this.db.getRow(sql_forceReloadConfig) else: sql_forceReloadConfig
+
+func getDatabaseSize*(this: Gatabase, databasename = "current_database()"): auto =
+  ## Return the current Postgres database size in bytes.
+  when not defined(release): debugEcho sql_DatabaseSize.format(databasename)
+  when not defined(js): this.db.getRow(sql_DatabaseSize.format(databasename)) else: sql_DatabaseSize.format(databasename)
+
+func getTableSize*(this: Gatabase, tablename: string): auto =
+  ## Return the current Postgres table size in bytes.
+  when not defined(release): debugEcho sql_TableSize.format(tablename)
+  when not defined(js): this.db.getRow(sql_TableSize.format(tablename)) else: sql_TableSize.format(tablename)
+
+func isUserConnected*(this: Gatabase, username: string): auto =
+  ## Return the current Postgres table size in bytes.
+  when not defined(release): debugEcho sql_IsUserConnected.format(username)
+  when not defined(js): this.db.getRow(sql_IsUserConnected.format(username)) else: sql_IsUserConnected.format(username)
 
 func listAllUsers*(this: Gatabase): auto =
   ## Return all users on the Postgres database server.
