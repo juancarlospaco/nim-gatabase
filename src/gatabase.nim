@@ -485,7 +485,7 @@ func dropSchema*(this: Gatabase, schemaname: string): auto =
 func createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, autocommit=true): auto =
   ## Create a new Table with Columns, Values, Comments, Metadata, etc.
   assert tablename.strip.len > 0, "'tablename' must not be an empty string."
-  doAssert fields.len > 0, "'fields' must be a non-empty seq[Field]"
+  doAssert fields.len > 0, "'fields' must be a non-empty sequence @[Field]"
   when not defined(sqlite):
     if not autocommit: this.db.exec(sql_begin)
   var columns = "\n  id SERIAL PRIMARY KEY"
