@@ -23,7 +23,7 @@
 - You can write with Gatabase and read with Ormin.
 - [Functional, all functions are `func` (Effects free).](https://nim-lang.org/docs/manual.html#procedures-func)
 - Debug raw SQL when not build for Release.
-- Table Helpers (ready-made Tables from templates  for common uses).
+- Table Helpers (ready-made Table templates for common uses).
 - Single file. 0 Dependency. Self-Documented.
 - Run the module itself for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
