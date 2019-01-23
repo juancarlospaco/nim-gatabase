@@ -159,7 +159,8 @@ COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 
 # Install
 
-- `nimble install gatabase`
+- `nimble install gatabase@0.1.0`
+- **Latest Stable Version 0.1.0**
 
 
 # FAQ
