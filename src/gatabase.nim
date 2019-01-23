@@ -20,6 +20,8 @@ else:                 import db_postgres
 
 
 const
+  gatabaseVersion* = 0.2  ## Gatabase Version (SemVer).
+
   sql_epochnow =
     when defined(sqlite): "(strftime('%s', 'now'))"     # SQLite 3 epoch now.
     else:                 "(extract(epoch from now()))" # Postgres epoch now.
@@ -575,6 +577,8 @@ proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, i
 
 
 when isMainModule:
+  {.hint: "This is for Demo purposes only, it may fail, see the Docs!.".}
+  {.passL: "-s".}
   # Database init (change to your user and password).
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
                           dbname: "database", port: 5432, timeout: 10)
