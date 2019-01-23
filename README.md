@@ -1,17 +1,17 @@
 # Nim-Gatabase
 
-![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Postgres high-level ORM for Nim")
+![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Postgres and SQLite high-level ORM for Nim")
 
 
 # API
 
-- [Postgres >= 10.](https://www.postgresql.org)
+- [Postgres >= 10.](https://www.postgresql.org) and SQLite.
 - UTF-8 encoding.
 - [All SQL are `const`.](https://nim-lang.org/docs/manual.html#statements-and-expressions-const-section)
 - Database user must have a password.
 - Database connection is to hostname.
-- [Self-Documentation Comments supported.](https://www.postgresql.org/docs/11/sql-comment.html)
-- [Configurable AutoVacuum supported.](https://www.postgresql.org/docs/11/runtime-config-autovacuum.html)
+- [Self-Documentation Comments supported  (Postgres).](https://www.postgresql.org/docs/11/sql-comment.html)
+- [Configurable AutoVacuum supported  (Postgres).](https://www.postgresql.org/docs/11/runtime-config-autovacuum.html)
 - Backups for Databases supported.
 - The `timeout` argument is on Seconds.
 - `DISTINCT` supported on SQL, `bool` type, `false` by default.
@@ -19,7 +19,7 @@
 - `OFFSET` supported on SQL, `int` type, `0` by default.
 - No OS-specific code, so it should work on Linux, Windows and Mac.
 - Compatible with [`db_postgres`](https://nim-lang.org/docs/db_postgres.html) and [Ormin](https://github.com/Araq/ormin).
-- You can still use std lib `db_postgres` as normal (same connection).
+- You can still use std lib `db_postgres` and `db_sqlite` as normal (same connection).
 - You can write with Gatabase and read with Ormin.
 - [Functional, all functions are `func` (Effects free).](https://nim-lang.org/docs/manual.html#procedures-func)
 - Debug raw SQL when not build for Release.
@@ -72,7 +72,8 @@ echo database.forceCommit()
 echo database.forceRollback()
 echo database.forceReloadConfig()
 echo database.isUserConnected(username = "juan")
-echo database.getDatabaseSize(databasename = "database")  # .getTableSize(tablename)
+echo database.getDatabaseSize(databasename = "database")  
+echo database.getTableSize(tablename = "mytable")
 
 # Database
 echo database.createDatabase("testing", "This is a Documentation Comment")
@@ -160,9 +161,9 @@ COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 
 - Supports SQLite ?.
 
-No.
+Yes.
 
-- This is faster than [ORMin](https://github.com/Araq/ormin) ?.
+- Supports MySQL ?.
 
 No.
 
@@ -178,54 +179,7 @@ https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
 _(You need a working Postgres server up & running to use it, but not to install it)_
 
 
-## Frontend
-
-- **This ORM can run on the Browser.** `nim js gatabase.nim`
-
-_Since you can not run a full Postgres Server on the Browser,
-it returns the Raw SQL Query string instead of executing it.
-[Just use Nims JavaScript target.](https://nim-lang.org/docs/backends.html#backends-the-javascript-target)_
-
-Example:
-```sql
-$ nim js -r gatabase.nim
-Hint: /usr/bin/node nimcache/gatabase.js  [Exec]
-
-SHOW SERVER_VERSION;
-SHOW ALL;
-select pg_backend_pid();
-SELECT rolname FROM pg_roles;
-SELECT nspname FROM pg_catalog.pg_namespace;
-SELECT tablename FROM pg_catalog.pg_tables;
-SELECT current_user;
-SELECT current_database();
-select current_schema();
-GRANT SELECT ON testing TO PUBLIC;
-GRANT ALL PRIVILEGES ON DATABASE testing TO PUBLIC;
-ALTER DATABASE testing RENAME TO testing2;
-SELECT  * FROM current_database() LIMIT 3 OFFSET 0;
-DROP DATABASE IF EXISTS testing2;
-ALTER USER pepe RENAME TO pepe2;
-DROP USER IF EXISTS pepe2;
-CREATE SCHEMA IF NOT EXISTS memes;
-ALTER SCHEMA memes RENAME TO foo;
-DROP SCHEMA IF EXISTS foo CASCADE;
-CREATE TABLE IF NOT EXISTS table_name(
-  id SERIAL PRIMARY KEY,
-  name0 smallint DEFAULT 127,
-  name1 smallint DEFAULT 32767,
-  name2 integer DEFAULT 2147483647,
-  name3 bigint DEFAULT 2147483647,
-  name4 decimal DEFAULT 42,
-  name5 decimal DEFAULT 666,
-  name6 boolean DEFAULT true); /* This is a Documentation Comment */
-select distinct * from table_name limit 255 offset 2;
-ALTER TABLE table_name RENAME TO cats;
-DROP TABLE IF EXISTS cats CASCADE;
-```
-
-
 #### Alternatives
 
 - [For a faster but lower-level ORM see ORMin.](https://github.com/Araq/blog/blob/master/ormin.rst#ormin)
-(DSL ORM, Raw SQL Performance, can expose your database fields via JSON WebSockets automagically)
+(DSL ORM, Raw SQL Performance, can expose your database via JSON WebSockets).
