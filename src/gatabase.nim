@@ -182,7 +182,6 @@ proc connect*(this: var Gatabase) {.discardable.} =
   doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
   when not defined(release): echo this.uri
 
-
 func close*(this: Gatabase) {.discardable, inline.} =
   ## Close the Database connection.
   this.db.close()
@@ -200,12 +199,12 @@ func getCaches*(this: Gatabase): auto =
 func killQuery*(this: Gatabase, pid: string): auto =
   ## Kill all the active running Queries.
   when not defined(release): debugEcho sql_killActive.format(pid)
-  this.db.getAllRows(sql_killActive.format(pid))
+  this.db.getAllRows(sql(sql_killActive.format(pid)))
 
 func killIdleQuery*(this: Gatabase, pid: string): auto =
   ## Kill all the diel non-running Queries.
   when not defined(release): debugEcho sql_killIdle.format(pid)
-  this.db.getAllRows(sql_killIdle.format(pid))
+  this.db.getAllRows(sql(sql_killIdle.format(pid)))
 
 func forceVacuum*(this: Gatabase): auto =
   ## Kill all the diel non-running Queries.
@@ -292,17 +291,17 @@ func forceReloadConfig*(this: Gatabase): auto =
 func getDatabaseSize*(this: Gatabase, databasename = "current_database()"): auto =
   ## Return the current Postgres database size in bytes.
   when not defined(release): debugEcho sql_DatabaseSize.format(databasename)
-  this.db.getRow(sql_DatabaseSize.format(databasename))
+  this.db.getRow(sql(sql_DatabaseSize.format(databasename)))
 
 func getTableSize*(this: Gatabase, tablename: string): auto =
   ## Return the current Postgres table size in bytes.
   when not defined(release): debugEcho sql_TableSize.format(tablename)
-  this.db.getRow(sql_TableSize.format(tablename))
+  this.db.getRow(sql(sql_TableSize.format(tablename)))
 
 func isUserConnected*(this: Gatabase, username: string): auto =
   ## Return the current Postgres table size in bytes.
   when not defined(release): debugEcho sql_IsUserConnected.format(username)
-  this.db.getRow(sql_IsUserConnected.format(username))
+  this.db.getRow(sql(sql_IsUserConnected.format(username)))
 
 func listAllUsers*(this: Gatabase): auto =
   ## Return all users on the Postgres database server.
