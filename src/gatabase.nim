@@ -1,11 +1,13 @@
 ## Gatabase
 ## ========
 ##
-## - Postgres >= 10 and SQLite Database ORM for Nim.
+## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg
 # https://github.com/coleifer/peewee/blob/035b7b55a80dc70a3f27dd5f2a4900908e541c49/peewee.py
 # https://github.com/coleifer/peewee/blob/2.1.3/peewee.py
 # http://docs.peewee-orm.com/en/2.10.2/peewee/querying.html
 # https://github.com/Araq/blog/blob/master/ormin.rst#ormin
+# https://evertpot.com/writing-sql-for-postgres-mysql-sqlite
+# https://gist.github.com/gipi/1521252
 # https://nim-lang.org/docs/db_postgres.html
 # https://nim-lang.org/docs/db_sqlite.html
 
@@ -18,6 +20,11 @@ else:                 import db_postgres
 
 
 const
+  sql_epochnow =
+    when defined(sqlite): "(strftime('%s', 'now'))"     # SQLite 3 epoch now.
+    else:                 "(extract(epoch from now()))" # Postgres epoch now.
+
+  sql_hstore = sql"CREATE EXTENSION hstore;"
   sql_begin = sql"BEGIN;"
   sql_Env = sql"SHOW ALL;"
   sql_commit = sql"COMMIT;"
@@ -89,7 +96,7 @@ const
 
 
 type
-  Gatabase* = object  ## Postgres database object type.
+  Gatabase* = object  ## Database object type.
     user*, password*, host*, dbname*, uri*, encoding*: string
     timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
     port: int16     ## Database port, int16 type, Postgres default is 5432.
