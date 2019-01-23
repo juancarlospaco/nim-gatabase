@@ -490,7 +490,7 @@ func createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment
     if not autocommit: this.db.exec(sql_begin)
   var columns = "\n  id SERIAL PRIMARY KEY"
   for c in fields:
-    columns &= ",\n  " & fmt"""{c["pgName"].getStr} {c["pgType"].getStr} DEFAULT {c["value"]}"""
+    columns &= ",\n  " & fmt"""{c["pgName"].getStr}\t{c["pgType"].getStr}\tDEFAULT {c["value"]}"""
   let query = sql_createTable.format(tablename, columns, comment)
   when not defined(release): debugEcho query
   result = this.db.tryExec(sql(query))
