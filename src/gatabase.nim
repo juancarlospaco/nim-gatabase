@@ -94,6 +94,48 @@ const
     "PDocument": "xml",
   }.toTable  ## Nim Types to Postgres Types "conversion" table.
 
+  # Migrated from NimWC to clean out code.
+
+  personTable_simple = """
+    create table if not exists $$1(
+      id         integer       primary key,
+      name       varchar(60)   not null,
+      password   varchar(300)  not null,
+      email      varchar(254)  not null
+    );"""
+
+  personTable_medium = """
+    create table if not exists $$1(
+      id         integer       primary key,
+      name       varchar(60)   not null,
+      password   varchar(300)  not null,
+      email      varchar(254)  not null,
+      creation   timestamp     not null           default $1,
+      modified   timestamp     not null           default $1,
+      salt       varchar(128)  not null,
+      status     varchar(30)   not null,
+      timezone   varchar(100),
+      secretUrl  varchar(250),
+      lastOnline timestamp     not null           default $1
+    );""".format(sql_epochnow)
+
+  personTable_full = """
+    create table if not exists $$1(
+      id         integer       primary key,
+      name       varchar(60)   not null,
+      password   varchar(300)  not null,
+      email      varchar(254)  not null,
+      creation   timestamp     not null           default $1,
+      modified   timestamp     not null           default $1,
+      salt       varchar(128)  not null,
+      status     varchar(30)   not null,
+      timezone   varchar(100),
+      secretUrl  varchar(250),
+      lastOnline timestamp     not null           default $1
+    );""".format(sql_epochnow)  # TODO TBD
+
+  # Migrated from NimWC to clean out code.
+
 
 type
   Gatabase* = object  ## Database object type.
@@ -269,6 +311,11 @@ when not defined(sqlite):
     assert columnname.strip.len > 0, "'columnname' must not be an empty string."
     let col_num = this.db.getRow(sql(sql_ordinalPosition.format(tablename, columnname)))[0]
     this.db.getRow(sql(sql_description.format(tablename, col_num)))[0].parseJson
+
+  func enableHstore*(this: Gatabase): auto =
+    ## Enable Postgres Extension HSTORE that comes built-in but disabled.
+    when not defined(release): debugEcho sql_hstore.repr
+    this.db.tryExec(sql_hstore)
 
 func getVersion*(this: Gatabase): auto =
   ## Return the Postgres database server Version (SemVer).
@@ -499,6 +546,16 @@ func changeAutoVacuumTable*(this: Gatabase, tablename: string, enabled: bool): a
   when not defined(release): debugEcho sql_autoVacuum.format(tablename, enabled)
   this.db.tryExec(sql(sql_autoVacuum.format(tablename, enabled)))
 
+func createTableUsers*(this: Gatabase, tablename="person", kind=""): auto =
+  ## Create 1 Table Users if not exists,from 3 possible templates basic,medium or full.
+  doAssert tablename.len > 2, "tablename must be a non-empty string"
+  var cueri: SqlQuery
+  if kind == "simple": cueri = sql(personTable_simple.format(tablename))
+  elif kind == "full": cueri = sql(personTable_full.format(tablename))
+  else:                cueri = sql(personTable_medium.format(tablename))
+  when not defined(release): debugEcho cueri.repr
+  this.db.tryExec(cueri)
+
 proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, inserts=false): auto =
   ## Backup the whole Database to a plain-text Raw SQL Query human-readable file.
   assert dbname.strip.len > 1, "'dbname' must not be an empty string."
@@ -524,6 +581,7 @@ when isMainModule:
   database.connect()
 
   # Engine
+  echo database.enableHstore()
   echo database.getVersion()
   echo database.getEnv()
   echo database.getPid()
@@ -539,7 +597,8 @@ when isMainModule:
   echo database.forceRollback()
   echo database.forceReloadConfig()
   echo database.isUserConnected(username = "juan")
-  echo database.getDatabaseSize(databasename = "database")  # .getTableSize(tablename)
+  #echo database.getDatabaseSize(databasename = "database")
+  #echo database.getTableSize(tablename = "mytable")
 
   # Database
   echo database.createDatabase("testing", "This is a Documentation Comment")
@@ -580,6 +639,10 @@ when isMainModule:
   echo database.changeAutoVacuumTable("table_name", true)
   echo database.renameTable("table_name", "cats")
   echo database.dropTable("cats")
+
+  # Table Helpers (ready-made "Users" table from 3 templates to choose)
+  echo database.createTableUsers(tablename="usuarios", kind="medium")
+  echo database.dropTable("usuarios")
 
   # Backups
   echo database.backupDatabase("database", "backup0.sql")

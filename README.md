@@ -57,6 +57,7 @@ database.connect()
 
 # Engine
 echo database.uri
+echo database.enableHstore()  # Postgres HSTORE Extension.
 echo database.getVersion()
 echo database.getEnv()
 echo database.getPid()
@@ -115,6 +116,10 @@ echo database.searchColumns("table_name", "name0", $int8.high, 255)
 echo database.changeAutoVacuumTable("table_name", true)
 echo database.renameTable("table_name", "cats")
 echo database.dropTable("cats")
+
+# Table Helpers (ready-made "Users" table from 3 templates to choose)
+echo database.createTableUsers(tablename="usuarios", kind="medium")
+echo database.dropTable("usuarios")
 
 # Backups
 echo database.backupDatabase("database", "backup0.sql").output
