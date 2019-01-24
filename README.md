@@ -169,6 +169,15 @@ COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 - **Latest Stable Version 0.1.0**
 
 
+# Use
+
+Lets say you have an example file that uses Gatabase ORM, how to Compile it?.
+
+- For Postgres `nim c youtfile.nim`.
+- For SQLite `nim c -d:sqlite youtfile.nim`.
+- For Postgres without Fields feature `nim c -d:noFields youtfile.nim`.
+
+
 # FAQ
 
 <details>
