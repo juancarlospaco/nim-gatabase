@@ -26,7 +26,7 @@
 - Table Helpers (ready-made Table templates for common uses).
 - Single file. 0 Dependency. Self-Documented.
 - Compile with `-d:sqlite` to enable SQLite and disable Postgres.
-- Compile with `-d:noFields` to disable Fields feature, for smaller binary (Kb).
+- Compile with `-d:noFields` to disable Fields feature, for smaller binary (Kb), etc.
 - Run the module itself for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
 
