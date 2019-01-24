@@ -57,6 +57,7 @@ var database = Gatabase(user: "MyUserHere", password: "Passw0rd!", host: "localh
 database.connect()
 
 # Engine
+echo gatabaseVersion
 echo database.uri
 echo database.enableHstore()  # Postgres HSTORE Extension.
 echo database.getVersion()
