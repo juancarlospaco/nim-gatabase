@@ -33,6 +33,7 @@ const
   sql_deleteAll     = "DELETE FROM $1 limit $2 offset $3;"
   sql_deleteValue   = "DELETE FROM $1 WHERE $2 = $3 limit $4 offset $5;"
   sql_renameTable   = "ALTER TABLE $1 RENAME TO $2;"
+  sql_allTables     = sql"SELECT tablename FROM pg_catalog.pg_tables;"
 
   nimTypes2pgTypes = {
     "int8":      "smallint",
@@ -61,9 +62,6 @@ const
   sql_vacuum =
     when defined(sqlite): sql"VACUUM;"
     else:                 sql"VACUUM (VERBOSE, ANALYZE);"
-  sql_allTables =
-    when defined(sqlite): sql".tables"
-    else:                 sql"SELECT tablename FROM pg_catalog.pg_tables;"
   sql_dropTable =
     when defined(sqlite): "DROP TABLE IF EXISTS $1;"
     else:                 "DROP TABLE IF EXISTS $1 CASCADE;"
@@ -603,6 +601,8 @@ when isMainModule:
   database.connect()
 
   # Engine
+  echo gatabaseVersion
+  echo database.uri
   echo database.enableHstore()
   echo database.getVersion()
   echo database.getEnv()
