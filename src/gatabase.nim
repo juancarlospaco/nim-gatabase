@@ -19,68 +19,20 @@ when defined(sqlite): import db_sqlite
 else:                 import db_postgres
 
 
+# SQL common to both Postgres and SQLite ######################################
+
+
 const
-  gatabaseVersion* = 0.2  ## Gatabase Version (SemVer).
-
-  sql_epochnow =
-    when defined(sqlite): "(strftime('%s', 'now'))"     # SQLite 3 epoch now.
-    else:                 "(extract(epoch from now()))" # Postgres epoch now.
-
-  sql_hstore = sql"CREATE EXTENSION hstore;"
-  sql_begin = sql"BEGIN;"
-  sql_Env = sql"SHOW ALL;"
-  sql_commit = sql"COMMIT;"
-  sql_rollback = sql"ROLLBACK;"
-  sql_pid = sql"select pg_backend_pid();"
-  sql_Version = sql"SHOW SERVER_VERSION;"
-  sql_schema = sql"select current_schema();"
-  sql_currentUser = sql"SELECT current_user;"
-  sql_vacuum = sql"VACUUM (VERBOSE, ANALYZE);"
-  sql_allUsers = sql"SELECT rolname FROM pg_roles;"
-  sql_currentDatabase = sql"SELECT current_database();"
-  sql_forceReloadConfig = sql"select pg_reload_conf();"
-  sql_allTables = sql"SELECT tablename FROM pg_catalog.pg_tables;"
-  sql_allSchemas = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
-  sql_allDatabases = sql"SELECT datname FROM pg_database WHERE datistemplate = false;"
-  sql_LoggedInUsers = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
-  sql_caches = sql"select sum(blks_hit)*100/sum(blks_hit+blks_read) as hit_ratio from pg_stat_database;"
-  sql_cpuTop = sql"SELECT substring(query, 1, 50) AS short_query, round(total_time::numeric, 2) AS total_time, calls, rows, round(total_time::numeric / calls, 2) AS avg_time, round((100 * total_time / sum(total_time::numeric) OVER ())::numeric, 2) AS percentage_cpu FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;"
-  sql_slowTop = sql"SELECT substring(query, 1, 100) AS short_query, round(total_time::numeric, 2) AS total_time, calls, rows, round(total_time::numeric / calls, 2) AS avg_time, round((100 * total_time / sum(total_time::numeric) OVER ())::numeric, 2) AS percentage_cpu FROM pg_stat_statements ORDER BY avg_time DESC LIMIT 10;"
-
-  sql_IsUserConnected = "SELECT datname FROM pg_stat_activity WHERE usename = '$1';"
-  sql_DatabaseSize = "SELECT pg_database_size($1);"
-  sql_TableSize = "select pg_relation_size('$1');"
-  sql_killActive = "SELECT pg_cancel_backend($1);"
-  sql_killIdle = "SELECT pg_terminate_backend($1);"
-  sql_document = "COMMENT ON $1 $2 IS ?;"
-  sql_dropDatabase = "DROP DATABASE IF EXISTS $1;"
-  sql_renameDatabase = "ALTER DATABASE $1 RENAME TO $2;"
-  sql_getTop = "SELECT $1 * FROM current_database() LIMIT $2 OFFSET $3;"
-  sql_grantSelect = "GRANT SELECT ON $1 TO $2;"
-  sql_writeMetadata = "COMMENT ON COLUMN $1.$2 IS '$3';"
-  sql_ordinalPosition = "select ordinal_position from information_schema.columns where table_name = '$1' and column_name = '$2';"
-  sql_description = "select col_description('$1'::regclass, $2);"
-  sql_createDatabase = "CREATE DATABASE $1 WITH OWNER $2;"
-  sql_grantAll = "GRANT ALL PRIVILEGES ON DATABASE $1 TO $2;"
-  sql_createUser = "CREATE USER $1 WITH PASSWORD ?;"
-  sql_changePasswordUser = "ALTER ROLE $1 WITH PASSWORD ?;"
-  sql_dropUser = "DROP USER IF EXISTS $1;"
-  sql_renameUser = "ALTER USER $1 RENAME TO $2;"
-  sql_createSchema = "CREATE SCHEMA IF NOT EXISTS $1;"
-  sql_renameSchema = "ALTER SCHEMA $1 RENAME TO $2;"
-  sql_dropSchema = "DROP SCHEMA IF EXISTS $1 CASCADE;"
-  sql_createTable = "CREATE TABLE IF NOT EXISTS $1($2); /* $3 */"
-  sql_getAllRows = "select $1 * from $2 limit $3 offset $4;"
+  gatabaseVersion*  = 0.2  ## Gatabase Version (SemVer).
+  sql_begin         = sql"BEGIN;"
+  sql_commit        = sql"COMMIT;"
+  sql_rollback      = sql"ROLLBACK;"
+  sql_createTable   = "CREATE TABLE IF NOT EXISTS $1($2); /* $3 */"
+  sql_getAllRows    = "select $1 * from $2 limit $3 offset $4;"
   sql_searchColumns = "SELECT $1 * FROM $2 WHERE $3 = $4 limit $5 offset $6;"
-  sql_deleteAll = "DELETE FROM $1 limit $2 offset $3;"
-  sql_deleteValue = "DELETE FROM $1 WHERE $2 = $3 limit $4 offset $5;"
-  sql_dropTable = "DROP TABLE IF EXISTS $1 CASCADE;"
-  sql_renameTable = "ALTER TABLE $1 RENAME TO $2;"
-  sql_autoVacuum = "ALTER TABLE $1 SET (autovacuum_enabled = $2);"
-
-  cmd_backup =
-    when defined(sqlite): "sqlite3 -readonly -echo "         ## Command to Backup SQLite Database.
-    else: "pg_dump --verbose --no-password --encoding=UTF8 " ## Command to Backup Postgres Database.
+  sql_deleteAll     = "DELETE FROM $1 limit $2 offset $3;"
+  sql_deleteValue   = "DELETE FROM $1 WHERE $2 = $3 limit $4 offset $5;"
+  sql_renameTable   = "ALTER TABLE $1 RENAME TO $2;"
 
   nimTypes2pgTypes = {
     "int8":      "smallint",
@@ -96,14 +48,37 @@ const
     "PDocument": "xml",
   }.toTable  ## Nim Types to Postgres Types "conversion" table.
 
+
+# SQL that are different for Postgres and SQLite but still works on both ######
+
+
+  sql_epochnow =
+    when defined(sqlite): "(strftime('%s', 'now'))"     # SQLite 3 epoch now.
+    else:                 "(extract(epoch from now()))" # Postgres epoch now.
+  sql_Version =
+    when defined(sqlite): sql"select sqlite_version();"
+    else:                 sql"SHOW SERVER_VERSION;"
+  sql_vacuum =
+    when defined(sqlite): sql"VACUUM;"
+    else:                 sql"VACUUM (VERBOSE, ANALYZE);"
+  sql_allTables =
+    when defined(sqlite): sql".tables"
+    else:                 sql"SELECT tablename FROM pg_catalog.pg_tables;"
+  sql_dropTable =
+    when defined(sqlite): "DROP TABLE IF EXISTS $1;"
+    else:                 "DROP TABLE IF EXISTS $1 CASCADE;"
+
+  cmd_backup =
+    when defined(sqlite): "sqlite3 -readonly -echo "         ## Command to Backup SQLite Database.
+    else: "pg_dump --verbose --no-password --encoding=UTF8 " ## Command to Backup Postgres Database.
+
   # Migrated from NimWC to clean out code.
 
   personTable_simple = """
     create table if not exists $$1(
       id         integer       primary key,
       name       varchar(60)   not null,
-      password   varchar(300)  not null,
-      email      varchar(254)  not null
+      password   varchar(300)  not null
     );"""
 
   personTable_medium = """
@@ -137,6 +112,50 @@ const
     );""".format(sql_epochnow)  # TODO TBD
 
   # Migrated from NimWC to clean out code.
+
+
+# SQL for Postgres only, or that I dont know how to do it on SQLite ###########
+
+
+when not defined(sqlite):
+  const
+    sql_hstore             = sql"CREATE EXTENSION hstore;" # Postgres HStore plugin
+    sql_Env                = sql"SHOW ALL;"
+    sql_pid                = sql"select pg_backend_pid();"
+    sql_schema             = sql"select current_schema();"
+    sql_currentUser        = sql"SELECT current_user;"
+    sql_allUsers           = sql"SELECT rolname FROM pg_roles;"
+    sql_currentDatabase    = sql"SELECT current_database();"
+    sql_forceReloadConfig  = sql"select pg_reload_conf();"
+    sql_allSchemas         = sql"SELECT nspname FROM pg_catalog.pg_namespace;"
+    sql_allDatabases       = sql"SELECT datname FROM pg_database WHERE datistemplate = false;"
+    sql_LoggedInUsers      = sql"SELECT DISTINCT datname, usename, client_hostname, client_port, query FROM pg_stat_activity;"
+    sql_caches             = sql"select sum(blks_hit)*100/sum(blks_hit+blks_read) as hit_ratio from pg_stat_database;"
+    sql_cpuTop             = sql"SELECT substring(query, 1, 50) AS short_query, round(total_time::numeric, 2) AS total_time, calls, rows, round(total_time::numeric / calls, 2) AS avg_time, round((100 * total_time / sum(total_time::numeric) OVER ())::numeric, 2) AS percentage_cpu FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;"
+    sql_slowTop            = sql"SELECT substring(query, 1, 100) AS short_query, round(total_time::numeric, 2) AS total_time, calls, rows, round(total_time::numeric / calls, 2) AS avg_time, round((100 * total_time / sum(total_time::numeric) OVER ())::numeric, 2) AS percentage_cpu FROM pg_stat_statements ORDER BY avg_time DESC LIMIT 10;"
+    sql_IsUserConnected    = "SELECT datname FROM pg_stat_activity WHERE usename = '$1';"
+    sql_DatabaseSize       = "SELECT pg_database_size($1);"
+    sql_TableSize          = "select pg_relation_size('$1');"
+    sql_killActive         = "SELECT pg_cancel_backend($1);"
+    sql_killIdle           = "SELECT pg_terminate_backend($1);"
+    sql_document           = "COMMENT ON $1 $2 IS ?;"
+    sql_getTop             = "SELECT $1 * FROM current_database() LIMIT $2 OFFSET $3;"
+    sql_writeMetadata      = "COMMENT ON COLUMN $1.$2 IS '$3';"
+    sql_ordinalPosition    = "select ordinal_position from information_schema.columns where table_name = '$1' and column_name = '$2';"
+    sql_description        = "select col_description('$1'::regclass, $2);"
+    sql_createSchema       = "CREATE SCHEMA IF NOT EXISTS $1;"
+    sql_renameSchema       = "ALTER SCHEMA $1 RENAME TO $2;"
+    sql_dropSchema         = "DROP SCHEMA IF EXISTS $1 CASCADE;"
+    sql_dropDatabase       = "DROP DATABASE IF EXISTS $1;"
+    sql_renameDatabase     = "ALTER DATABASE $1 RENAME TO $2;"
+    sql_grantSelect        = "GRANT SELECT ON $1 TO $2;"
+    sql_grantAll           = "GRANT ALL PRIVILEGES ON DATABASE $1 TO $2;"
+    sql_createDatabase     = "CREATE DATABASE $1 WITH OWNER $2;"
+    sql_createUser         = "CREATE USER $1 WITH PASSWORD ?;"
+    sql_changePasswordUser = "ALTER ROLE $1 WITH PASSWORD ?;"
+    sql_dropUser           = "DROP USER IF EXISTS $1;"
+    sql_renameUser         = "ALTER USER $1 RENAME TO $2;"
+    sql_autoVacuum         = "ALTER TABLE $1 SET (autovacuum_enabled = $2);"
 
 
 type
@@ -637,11 +656,11 @@ when isMainModule:
   # Tables
   echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
                             "This is a Documentation Comment")
-  echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
-  echo database.searchColumns("table_name", "name0", $int8.high, 666)
-  echo database.changeAutoVacuumTable("table_name", true)
-  echo database.renameTable("table_name", "cats")
-  echo database.dropTable("cats")
+  #echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
+  #echo database.searchColumns("table_name", "name0", $int8.high, 666)
+  #echo database.changeAutoVacuumTable("table_name", true)
+  #echo database.renameTable("table_name", "cats")
+  #echo database.dropTable("cats")
 
   # Table Helpers (ready-made "Users" table from 3 templates to choose)
   echo database.createTableUsers(tablename="usuarios", kind="medium")
