@@ -11,7 +11,9 @@
 # https://nim-lang.org/docs/db_postgres.html
 # https://nim-lang.org/docs/db_sqlite.html
 
-import strformat, strutils, json, uri, tables, osproc
+import strformat, strutils, json, tables
+from ospaths import quoteShell
+from osproc import execCmdEx
 from nativesockets import Port
 
 when not defined(noFields):
