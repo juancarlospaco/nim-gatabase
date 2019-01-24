@@ -99,27 +99,27 @@ echo database.createSchema("memes", "This is a Documentation Comment", autocommi
 echo database.renameSchema("memes", "foo")
 echo database.dropSchema("foo")
 
-# Fields
-let
-  a = newInt8Field(int8.high, "name0", "Help here", "Error here")
-  b = newInt16Field(int16.high, "name1", "Help here", "Error here")
-  c = newInt32Field(int32.high, "name2", "Help here", "Error here")
-  d = newIntField(int.high, "name3", "Help here", "Error here")
-  e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
-  f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
-  g = newBoolField(true, "name6", "Help here", "Error here")
-  # fails = newInt8Field(int64.high, "name9", "Input an int8", "Integer overflow error")
-assert a is Field
-assert b is Field
+when not defined(noFields): # Compile with `-d:noFields` to disable Fields feature.
+  let   # Fields
+    a = newInt8Field(int8.high, "name0", "Help here", "Error here")
+    b = newInt16Field(int16.high, "name1", "Help here", "Error here")
+    c = newInt32Field(int32.high, "name2", "Help here", "Error here")
+    d = newIntField(int.high, "name3", "Help here", "Error here")
+    e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
+    f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
+    g = newBoolField(true, "name6", "Help here", "Error here")
+    # fails = newInt8Field(int64.high, "name9", "Input an int8", "Integer overflow error")
+  assert a is Field
+  assert b is Field
 
-# Tables
-echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
-                          "This is a Documentation Comment")
-echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
-echo database.searchColumns("table_name", "name0", $int8.high, 255)
-echo database.changeAutoVacuumTable("table_name", true)
-echo database.renameTable("table_name", "cats")
-echo database.dropTable("cats")
+  # Tables
+  echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
+                            "This is a Documentation Comment")
+  echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
+  echo database.searchColumns("table_name", "name0", $int8.high, 255)
+  echo database.changeAutoVacuumTable("table_name", true)
+  echo database.renameTable("table_name", "cats")
+  echo database.dropTable("cats")
 
 # Table Helpers (ready-made "Users" table from 3 templates to choose)
 echo database.createTableUsers(tablename="usuarios", kind="medium")
