@@ -12,6 +12,7 @@
 # https://nim-lang.org/docs/db_sqlite.html
 
 import strformat, strutils, json, uri, tables, osproc
+from nativesockets import Port
 
 when not defined(noFields):
   import xmldom, colors, hashes, httpcore, pegs, subexes
@@ -24,9 +25,9 @@ else:                 import db_postgres
 
 
 const
-  gatabaseVersion*  = 0.2                 ## Gatabase Version (SemVer).
-  gatabasePostgres* = not defined(sqlite) ## Gatabase was compiled for Postgres?
-  gatabaseFields*   = not defined(noFields) ## Gatabase was compiled for Fields?
+  gatabaseVersion*    = 0.2                   ## Gatabase Version (SemVer).
+  gatabaseIsPostgres* = not defined(sqlite)   ## Gatabase was compiled for Postgres?
+  gatabaseIsFields*   = not defined(noFields) ## Gatabase was compiled for Fields?
   sql_begin         = sql"BEGIN;"
   sql_commit        = sql"COMMIT;"
   sql_rollback      = sql"ROLLBACK;"
@@ -164,7 +165,7 @@ type
   Gatabase* = object  ## Database object type.
     user*, password*, host*, dbname*, uri*, encoding*: string
     timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
-    port: int16     ## Database port, int16 type, Postgres default is 5432.
+    port: Port     ## Database port, Port type, Postgres default is 5432.
     db*: DbConn   ## Database connection instance.
 
 when not defined(sqlite):
@@ -304,9 +305,9 @@ proc connect*(this: var Gatabase) {.discardable.} =
     assert this.password.len > 3, "Password must be a non-empty string"
     assert this.dbname.len > 1,   "DBname must be a non-empty string"
     assert this.timeout.int > 3,   "Timeout must be a non-zero positive byte (> 3)"
-    this.uri = fmt"postgresql://{this.user}:{this.password}@{this.host}:{this.port}/{this.dbname}?connect_timeout={this.timeout.int16}"
+    this.uri = fmt"postgresql://{this.user}:{this.password}@{this.host}:{this.port.int}/{this.dbname}?connect_timeout={this.timeout.int16}"
     this.db = db_postgres.open("", "", "",
-      fmt"host={this.host} port={this.port} dbname={this.dbname} user={this.user} password={this.password} connect_timeout={this.timeout.int16}")
+      fmt"host={this.host} port={this.port.int} dbname={this.dbname} user={this.user} password={this.password} connect_timeout={this.timeout.int16}")
   doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
   when not defined(release): echo this.uri
 
@@ -593,7 +594,7 @@ proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, i
       a = if dataOnly: "--data-only " else: ""
       b = if inserts: "--inserts " else: ""
       c = fmt"--lock-wait-timeout={this.timeout.int * 2} "
-      d = "--host=" & this.host & " --port=" & $this.port & " --username=" & this.user
+      d = "--host=" & this.host & " --port=" & $this.port.int & " --username=" & this.user
       e = filename.quoteShell
       cmd = fmt"{cmd_backup}{a}{b}{c}{d} --file={e} --dbname={dbname}"
   when not defined(release): echo cmd
@@ -604,13 +605,13 @@ when isMainModule:
   {.hint: "This is for Demo purposes only!.", passL: "-s", passC: "-flto" .}
   # Database init (change to your user and password).
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
-                          dbname: "database", port: 5432, timeout: 10)
+                          dbname: "database", port: Port(5432), timeout: 10)
   database.connect()
 
   # Engine
   echo gatabaseVersion
-  echo gatabasePostgres
-  echo gatabaseFields
+  echo gatabaseIsPostgres
+  echo gatabaseIsFields
   echo database.uri
   echo database.enableHstore()
   echo database.getVersion()
