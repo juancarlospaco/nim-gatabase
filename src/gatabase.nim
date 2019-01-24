@@ -163,6 +163,9 @@ when not defined(sqlite):
     sql_autoVacuum         = "ALTER TABLE $1 SET (autovacuum_enabled = $2);"
 
 
+# SQL for Postgres only, or that I dont know how to do it on SQLite ###########
+
+
 type
   Gatabase* = object  ## Database object type.
     user*, password*, host*, dbname*, uri*, encoding*: string
