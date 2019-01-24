@@ -24,7 +24,9 @@ else:                 import db_postgres
 
 
 const
-  gatabaseVersion*  = 0.2  ## Gatabase Version (SemVer).
+  gatabaseVersion*  = 0.2                 ## Gatabase Version (SemVer).
+  gatabasePostgres* = not defined(sqlite) ## Gatabase was compiled for Postgres?
+  gatabaseFields*   = not defined(noFields) ## Gatabase was compiled for Fields?
   sql_begin         = sql"BEGIN;"
   sql_commit        = sql"COMMIT;"
   sql_rollback      = sql"ROLLBACK;"
@@ -607,6 +609,8 @@ when isMainModule:
 
   # Engine
   echo gatabaseVersion
+  echo gatabasePostgres
+  echo gatabaseFields
   echo database.uri
   echo database.enableHstore()
   echo database.getVersion()
