@@ -174,6 +174,10 @@ Yes.
 
 No.
 
+- Will support MySQL someday ?.
+
+No.
+
 - I dont want to pass the Table name every time I use a function ?.
 
 https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
