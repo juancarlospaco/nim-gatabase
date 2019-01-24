@@ -11,9 +11,10 @@
 # https://nim-lang.org/docs/db_postgres.html
 # https://nim-lang.org/docs/db_sqlite.html
 
-import
-  strformat, strutils, json, xmldom, uri, tables, colors, hashes, httpcore,
-  pegs, subexes, osproc
+import strformat, strutils, json, uri, tables, osproc
+
+when not defined(noFields):
+  import xmldom, colors, hashes, httpcore, pegs, subexes
 
 when defined(sqlite): import db_sqlite
 else:                 import db_postgres
@@ -116,6 +117,7 @@ const
 
 
 when not defined(sqlite):
+  {.hint: "Compile with -d:sqlite to enable SQLite and disable Postgres.".}
   const
     sql_hstore             = sql"CREATE EXTENSION hstore;" # Postgres HStore plugin
     sql_Env                = sql"SHOW ALL;"
@@ -163,73 +165,129 @@ type
     port: int16     ## Database port, int16 type, Postgres default is 5432.
     db*: DbConn   ## Database connection instance.
 
-  Field* = JsonNode  ## Gatabase Field.
+when not defined(sqlite):
+  template document*(this: Gatabase, what, target, comment: string): untyped =
+    ## Document target with comment. Postgres Comment is like Self-Documentation.
+    assert what.strip.len > 1, "'what' must not be an empty string."
+    assert target.strip.len > 1, "'target' must not an be empty string."
+    doAssert what.normalize != "column", "Comments on columns are not allowed."
+    if comment.strip.len > 0:
+      when not defined(release): debugEcho sql_document.format(what, target)
+      discard this.db.tryExec(sql(sql_document.format(what, target)), comment.strip)
 
+when not defined(noFields) and not defined(sqlite):
+  {.hint: "Compile with -d:noFields to disable Fields feature (smaller binary)".}
+  type Field* = JsonNode  ## Gatabase Field.
 
-func newInt8Field*(value: int8, name: string, help="", error=""): Field =
-  ## Database field for an int8 value, with help and error messages.
-  Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
-           "nimType": "int8", "pgType": nimTypes2pgTypes["int8"], "pgName": name.normalize})
+  func newInt8Field*(value: int8, name: string, help="", error=""): Field =
+    ## Database field for an int8 value, with help and error messages.
+    Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
+             "nimType": "int8", "pgType": nimTypes2pgTypes["int8"], "pgName": name.normalize})
 
-func newInt16Field*(value: int16, name: string, help="", error=""): Field =
-  ## Database field for an int16 value, with help and error messages.
-  Field(%*{"value": value,  "help": help.normalize, "error": error.normalize,
-           "nimType": "int16", "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+  func newInt16Field*(value: int16, name: string, help="", error=""): Field =
+    ## Database field for an int16 value, with help and error messages.
+    Field(%*{"value": value,  "help": help.normalize, "error": error.normalize,
+             "nimType": "int16", "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
 
-func newInt32Field*(value: int32, name: string, help="", error=""): Field =
-  ## Database field for an int32 value, with help and error messages.
-  Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
-           "nimType": "int32", "pgType": nimTypes2pgTypes["int32"], "pgName": name.normalize})
+  func newInt32Field*(value: int32, name: string, help="", error=""): Field =
+    ## Database field for an int32 value, with help and error messages.
+    Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
+             "nimType": "int32", "pgType": nimTypes2pgTypes["int32"], "pgName": name.normalize})
 
-func newIntField*(value: int, name: string, help="", error=""): Field =
-  ## Database field for an int64 value, with help and error messages.
-  Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
-           "nimType": "int", "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+  func newIntField*(value: int, name: string, help="", error=""): Field =
+    ## Database field for an int64 value, with help and error messages.
+    Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
+             "nimType": "int", "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
 
-func newFloat32Field*(value: float32, name: string, help="", error=""): Field =
-  ## Database field for an float32 value, with help and error messages.
-  Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
-           "nimType": "float32", "pgType": nimTypes2pgTypes["float32"], "pgName": name.normalize})
+  func newFloat32Field*(value: float32, name: string, help="", error=""): Field =
+    ## Database field for an float32 value, with help and error messages.
+    Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
+             "nimType": "float32", "pgType": nimTypes2pgTypes["float32"], "pgName": name.normalize})
 
-func newFloatField*(value: float, name: string, help="", error=""): Field =
-  ## Database field for an float64 value, with help and error messages.
-  Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
-           "nimType": "float", "pgType": nimTypes2pgTypes["float"], "pgName": name.normalize})
+  func newFloatField*(value: float, name: string, help="", error=""): Field =
+    ## Database field for an float64 value, with help and error messages.
+    Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
+             "nimType": "float", "pgType": nimTypes2pgTypes["float"], "pgName": name.normalize})
 
-func newBoolField*(value: bool, name: string, help="", error=""): Field =
-  ## Database field for an bool value, with help and error messages.
-  Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
-           "nimType": "bool", "pgType": nimTypes2pgTypes["bool"], "pgName": name.normalize})
+  func newBoolField*(value: bool, name: string, help="", error=""): Field =
+    ## Database field for an bool value, with help and error messages.
+    Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
+             "nimType": "bool", "pgType": nimTypes2pgTypes["bool"], "pgName": name.normalize})
 
-func newPDocumentField*(value: PDocument, name: string, help="", error=""): Field =
-  ## Database field for an XML value, with help and error messages.
-  Field(%*{"value": $value, "help": help.normalize, "error": error.normalize,
-           "nimType": "PDocument", "pgType": nimTypes2pgTypes["PDocument"], "pgName": name.normalize})
+  func newPDocumentField*(value: PDocument, name: string, help="", error=""): Field =
+    ## Database field for an XML value, with help and error messages.
+    Field(%*{"value": $value, "help": help.normalize, "error": error.normalize,
+             "nimType": "PDocument", "pgType": nimTypes2pgTypes["PDocument"], "pgName": name.normalize})
 
-func newColorField*(value: Color, name: string, help="", error=""): Field =
-  ## Database field for a Color value, with help and error messages.
-  Field(%*{"value": value.int, "help": help.normalize, "error": error.normalize,
-           "nimType": "Color", "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+  func newColorField*(value: Color, name: string, help="", error=""): Field =
+    ## Database field for a Color value, with help and error messages.
+    Field(%*{"value": value.int, "help": help.normalize, "error": error.normalize,
+             "nimType": "Color", "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
 
-func newHashField*(value: Hash, name: string, help="", error=""): Field =
-  ## Database field for an Hash value, with help and error messages.
-  Field(%*{"value": value.int,  "help": help.normalize, "error": error.normalize,
-           "nimType": "Hash", "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
+  func newHashField*(value: Hash, name: string, help="", error=""): Field =
+    ## Database field for an Hash value, with help and error messages.
+    Field(%*{"value": value.int,  "help": help.normalize, "error": error.normalize,
+             "nimType": "Hash", "pgType": nimTypes2pgTypes["int"], "pgName": name.normalize})
 
-func newHttpCodeField*(value: HttpCode, name: string, help="", error=""): Field =
-  ## Database field for an HTTP Response Code value, with help and error messages.
-  Field(%*{"value": value.int16, "help": help.normalize, "error": error.normalize,
-           "nimType": "HttpCode", "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
+  func newHttpCodeField*(value: HttpCode, name: string, help="", error=""): Field =
+    ## Database field for an HTTP Response Code value, with help and error messages.
+    Field(%*{"value": value.int16, "help": help.normalize, "error": error.normalize,
+             "nimType": "HttpCode", "pgType": nimTypes2pgTypes["int16"], "pgName": name.normalize})
 
-func newPegField*(value: Peg, name: string, help="", error=""): Field =
-  ## Database field for an PEG value, with help and error messages.
-  Field(%*{"value": $value, "help": help.normalize, "error": error.normalize,
-           "nimType": "Peg", "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
+  func newPegField*(value: Peg, name: string, help="", error=""): Field =
+    ## Database field for an PEG value, with help and error messages.
+    Field(%*{"value": $value, "help": help.normalize, "error": error.normalize,
+             "nimType": "Peg", "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
 
-func newStringField*(value: string, name: string, help="", error=""): Field =
-  ## Database field for an string value, with help and error messages.
-  Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
-           "nimType": "string", "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
+  func newStringField*(value: string, name: string, help="", error=""): Field =
+    ## Database field for an string value, with help and error messages.
+    Field(%*{"value": value, "help": help.normalize, "error": error.normalize,
+             "nimType": "string", "pgType": nimTypes2pgTypes["string"], "pgName": name.normalize})
+
+  func writeMetadata(this: Gatabase, field: Field, columnname, tablename: string): auto =
+    ## Field Metadata is converted to JSON & stored as Postgres Comment. Know a better way?, send Pull Request!.
+    assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+    assert columnname.strip.len > 0, "'columnname' must not be an empty string."
+    var meta: string
+    meta.toUgly(%*{
+     "help":    field["help"],
+     "error":   field["error"],
+     "pgType":  field["pgType"],
+     "nimType": field["nimType"],
+     "pgName":  field["pgName"]
+    })
+    this.db.tryExec(sql(sql_writeMetadata.format(tablename, columnname, meta)))
+
+  proc readMetadata(this: Gatabase, field: Field, columnname, tablename: string): JsonNode =
+    ## Field Metadata is JSON read from Postgres Comment.
+    ## https://www.postgresql.org/message-id/28332.1074527643%40sss.pgh.pa.us
+    assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+    assert columnname.strip.len > 0, "'columnname' must not be an empty string."
+    let col_num = this.db.getRow(sql(sql_ordinalPosition.format(tablename, columnname)))[0]
+    this.db.getRow(sql(sql_description.format(tablename, col_num)))[0].parseJson
+
+  func createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, autocommit=true): auto =
+    ## Create a new Table with Columns, Values, Comments, Metadata, etc.
+    assert tablename.strip.len > 0, "'tablename' must not be an empty string."
+    doAssert fields.len > 0, "'fields' must be a non-empty sequence @[Field]"
+    when not defined(sqlite):
+      if not autocommit: this.db.exec(sql_begin)
+    var columns = "\n  id SERIAL PRIMARY KEY"
+    for c in fields:
+      columns &= ",\n  " & fmt"""{c["pgName"].getStr}\t{c["pgType"].getStr}\tDEFAULT {c["value"]}"""
+    let query = sql_createTable.format(tablename, columns, comment)
+    when not defined(release): debugEcho query
+    result = this.db.tryExec(sql(query))
+    when not defined(sqlite):
+      for field in fields:
+        discard this.writeMetadata(field, field["pgName"].getStr, tablename)
+        # echo this.readMetadata(field, field["pgName"].getStr, tablename)
+      document(this, "TABLE", tablename, comment)
+      if not autocommit:
+        if result:
+          this.db.exec(sql_commit)
+        else:
+          this.db.exec(sql_rollback)
 
 
 proc connect*(this: var Gatabase) {.discardable.} =
@@ -300,36 +358,6 @@ func forceRollback*(this: Gatabase): auto =
   this.db.tryExec(sql_rollback)
 
 when not defined(sqlite):
-  template document*(this: Gatabase, what, target, comment: string): untyped =
-    ## Document target with comment. Postgres Comment is like Self-Documentation.
-    assert what.strip.len > 1, "'what' must not be an empty string."
-    assert target.strip.len > 1, "'target' must not an be empty string."
-    doAssert what.normalize != "column", "Comments on columns are not allowed."
-    if comment.strip.len > 0:
-      when not defined(release): debugEcho sql_document.format(what, target)
-      discard this.db.tryExec(sql(sql_document.format(what, target)), comment.strip)
-
-  func writeMetadata(this: Gatabase, field: Field, columnname, tablename: string): auto =
-    ## Field Metadata is converted to JSON & stored as Postgres Comment. Know a better way?, send Pull Request!.
-    assert tablename.strip.len > 0, "'tablename' must not be an empty string."
-    assert columnname.strip.len > 0, "'columnname' must not be an empty string."
-    var meta: string
-    meta.toUgly(%*{
-      "help":    field["help"],
-      "error":   field["error"],
-      "pgType":  field["pgType"],
-      "nimType": field["nimType"],
-      "pgName":  field["pgName"]
-    })
-    this.db.tryExec(sql(sql_writeMetadata.format(tablename, columnname, meta)))
-
-  proc readMetadata(this: Gatabase, field: Field, columnname, tablename: string): JsonNode =
-    ## Field Metadata is JSON read from Postgres Comment.
-    ## https://www.postgresql.org/message-id/28332.1074527643%40sss.pgh.pa.us
-    assert tablename.strip.len > 0, "'tablename' must not be an empty string."
-    assert columnname.strip.len > 0, "'columnname' must not be an empty string."
-    let col_num = this.db.getRow(sql(sql_ordinalPosition.format(tablename, columnname)))[0]
-    this.db.getRow(sql(sql_description.format(tablename, col_num)))[0].parseJson
 
   func enableHstore*(this: Gatabase): auto =
     ## Enable Postgres Extension HSTORE that comes built-in but disabled.
@@ -499,29 +527,6 @@ func dropSchema*(this: Gatabase, schemaname: string): auto =
   when not defined(release): debugEcho sql_dropSchema.format(schemaname)
   this.db.tryExec(sql(sql_dropSchema.format(schemaname)))
 
-func createTable*(this: Gatabase, tablename: string, fields: seq[Field], comment: string, autocommit=true): auto =
-  ## Create a new Table with Columns, Values, Comments, Metadata, etc.
-  assert tablename.strip.len > 0, "'tablename' must not be an empty string."
-  doAssert fields.len > 0, "'fields' must be a non-empty sequence @[Field]"
-  when not defined(sqlite):
-    if not autocommit: this.db.exec(sql_begin)
-  var columns = "\n  id SERIAL PRIMARY KEY"
-  for c in fields:
-    columns &= ",\n  " & fmt"""{c["pgName"].getStr}\t{c["pgType"].getStr}\tDEFAULT {c["value"]}"""
-  let query = sql_createTable.format(tablename, columns, comment)
-  when not defined(release): debugEcho query
-  result = this.db.tryExec(sql(query))
-  when not defined(sqlite):
-    for field in fields:
-      discard this.writeMetadata(field, field["pgName"].getStr, tablename)
-      # echo this.readMetadata(field, field["pgName"].getStr, tablename)
-    document(this, "TABLE", tablename, comment)
-    if not autocommit:
-      if result:
-        this.db.exec(sql_commit)
-      else:
-        this.db.exec(sql_rollback)
-
 func getTop(this: Gatabase, limit=int.high, offset=0, `distinct`=false): auto =
   ## Get Top from current database with limit.
   when not defined(release): debugEcho sql_getTop.format(if `distinct`: "distinct" else: "", limit, offset)
@@ -640,27 +645,27 @@ when isMainModule:
   echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
   echo database.renameSchema("memes", "foo")
   echo database.dropSchema("foo")
+  when not defined(noFields):
+    # Fields
+    let
+      a = newInt8Field(int8.high, "name0", "Help here", "Error here")
+      b = newInt16Field(int16.high, "name1", "Help here", "Error here")
+      c = newInt32Field(int32.high, "name2", "Help here", "Error here")
+      d = newIntField(int.high, "name3", "Help here", "Error here")
+      e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
+      f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
+      g = newBoolField(true, "name6", "Help here", "Error here")
+    assert a is Field
+    assert b is Field
 
-  # Fields
-  let
-    a = newInt8Field(int8.high, "name0", "Help here", "Error here")
-    b = newInt16Field(int16.high, "name1", "Help here", "Error here")
-    c = newInt32Field(int32.high, "name2", "Help here", "Error here")
-    d = newIntField(int.high, "name3", "Help here", "Error here")
-    e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
-    f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
-    g = newBoolField(true, "name6", "Help here", "Error here")
-  assert a is Field
-  assert b is Field
-
-  # Tables
-  echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
-                            "This is a Documentation Comment")
-  #echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
-  #echo database.searchColumns("table_name", "name0", $int8.high, 666)
-  #echo database.changeAutoVacuumTable("table_name", true)
-  #echo database.renameTable("table_name", "cats")
-  #echo database.dropTable("cats")
+    # Tables
+    echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
+                              "This is a Documentation Comment")
+    #echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
+    #echo database.searchColumns("table_name", "name0", $int8.high, 666)
+    #echo database.changeAutoVacuumTable("table_name", true)
+    #echo database.renameTable("table_name", "cats")
+    #echo database.dropTable("cats")
 
   # Table Helpers (ready-made "Users" table from 3 templates to choose)
   echo database.createTableUsers(tablename="usuarios", kind="medium")
