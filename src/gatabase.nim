@@ -645,9 +645,9 @@ when isMainModule:
   echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
   echo database.renameSchema("memes", "foo")
   echo database.dropSchema("foo")
+
   when not defined(noFields):
-    # Fields
-    let
+    let   # Fields
       a = newInt8Field(int8.high, "name0", "Help here", "Error here")
       b = newInt16Field(int16.high, "name1", "Help here", "Error here")
       c = newInt32Field(int32.high, "name2", "Help here", "Error here")
