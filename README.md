@@ -51,7 +51,7 @@
 ```nim
 import gatabase
 
-# Database init (change to your user and password).
+# Database init (change to your user and password). For SQLite compile with -d:sqlite
 var database = Gatabase(user: "MyUserHere", password: "Passw0rd!", host: "localhost",
                         dbname: "database", port: 5432, timeout: 42)
 database.connect()
