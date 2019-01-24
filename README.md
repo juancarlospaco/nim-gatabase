@@ -180,13 +180,13 @@ No.
 
 No.
 
-- I dont want to pass the Table name every time I use a function ?.
-
-https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
-
 - SQLite mode dont support a lot of stuff ?.
 
 We try to keep as similar as possible, but SQLite is very limited.
+
+- I dont want to pass the Table name every time I use a function ?.
+
+https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
 
 </details>
 
