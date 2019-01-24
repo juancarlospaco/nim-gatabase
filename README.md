@@ -185,6 +185,10 @@ No.
 
 No.
 
+- Whats `-d:noFields` for ?.
+
+Smaller binaries, less imports, more manual hand-crafted queries, simpler, etc.
+
 - SQLite mode dont support a lot of stuff ?.
 
 We try to keep as similar as possible, but SQLite is very limited.
