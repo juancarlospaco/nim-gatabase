@@ -60,6 +60,8 @@ database.connect()
 
 # Engine
 echo gatabaseVersion
+echo gatabasePostgres
+echo gatabaseFields
 echo database.uri
 echo database.enableHstore()  # Postgres HSTORE Extension.
 echo database.getVersion()
