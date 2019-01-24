@@ -201,4 +201,4 @@ _(You need a working Postgres server up & running to use it, but not to install 
 #### Alternatives
 
 - [For a faster but lower-level ORM see ORMin.](https://github.com/Araq/blog/blob/master/ormin.rst#ormin)
-(DSL ORM, Raw SQL Performance, can expose your database via JSON WebSockets).
+(DSL ORM, Raw SQL Performance, JSON WebSockets, Undocumented).
