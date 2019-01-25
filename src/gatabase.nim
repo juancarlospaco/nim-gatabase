@@ -615,48 +615,48 @@ when isMainModule:
                           dbname: "database", port: Port(5432), timeout: 10)
   database.connect()
 
-  # # Engine
-  # echo gatabaseVersion
-  # echo gatabaseIsPostgres
-  # echo gatabaseIsFields
-  # echo database.uri
-  # echo database.enableHstore()
-  # echo database.getVersion()
-  # echo database.getEnv()
-  # echo database.getPid()
-  # echo database.listAllUsers()
-  # echo database.listAllDatabases()
-  # echo database.listAllSchemas()
-  # echo database.listAllTables()
-  # echo database.getCurrentUser()
-  # echo database.getCurrentDatabase()
-  # echo database.getCurrentSchema()
-  # echo database.getLoggedInUsers()
-  # echo database.forceCommit()
-  # echo database.forceRollback()
-  # echo database.forceReloadConfig()
-  # echo database.isUserConnected(username = "juan")
-  # #echo database.getDatabaseSize(databasename = "database")
-  # #echo database.getTableSize(tablename = "mytable")
-  #
-  # # Database
-  # echo database.createDatabase("testing", "This is a Documentation Comment")
-  # echo database.grantSelect("testing")
-  # echo database.grantAll("testing")
-  # echo database.renameDatabase("testing", "testing2")
-  # echo database.getTop(3)
-  # echo database.dropDatabase("testing2")
-  #
-  # # User
-  # echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
-  # echo database.changePasswordUser("pepe", "p@ssw0rd")
-  # echo database.renameUser("pepe", "pepe2")
-  # echo database.dropUser("pepe2")
-  #
-  # # Schema
-  # echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
-  # echo database.renameSchema("memes", "foo")
-  # echo database.dropSchema("foo")
+  # Engine
+  echo gatabaseVersion
+  echo gatabaseIsPostgres
+  echo gatabaseIsFields
+  echo database.uri
+  echo database.enableHstore()
+  echo database.getVersion()
+  echo database.getEnv()
+  echo database.getPid()
+  echo database.listAllUsers()
+  echo database.listAllDatabases()
+  echo database.listAllSchemas()
+  echo database.listAllTables()
+  echo database.getCurrentUser()
+  echo database.getCurrentDatabase()
+  echo database.getCurrentSchema()
+  echo database.getLoggedInUsers()
+  echo database.forceCommit()
+  echo database.forceRollback()
+  echo database.forceReloadConfig()
+  echo database.isUserConnected(username = "juan")
+  #echo database.getDatabaseSize(databasename = "database")
+  #echo database.getTableSize(tablename = "mytable")
+
+  # Database
+  echo database.createDatabase("testing", "This is a Documentation Comment")
+  echo database.grantSelect("testing")
+  echo database.grantAll("testing")
+  echo database.renameDatabase("testing", "testing2")
+  echo database.getTop(3)
+  echo database.dropDatabase("testing2")
+
+  # User
+  echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
+  echo database.changePasswordUser("pepe", "p@ssw0rd")
+  echo database.renameUser("pepe", "pepe2")
+  echo database.dropUser("pepe2")
+
+  # Schema
+  echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
+  echo database.renameSchema("memes", "foo")
+  echo database.dropSchema("foo")
 
   when not defined(noFields):
     let   # Fields
@@ -680,14 +680,14 @@ when isMainModule:
     echo database.dropTable("cats")
 
   # Table Helpers (ready-made "Users" table from 3 templates to choose)
-  # echo database.createTableUsers(tablename="usuarios", kind="medium")
-  # echo database.dropTable("usuarios")
-  #
-  # # Backups
-  # echo database.backupDatabase("database", "backup0.sql")
-  # echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
-  #
-  # # Std Lib compatible
-  # echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
+  echo database.createTableUsers(tablename="usuarios", kind="medium")
+  echo database.dropTable("usuarios")
+
+  # Backups
+  echo database.backupDatabase("database", "backup0.sql")
+  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
+
+  # Std Lib compatible
+  echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
   database.close()
