@@ -616,11 +616,9 @@ when not defined(noFields) and not defined(sqlite):
           this.db.exec(sql_rollback)
 
 
-
-
-when isMainModule:
-  {.hint: "This is for Demo purposes only!.", passL: "-s", passC: "-flto" .}
+runnableExamples:
   when defined(sqlite):
+    ## nim doc -d:sqlite gatabase.nim
     # Database init (change to your user and password).
     var database = Gatabase(host: "example.db")
     database.connect()
@@ -648,87 +646,86 @@ when isMainModule:
     database.close()
 
 
-  else:
+when isMainModule:
+  {.hint: "This is for Demo purposes only!.", passL: "-s", passC: "-flto" .}
+  # Database init (change to your user and password).
+  var database = Gatabase(user: "juan", password: "juan", host: "localhost",
+                          dbname: "database", port: Port(5432), timeout: 10)
+  database.connect()
 
+  # Engine
+  echo gatabaseVersion
+  echo gatabaseIsPostgres
+  echo gatabaseIsFields
+  echo database.uri
+  echo database.enableHstore()
+  echo database.getVersion()
+  echo database.getEnv()
+  echo database.getPid()
+  echo database.listAllUsers()
+  echo database.listAllDatabases()
+  echo database.listAllSchemas()
+  echo database.listAllTables()
+  echo database.getCurrentUser()
+  echo database.getCurrentDatabase()
+  echo database.getCurrentSchema()
+  echo database.getLoggedInUsers()
+  echo database.forceCommit()
+  echo database.forceRollback()
+  echo database.forceReloadConfig()
+  echo database.isUserConnected(username = "juan")
 
-    # Database init (change to your user and password).
-    var database = Gatabase(user: "juan", password: "juan", host: "localhost",
-                            dbname: "database", port: Port(5432), timeout: 10)
-    database.connect()
+  # Database
+  echo database.createDatabase("testing", "This is a Documentation Comment")
+  echo database.grantSelect("testing")
+  echo database.grantAll("testing")
+  echo database.getDatabaseSize()
+  echo database.renameDatabase("testing", "testing2")
+  echo database.getTop(3)
+  echo database.dropDatabase("testing2")
 
-    # Engine
-    echo gatabaseVersion
-    echo gatabaseIsPostgres
-    echo gatabaseIsFields
-    echo database.uri
-    echo database.enableHstore()
-    echo database.getVersion()
-    echo database.getEnv()
-    echo database.getPid()
-    echo database.listAllUsers()
-    echo database.listAllDatabases()
-    echo database.listAllSchemas()
-    echo database.listAllTables()
-    echo database.getCurrentUser()
-    echo database.getCurrentDatabase()
-    echo database.getCurrentSchema()
-    echo database.getLoggedInUsers()
-    echo database.forceCommit()
-    echo database.forceRollback()
-    echo database.forceReloadConfig()
-    echo database.isUserConnected(username = "juan")
+  # User
+  echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
+  echo database.changePasswordUser("pepe", "p@ssw0rd")
+  echo database.renameUser("pepe", "pepe2")
+  echo database.dropUser("pepe2")
 
-    # Database
-    echo database.createDatabase("testing", "This is a Documentation Comment")
-    echo database.grantSelect("testing")
-    echo database.grantAll("testing")
-    echo database.getDatabaseSize()
-    echo database.renameDatabase("testing", "testing2")
-    echo database.getTop(3)
-    echo database.dropDatabase("testing2")
+  # Schema
+  echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
+  echo database.renameSchema("memes", "foo")
+  echo database.dropSchema("foo")
 
-    # User
-    echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
-    echo database.changePasswordUser("pepe", "p@ssw0rd")
-    echo database.renameUser("pepe", "pepe2")
-    echo database.dropUser("pepe2")
+  when not defined(noFields):
+    let   # Fields
+      a = newInt8Field(int8.high, "name0", "Help here", "Error here")
+      b = newInt16Field(int16.high, "name1", "Help here", "Error here")
+      c = newInt32Field(int32.high, "name2", "Help here", "Error here")
+      d = newIntField(int.high, "name3", "Help here", "Error here")
+      e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
+      f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
+      g = newBoolField(true, "name6", "Help here", "Error here")
+    assert a is Field
+    assert b is Field
 
-    # Schema
-    echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
-    echo database.renameSchema("memes", "foo")
-    echo database.dropSchema("foo")
+    # Tables
+    echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
+                              "This is a Documentation Comment")
+    echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
+    echo database.searchColumns("table_name", "name0", $int8.high, 666)
+    echo database.changeAutoVacuumTable("table_name", true)
+    echo database.getTableSize(tablename = "table_name")
+    echo database.renameTable("table_name", "cats")
+    echo database.dropTable("cats")
 
-    when not defined(noFields):
-      let   # Fields
-        a = newInt8Field(int8.high, "name0", "Help here", "Error here")
-        b = newInt16Field(int16.high, "name1", "Help here", "Error here")
-        c = newInt32Field(int32.high, "name2", "Help here", "Error here")
-        d = newIntField(int.high, "name3", "Help here", "Error here")
-        e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
-        f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
-        g = newBoolField(true, "name6", "Help here", "Error here")
-      assert a is Field
-      assert b is Field
+  # Table Helpers (ready-made "Users" table from 3 templates to choose)
+  echo database.createTableUsers(tablename="usuarios", kind="medium")
+  echo database.dropTable("usuarios")
 
-      # Tables
-      echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
-                                "This is a Documentation Comment")
-      echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
-      echo database.searchColumns("table_name", "name0", $int8.high, 666)
-      echo database.changeAutoVacuumTable("table_name", true)
-      echo database.getTableSize(tablename = "table_name")
-      echo database.renameTable("table_name", "cats")
-      echo database.dropTable("cats")
+  # Backups
+  echo database.backupDatabase("database", "backup0.sql")
+  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
 
-    # Table Helpers (ready-made "Users" table from 3 templates to choose)
-    echo database.createTableUsers(tablename="usuarios", kind="medium")
-    echo database.dropTable("usuarios")
+  # Std Lib compatible
+  echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
-    # Backups
-    echo database.backupDatabase("database", "backup0.sql")
-    echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
-
-    # Std Lib compatible
-    echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
-
-    database.close()
+  database.close()
