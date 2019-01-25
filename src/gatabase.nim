@@ -33,7 +33,7 @@ const
   sql_begin         = sql"BEGIN;"
   sql_commit        = sql"COMMIT;"
   sql_rollback      = sql"ROLLBACK;"
-  sql_createTable   = "CREATE TABLE IF NOT EXISTS $1($2); /* $3 */"
+  sql_createTable   = "CREATE TABLE IF NOT EXISTS $1($2);\n/* $3 */"
   sql_getAllRows    = "select $1 * from $2 limit $3 offset $4;"
   sql_searchColumns = "SELECT $1 * FROM $2 WHERE $3 = $4 limit $5 offset $6;"
   sql_deleteAll     = "DELETE FROM $1 limit $2 offset $3;"
