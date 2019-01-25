@@ -29,7 +29,7 @@
 - Compile with `-d:noFields` to disable Fields feature, for smaller binary (Kb), etc.
 - No code for Postgres when compiled for SQLite, no code for SQLite when compiled for Postgres.
 - Run `nim c -r gatabase.nim` for an Example.
-- Run `nim doc gatabase.nim` for more Documentation.
+- Run `nim doc gatabase.nim` for more Documentation. `runnableExamples` provided.
 - **Pull Requests welcome!.**
 
 
