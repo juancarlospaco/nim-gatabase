@@ -29,6 +29,7 @@
 - Compile with `-d:noFields` to disable Fields feature, for smaller binary (Kb), etc.
 - Run `nim c -r gatabase.nim` for an Example.
 - Run `nim doc gatabase.nim` for more Documentation.
+- **Pull Requests welcome!**
 
 
 # Fields
