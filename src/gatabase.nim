@@ -630,11 +630,11 @@ when not defined(noFields) and not defined(sqlite):
 runnableExamples:
   when defined(sqlite):
     ## nim doc -d:sqlite gatabase.nim
-    # Database init (change to your user and password).
+    ## Database init (change to your user and password).
     var database = Gatabase(host: "example.db")
     database.connect()
 
-    # Engine
+    ## Engine.
     echo gatabaseVersion
     echo gatabaseIsPostgres
     echo gatabaseIsFields
@@ -643,19 +643,19 @@ runnableExamples:
     echo database.forceCommit()
     echo database.forceRollback()
 
-    # Table Helpers (ready-made "Users" table from 3 templates to choose)
+    ## Table Helpers (ready-made "Users" table from 3 templates to choose).
     echo database.createTableUsers(tablename="usuarios", kind="medium")
     echo database.dropTable("usuarios")
 
-    # Backups
+    ## Backups.
     echo database.backupDatabase("example.db", "backup0.sql")
     echo database.backupDatabase("example.db", "backup1.sql", dataOnly=true, inserts=true)
 
-    # Explicit SQL Transactions with auto Rollback when failed.
+    ## Explicit SQL Transactions with auto Rollback when failed.
     database.transaction:
       echo database.db.getRow(sql"SELECT sqlite_version(); /* Inside a Transaction */")
 
-    # Std Lib compatible
+    ## Std Lib compatible.
     echo database.db.getRow(sql"SELECT sqlite_version(); /* Still compatible with Std Lib */")
 
     database.close()
@@ -668,7 +668,7 @@ when isMainModule and not defined(sqlite):
                           dbname: "database", port: Port(5432), timeout: 10)
   database.connect()
 
-  # Engine
+  # Engine.
   echo gatabaseVersion
   echo gatabaseIsPostgres
   echo gatabaseIsFields
@@ -690,7 +690,7 @@ when isMainModule and not defined(sqlite):
   echo database.forceReloadConfig()
   echo database.isUserConnected(username = "juan")
 
-  # Database
+  # Database.
   echo database.createDatabase("testing", "This is a Documentation Comment")
   echo database.grantSelect("testing")
   echo database.grantAll("testing")
@@ -699,19 +699,19 @@ when isMainModule and not defined(sqlite):
   echo database.getTop(3)
   echo database.dropDatabase("testing2")
 
-  # User
+  # User.
   echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
   echo database.changePasswordUser("pepe", "p@ssw0rd")
   echo database.renameUser("pepe", "pepe2")
   echo database.dropUser("pepe2")
 
-  # Schema
+  # Schema.
   echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
   echo database.renameSchema("memes", "foo")
   echo database.dropSchema("foo")
 
-  when not defined(noFields):
-    let   # Fields
+  when not defined(noFields): # -d:noFields
+    let   # Fields.
       a = newInt8Field(int8.high, "name0", "Help here", "Error here")
       b = newInt16Field(int16.high, "name1", "Help here", "Error here")
       c = newInt32Field(int32.high, "name2", "Help here", "Error here")
@@ -722,7 +722,7 @@ when isMainModule and not defined(sqlite):
     assert a is Field
     assert b is Field
 
-    # Tables
+    # Tables.
     echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
                               "This is a Documentation Comment")
     echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
@@ -732,11 +732,11 @@ when isMainModule and not defined(sqlite):
     echo database.renameTable("table_name", "cats")
     echo database.dropTable("cats")
 
-  # Table Helpers (ready-made "Users" table from 3 templates to choose)
+  # Table Helpers (ready-made "Users" table from 3 templates to choose).
   echo database.createTableUsers(tablename="usuarios", kind="medium")
   echo database.dropTable("usuarios")
 
-  # Backups
+  # Backups.
   echo database.backupDatabase("database", "backup0.sql")
   echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
 
@@ -744,7 +744,7 @@ when isMainModule and not defined(sqlite):
   database.transaction:
     echo database.db.getRow(sql"SELECT NOW(); /* Inside a Transaction */")
 
-  # Std Lib compatible
+  # Std Lib compatible.
   echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
   database.close()
