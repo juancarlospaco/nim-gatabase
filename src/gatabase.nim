@@ -19,8 +19,11 @@ from nativesockets import Port
 when not defined(noFields):
   import xmldom, colors, hashes, httpcore, pegs, subexes
 
-when defined(sqlite): import db_sqlite
+when defined(sqlite): import db_sqlite, os
 else:                 import db_postgres
+
+when defined(sqlite) and defined(noFields):
+  {.fatal:"'-d:noFields -d:sqlite' must Not be used togheter, not supported by SQLite.".}
 
 
 # SQL common to both Postgres and SQLite ######################################
@@ -168,10 +171,13 @@ when not defined(sqlite):
 
 type
   Gatabase* = object  ## Database object type.
-    user*, password*, host*, dbname*, uri*, encoding*: string
-    timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
-    port: Port     ## Database port, Port type, Postgres default is 5432.
     db*: DbConn   ## Database connection instance.
+    when defined(sqlite):
+      host*, encoding*, uri*: string
+    else:
+      user*, password*, host*, dbname*, uri*, encoding*: string
+      timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
+      port: Port     ## Database port, Port type, Postgres default is 5432.
 
 
 proc connect*(this: var Gatabase) {.discardable.} =
@@ -189,12 +195,16 @@ proc connect*(this: var Gatabase) {.discardable.} =
     this.uri = "postgresql://" & $this.user & ":" & $this.password & "@" & $this.host & ":" & $this.port.int & "/" & $this.dbname & "?connect_timeout=" & $this.timeout.int16
     this.db = db_postgres.open("", "", "",
       "host=" & $this.host & " port=" & $this.port.int & " dbname=" & $this.dbname & " user=" & $this.user & " password=" & $this.password & " connect_timeout=" & $this.timeout.int16)
-  doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
+    doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
   when not defined(release): echo this.uri
 
 func close*(this: Gatabase) {.discardable, inline.} =
   ## Close the Database connection.
-  this.db.close()
+  when defined(sqlite):
+    try: this.db.close() # Sometimes close fails, I dunno why.
+    except: discard # Error: unable to close due to unfinalized statements or backups
+  else:
+    this.db.close()
 
 func forceCommit*(this: Gatabase): auto =
   ## Delete all from table.
@@ -257,8 +267,8 @@ proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, i
   ## Backup the whole Database to a plain-text Raw SQL Query human-readable file.
   assert dbname.strip.len > 1, "'dbname' must not be an empty string."
   assert filename.strip.len > 5, "'filename' must not be an empty string."
-  when defined(sqlite):
-    let cmd = cmd_backup & dbname.quoteShell & " '.backup " & filename & "'"
+  when defined(sqlite):      # SQLite .dump is Not working, Docs says it should.
+    let cmd = cmd_backup & dbname.quoteShell & " '.backup " & filename.quoteShell & "'"
   else:
     let
       a = if dataOnly: "--data-only " else: ""
@@ -610,84 +620,115 @@ when not defined(noFields) and not defined(sqlite):
 
 when isMainModule:
   {.hint: "This is for Demo purposes only!.", passL: "-s", passC: "-flto" .}
-  # Database init (change to your user and password).
-  var database = Gatabase(user: "juan", password: "juan", host: "localhost",
-                          dbname: "database", port: Port(5432), timeout: 10)
-  database.connect()
+  when defined(sqlite):
+    # Database init (change to your user and password).
+    var database = Gatabase(host: "example.db")
+    database.connect()
 
-  # Engine
-  echo gatabaseVersion
-  echo gatabaseIsPostgres
-  echo gatabaseIsFields
-  echo database.uri
-  echo database.enableHstore()
-  echo database.getVersion()
-  echo database.getEnv()
-  echo database.getPid()
-  echo database.listAllUsers()
-  echo database.listAllDatabases()
-  echo database.listAllSchemas()
-  echo database.listAllTables()
-  echo database.getCurrentUser()
-  echo database.getCurrentDatabase()
-  echo database.getCurrentSchema()
-  echo database.getLoggedInUsers()
-  echo database.forceCommit()
-  echo database.forceRollback()
-  echo database.forceReloadConfig()
-  echo database.isUserConnected(username = "juan")
+    # Engine
+    echo gatabaseVersion
+    echo gatabaseIsPostgres
+    echo gatabaseIsFields
+    echo database.uri
+    echo database.getVersion()
+    echo database.forceCommit()
+    echo database.forceRollback()
 
-  # Database
-  echo database.createDatabase("testing", "This is a Documentation Comment")
-  echo database.grantSelect("testing")
-  echo database.grantAll("testing")
-  echo database.getDatabaseSize()
-  echo database.renameDatabase("testing", "testing2")
-  echo database.getTop(3)
-  echo database.dropDatabase("testing2")
+    # Table Helpers (ready-made "Users" table from 3 templates to choose)
+    echo database.createTableUsers(tablename="usuarios", kind="medium")
+    echo database.dropTable("usuarios")
 
-  # User
-  echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
-  echo database.changePasswordUser("pepe", "p@ssw0rd")
-  echo database.renameUser("pepe", "pepe2")
-  echo database.dropUser("pepe2")
+    # Backups
+    echo database.backupDatabase("example.db", "backup0.sql")
+    echo database.backupDatabase("example.db", "backup1.sql", dataOnly=true, inserts=true)
 
-  # Schema
-  echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
-  echo database.renameSchema("memes", "foo")
-  echo database.dropSchema("foo")
+    # Std Lib compatible
+    echo database.db.getRow(sql"SELECT sqlite_version(); /* Still compatible with Std Lib */")
 
-  when not defined(noFields):
-    let   # Fields
-      a = newInt8Field(int8.high, "name0", "Help here", "Error here")
-      b = newInt16Field(int16.high, "name1", "Help here", "Error here")
-      c = newInt32Field(int32.high, "name2", "Help here", "Error here")
-      d = newIntField(int.high, "name3", "Help here", "Error here")
-      e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
-      f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
-      g = newBoolField(true, "name6", "Help here", "Error here")
-    assert a is Field
-    assert b is Field
+    database.close()
 
-    # Tables
-    echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
-                              "This is a Documentation Comment")
-    echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
-    echo database.searchColumns("table_name", "name0", $int8.high, 666)
-    echo database.changeAutoVacuumTable("table_name", true)
-    echo database.getTableSize(tablename = "table_name")
-    echo database.renameTable("table_name", "cats")
-    echo database.dropTable("cats")
 
-  # Table Helpers (ready-made "Users" table from 3 templates to choose)
-  echo database.createTableUsers(tablename="usuarios", kind="medium")
-  echo database.dropTable("usuarios")
+  else:
 
-  # Backups
-  echo database.backupDatabase("database", "backup0.sql")
-  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
 
-  # Std Lib compatible
-  echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
+    # Database init (change to your user and password).
+    var database = Gatabase(user: "juan", password: "juan", host: "localhost",
+                            dbname: "database", port: Port(5432), timeout: 10)
+    database.connect()
 
-  database.close()
+    # Engine
+    echo gatabaseVersion
+    echo gatabaseIsPostgres
+    echo gatabaseIsFields
+    echo database.uri
+    echo database.enableHstore()
+    echo database.getVersion()
+    echo database.getEnv()
+    echo database.getPid()
+    echo database.listAllUsers()
+    echo database.listAllDatabases()
+    echo database.listAllSchemas()
+    echo database.listAllTables()
+    echo database.getCurrentUser()
+    echo database.getCurrentDatabase()
+    echo database.getCurrentSchema()
+    echo database.getLoggedInUsers()
+    echo database.forceCommit()
+    echo database.forceRollback()
+    echo database.forceReloadConfig()
+    echo database.isUserConnected(username = "juan")
+
+    # Database
+    echo database.createDatabase("testing", "This is a Documentation Comment")
+    echo database.grantSelect("testing")
+    echo database.grantAll("testing")
+    echo database.getDatabaseSize()
+    echo database.renameDatabase("testing", "testing2")
+    echo database.getTop(3)
+    echo database.dropDatabase("testing2")
+
+    # User
+    echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
+    echo database.changePasswordUser("pepe", "p@ssw0rd")
+    echo database.renameUser("pepe", "pepe2")
+    echo database.dropUser("pepe2")
+
+    # Schema
+    echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
+    echo database.renameSchema("memes", "foo")
+    echo database.dropSchema("foo")
+
+    when not defined(noFields):
+      let   # Fields
+        a = newInt8Field(int8.high, "name0", "Help here", "Error here")
+        b = newInt16Field(int16.high, "name1", "Help here", "Error here")
+        c = newInt32Field(int32.high, "name2", "Help here", "Error here")
+        d = newIntField(int.high, "name3", "Help here", "Error here")
+        e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
+        f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
+        g = newBoolField(true, "name6", "Help here", "Error here")
+      assert a is Field
+      assert b is Field
+
+      # Tables
+      echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
+                                "This is a Documentation Comment")
+      echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
+      echo database.searchColumns("table_name", "name0", $int8.high, 666)
+      echo database.changeAutoVacuumTable("table_name", true)
+      echo database.getTableSize(tablename = "table_name")
+      echo database.renameTable("table_name", "cats")
+      echo database.dropTable("cats")
+
+    # Table Helpers (ready-made "Users" table from 3 templates to choose)
+    echo database.createTableUsers(tablename="usuarios", kind="medium")
+    echo database.dropTable("usuarios")
+
+    # Backups
+    echo database.backupDatabase("database", "backup0.sql")
+    echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
+
+    # Std Lib compatible
+    echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
+
+    database.close()
