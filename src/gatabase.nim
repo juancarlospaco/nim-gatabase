@@ -636,13 +636,12 @@ when isMainModule:
   echo database.forceRollback()
   echo database.forceReloadConfig()
   echo database.isUserConnected(username = "juan")
-  #echo database.getDatabaseSize(databasename = "database")
-  #echo database.getTableSize(tablename = "mytable")
 
   # Database
   echo database.createDatabase("testing", "This is a Documentation Comment")
   echo database.grantSelect("testing")
   echo database.grantAll("testing")
+  echo database.getDatabaseSize()
   echo database.renameDatabase("testing", "testing2")
   echo database.getTop(3)
   echo database.dropDatabase("testing2")
@@ -676,6 +675,7 @@ when isMainModule:
     echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
     echo database.searchColumns("table_name", "name0", $int8.high, 666)
     echo database.changeAutoVacuumTable("table_name", true)
+    echo database.getTableSize(tablename = "table_name")
     echo database.renameTable("table_name", "cats")
     echo database.dropTable("cats")
 
