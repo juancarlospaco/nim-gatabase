@@ -11,7 +11,7 @@
 # https://nim-lang.org/docs/db_postgres.html
 # https://nim-lang.org/docs/db_sqlite.html
 
-import strformat, strutils, json, tables
+import strutils, json, tables
 from ospaths import quoteShell
 from osproc import execCmdEx
 from nativesockets import Port
@@ -186,9 +186,9 @@ proc connect*(this: var Gatabase) {.discardable.} =
     assert this.password.len > 3, "Password must be a non-empty string"
     assert this.dbname.len > 1,   "DBname must be a non-empty string"
     assert this.timeout.int > 3,   "Timeout must be a non-zero positive byte (> 3)"
-    this.uri = fmt"postgresql://{this.user}:{this.password}@{this.host}:{this.port.int}/{this.dbname}?connect_timeout={this.timeout.int16}"
+    this.uri = "postgresql://" & $this.user & ":" & $this.password & "@" & $this.host & ":" & $this.port.int & "/" & $this.dbname & "?connect_timeout=" & $this.timeout.int16
     this.db = db_postgres.open("", "", "",
-      fmt"host={this.host} port={this.port.int} dbname={this.dbname} user={this.user} password={this.password} connect_timeout={this.timeout.int16}")
+      "host=" & $this.host & " port=" & $this.port.int & " dbname=" & $this.dbname & " user=" & $this.user & " password=" & $this.password & " connect_timeout=" & $this.timeout.int16)
   doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
   when not defined(release): echo this.uri
 
@@ -258,15 +258,15 @@ proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, i
   assert dbname.strip.len > 1, "'dbname' must not be an empty string."
   assert filename.strip.len > 5, "'filename' must not be an empty string."
   when defined(sqlite):
-    let cmd = fmt"{cmd_backup}{dbname.quoteShell} '.backup {filename.quoteShell}'"
+    let cmd = cmd_backup & dbname.quoteShell & " '.backup " & filename & "'"
   else:
     let
       a = if dataOnly: "--data-only " else: ""
       b = if inserts: "--inserts " else: ""
-      c = fmt"--lock-wait-timeout={this.timeout.int * 2} "
+      c = "--lock-wait-timeout=" & $(this.timeout.int * 2) & " "
       d = "--host=" & this.host & " --port=" & $this.port.int & " --username=" & this.user
       e = filename.quoteShell
-      cmd = fmt"{cmd_backup}{a}{b}{c}{d} --file={e} --dbname={dbname}"
+      cmd = cmd_backup & a & b & c & d & " --file=" & e & " --dbname=" & dbname
   when not defined(release): echo cmd
   execCmdEx(cmd)
 
@@ -590,7 +590,7 @@ when not defined(noFields) and not defined(sqlite):
       if not autocommit: this.db.exec(sql_begin)
     var columns = "\n  id SERIAL PRIMARY KEY"
     for c in fields:
-      columns &= ",\n  " & fmt"""{c["pgName"].getStr}\t{c["pgType"].getStr}\tDEFAULT {c["value"]}"""
+      columns &= ",\n  " & c["pgName"].getStr & "\t" & c["pgType"].getStr & "\t" & "DEFAULT " & $c["value"]
     let query = sql_createTable.format(tablename, columns, comment)
     when not defined(release): debugEcho query
     result = this.db.tryExec(sql(query))
@@ -615,48 +615,48 @@ when isMainModule:
                           dbname: "database", port: Port(5432), timeout: 10)
   database.connect()
 
-  # Engine
-  echo gatabaseVersion
-  echo gatabaseIsPostgres
-  echo gatabaseIsFields
-  echo database.uri
-  echo database.enableHstore()
-  echo database.getVersion()
-  echo database.getEnv()
-  echo database.getPid()
-  echo database.listAllUsers()
-  echo database.listAllDatabases()
-  echo database.listAllSchemas()
-  echo database.listAllTables()
-  echo database.getCurrentUser()
-  echo database.getCurrentDatabase()
-  echo database.getCurrentSchema()
-  echo database.getLoggedInUsers()
-  echo database.forceCommit()
-  echo database.forceRollback()
-  echo database.forceReloadConfig()
-  echo database.isUserConnected(username = "juan")
-  #echo database.getDatabaseSize(databasename = "database")
-  #echo database.getTableSize(tablename = "mytable")
-
-  # Database
-  echo database.createDatabase("testing", "This is a Documentation Comment")
-  echo database.grantSelect("testing")
-  echo database.grantAll("testing")
-  echo database.renameDatabase("testing", "testing2")
-  echo database.getTop(3)
-  echo database.dropDatabase("testing2")
-
-  # User
-  echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
-  echo database.changePasswordUser("pepe", "p@ssw0rd")
-  echo database.renameUser("pepe", "pepe2")
-  echo database.dropUser("pepe2")
-
-  # Schema
-  echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
-  echo database.renameSchema("memes", "foo")
-  echo database.dropSchema("foo")
+  # # Engine
+  # echo gatabaseVersion
+  # echo gatabaseIsPostgres
+  # echo gatabaseIsFields
+  # echo database.uri
+  # echo database.enableHstore()
+  # echo database.getVersion()
+  # echo database.getEnv()
+  # echo database.getPid()
+  # echo database.listAllUsers()
+  # echo database.listAllDatabases()
+  # echo database.listAllSchemas()
+  # echo database.listAllTables()
+  # echo database.getCurrentUser()
+  # echo database.getCurrentDatabase()
+  # echo database.getCurrentSchema()
+  # echo database.getLoggedInUsers()
+  # echo database.forceCommit()
+  # echo database.forceRollback()
+  # echo database.forceReloadConfig()
+  # echo database.isUserConnected(username = "juan")
+  # #echo database.getDatabaseSize(databasename = "database")
+  # #echo database.getTableSize(tablename = "mytable")
+  #
+  # # Database
+  # echo database.createDatabase("testing", "This is a Documentation Comment")
+  # echo database.grantSelect("testing")
+  # echo database.grantAll("testing")
+  # echo database.renameDatabase("testing", "testing2")
+  # echo database.getTop(3)
+  # echo database.dropDatabase("testing2")
+  #
+  # # User
+  # echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
+  # echo database.changePasswordUser("pepe", "p@ssw0rd")
+  # echo database.renameUser("pepe", "pepe2")
+  # echo database.dropUser("pepe2")
+  #
+  # # Schema
+  # echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
+  # echo database.renameSchema("memes", "foo")
+  # echo database.dropSchema("foo")
 
   when not defined(noFields):
     let   # Fields
@@ -673,21 +673,21 @@ when isMainModule:
     # Tables
     echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
                               "This is a Documentation Comment")
-    #echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
-    #echo database.searchColumns("table_name", "name0", $int8.high, 666)
-    #echo database.changeAutoVacuumTable("table_name", true)
-    #echo database.renameTable("table_name", "cats")
-    #echo database.dropTable("cats")
+    echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
+    echo database.searchColumns("table_name", "name0", $int8.high, 666)
+    echo database.changeAutoVacuumTable("table_name", true)
+    echo database.renameTable("table_name", "cats")
+    echo database.dropTable("cats")
 
   # Table Helpers (ready-made "Users" table from 3 templates to choose)
-  echo database.createTableUsers(tablename="usuarios", kind="medium")
-  echo database.dropTable("usuarios")
-
-  # Backups
-  echo database.backupDatabase("database", "backup0.sql")
-  echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
-
-  # Std Lib compatible
-  echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
+  # echo database.createTableUsers(tablename="usuarios", kind="medium")
+  # echo database.dropTable("usuarios")
+  #
+  # # Backups
+  # echo database.backupDatabase("database", "backup0.sql")
+  # echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
+  #
+  # # Std Lib compatible
+  # echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
   database.close()
