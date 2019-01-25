@@ -140,6 +140,23 @@ echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with 
 
 database.close()
 
+
+## Async Postgres Gatabase Example.
+proc asyncExample() {.async.} =
+  var database = AsyncGatabase(user: "juan", password: "juan",
+                               host: "localhost", dbname: "database",
+                               port: Port(5432), timeout: 10, connectionCount: 2)
+  database.connect()
+  var futures = newSeq[Future[seq[Row]]]()
+  for i in 0..9:
+    futures.add database.getAllRows(sql"SELECT NOW(), pg_sleep(1);", @[])
+  for gatabaseFuture in futures:
+    echo(await gatabaseFuture)
+  database.close()
+
+waitFor asyncExample()
+
+
 # Check the Docs for more...
 ```
 
@@ -197,6 +214,14 @@ No.
 - Will support MySQL someday ?.
 
 No.
+
+- This works with Synchronous code ?.
+
+Yes.
+
+- This works with Asynchronous code ?.
+
+Yes.
 
 - Whats `-d:noFields` for ?.
 

@@ -19,8 +19,12 @@ from nativesockets import Port
 when not defined(noFields):
   import xmldom, colors, hashes, httpcore, pegs, subexes
 
-when defined(sqlite): import db_sqlite, os
-else:                 import db_postgres
+when defined(sqlite):
+  import db_sqlite
+  from os import quoteShell
+else:
+  import asyncdispatch
+  include db_postgres
 
 when defined(sqlite) and defined(noFields):
   {.fatal:"'-d:noFields -d:sqlite' must Not be used togheter, not supported by SQLite.".}
@@ -170,7 +174,7 @@ when not defined(sqlite):
 
 
 type
-  Gatabase* = object  ## Database object type.
+  Gatabase* = object  ## Gatabase.
     db*: DbConn   ## Database connection instance.
     when defined(sqlite):
       host*, encoding*, uri*: string
@@ -178,6 +182,16 @@ type
       user*, password*, host*, dbname*, uri*, encoding*: string
       timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
       port: Port     ## Database port, Port type, Postgres default is 5432.
+
+when not defined(sqlite):
+  type
+    AsyncGatabase* = ref object  ## Async Gatabase.
+      user*, password*, host*, dbname*, uri*, encoding*: string
+      timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
+      connectionCount*: byte  ## Database connection pool count of workers, byte type, 1 ~ 255.
+      port: Port     ## Database port, Port type, Postgres default is 5432.
+      dbs*: seq[DbConn] ## Database connection instances (Async).
+      isBusy*: seq[bool]   ## Status (Async).
 
 
 proc connect*(this: var Gatabase) {.discardable.} =
@@ -193,12 +207,91 @@ proc connect*(this: var Gatabase) {.discardable.} =
     assert this.dbname.len > 1,   "DBname must be a non-empty string"
     assert this.timeout.int > 3,   "Timeout must be a non-zero positive byte (> 3)"
     this.uri = "postgresql://" & $this.user & ":" & $this.password & "@" & $this.host & ":" & $this.port.int & "/" & $this.dbname & "?connect_timeout=" & $this.timeout.int16
-    this.db = db_postgres.open("", "", "",
+    this.db = open("", "", "",
       "host=" & $this.host & " port=" & $this.port.int & " dbname=" & $this.dbname & " user=" & $this.user & " password=" & $this.password & " connect_timeout=" & $this.timeout.int16)
     doAssert this.db.setEncoding(this.encoding), "Failed to set Encoding to UTF-8"
   when not defined(release): echo this.uri
 
-func close*(this: Gatabase) {.discardable, inline.} =
+when not defined(sqlite):
+  proc connect*(this: var AsyncGatabase) {.discardable.} =
+    ## Open the Database connections, set Encoding to UTF-8, set URI, debug URI.
+    assert this.host.len > 1,     "Hostname must be a non-empty string"
+    assert this.user.len > 1,     "Username must be a non-empty string"
+    assert this.password.len > 3, "Password must be a non-empty string"
+    assert this.dbname.len > 1,   "DBname must be a non-empty string"
+    assert this.timeout.int > 3,   "Timeout must be a non-zero positive byte (> 3)"
+    assert this.connectionCount.int > 1, "connectionCount must be a non-zero positive byte (> 2)"
+    this.encoding = "UTF8"
+    this.uri = "postgresql://" & $this.user & ":" & $this.password & "@" & $this.host & ":" & $this.port.int & "/" & $this.dbname & "?connect_timeout=" & $this.timeout.int16
+    for i in 0..this.connectionCount.int:
+      this.dbs.add open("", "", "",
+        "host=" & $this.host & " port=" & $this.port.int & " dbname=" & $this.dbname & " user=" & $this.user & " password=" & $this.password & " connect_timeout=" & $this.timeout.int16)
+      this.isBusy.add off  # is not busy.
+      when not defined(release): echo "Postgres Connection Pooling Worker: " & $i
+    when not defined(release): echo this.uri
+
+  func close*(this: var AsyncGatabase) {.discardable, inline.} =
+    ## Close the Database connection.
+    for worker in this.dbs:
+      worker.close()
+
+  func setWorkerIdle(this: AsyncGatabase, workerIndex: byte) {.inline.} =
+    ## Set 1 Worker to be Idle by index.
+    when not defined(release): debugEcho "Postgres Worker is Idle: " & $workerIndex
+    this.isBusy[workerIndex.int] = off
+
+  proc getIdleWorker*(this: AsyncGatabase): Future[int] {.async.} =
+    ## Get 1 Idle Worker by index.
+    while on:
+      for workerIndex in 0..<this.dbs.len:
+        if not this.isBusy[workerIndex]:
+          this.isBusy[workerIndex] = on
+          return workerIndex.int
+      when not defined(release): debugEcho "All Postgres Workers are Busy."
+      await sleepAsync(when defined(release): 100 else: 500)
+
+  proc getAllRows*(this: AsyncGatabase, db: DbConn, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async.} =
+    ## Get all Rows from table from a worker of the pool of workers.
+    assert db.status == CONNECTION_OK, "Postgres Connection Pooling Worker Failed"
+    let success = pqsendQuery(db, dbFormat(query, args))
+    if success != 1: dbError(db)
+    while true:
+      let success = pqconsumeInput(db)
+      if success != 1: dbError(db)
+      if pqisBusy(db) == 1:
+        await sleepAsync(1)
+        continue
+      var pqresutl = pqgetResult(db)
+      if pqresutl == nil:
+        break
+      var
+        cols = pqnfields(pqresutl)
+        row = newRow(cols)
+      for i in 0.int32..pqNtuples(pqresutl) - 1:
+        setRow(pqresutl, row, i, cols)
+        result.add row
+      pqclear(pqresutl)
+
+  proc getAllRows*(this: AsyncGatabase, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async.} =
+    ## Get all Rows from table.
+    let workerIndex = await this.getIdleWorker()
+    result = await getAllRows(this, this.dbs[workerIndex], query, args)
+    this.setWorkerIdle(workerIndex.byte)
+
+  proc exec*(this: AsyncGatabase, query: SqlQuery, args: seq[string]) {.async.} =
+    ## Get all Rows from table, but do not return.
+    let workerIndex = await this.getIdleWorker()
+    discard await getAllRows(this, this.dbs[workerIndex], query, args)
+    this.setWorkerIdle(workerIndex.byte)
+
+  proc tryExec*(this: AsyncGatabase, query: SqlQuery, args: seq[string]): Future[bool] {.async.} =
+    ## Get all Rows from table, but do not return.
+    let workerIndex = await this.getIdleWorker()
+    result = len(await getAllRows(this, this.dbs[workerIndex], query, args)) > 0
+    this.setWorkerIdle(workerIndex.byte)
+
+
+func close*(this: var Gatabase) {.discardable, inline.} =
   ## Close the Database connection.
   when defined(sqlite):
     try: this.db.close() # Sometimes close fails, I dunno why.
@@ -748,3 +841,19 @@ when isMainModule and not defined(sqlite):
   echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
 
   database.close()
+
+  ## Async Postgres Gatabase Example.
+  when not defined(sqlite):
+    proc asyncExample() {.async.} =
+      var database = AsyncGatabase(user: "juan", password: "juan",
+                                   host: "localhost", dbname: "database",
+                                   port: Port(5432), timeout: 10, connectionCount: 2)
+      database.connect()
+      var futures = newSeq[Future[seq[Row]]]()
+      for i in 0..9:
+        futures.add database.getAllRows(sql"SELECT NOW(), pg_sleep(1);", @[])
+      for gatabaseFuture in futures:
+        echo(await gatabaseFuture)
+      database.close()
+
+    waitFor asyncExample()
