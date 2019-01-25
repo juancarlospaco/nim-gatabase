@@ -3,7 +3,7 @@
 ![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Postgres and SQLite high-level ORM for Nim")
 
 
-# API
+# Features
 
 - [Postgres >= 10](https://www.postgresql.org) and [SQLite](https://sqlite.org).
 - UTF-8 encoding.
@@ -28,8 +28,8 @@
 - Compile with `-d:sqlite` to enable SQLite and disable Postgres.
 - Compile with `-d:noFields` to disable Fields feature, for smaller binary (Kb), etc.
 - No code for Postgres when compiled for SQLite, no code for SQLite when compiled for Postgres.
-- Run `nim c -r gatabase.nim` for an Example.
 - Run `nim doc gatabase.nim` for more Documentation. `runnableExamples` provided.
+- Run `nim c -r gatabase.nim` for an Example.
 - **Pull Requests welcome!.**
 
 
