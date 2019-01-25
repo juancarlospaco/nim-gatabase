@@ -219,7 +219,8 @@ https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
 _(You need a working Postgres server up & running to use it, but not to install it)_
 
 
-#### Alternatives
+#### Extras
 
+- [Recommended tool for SQL, Qt5 WYSIWYG & Drag'n'Drop graphical query builder.](https://pgmodeler.io/screenshots)
 - [For a faster but lower-level ORM see ORMin.](https://github.com/Araq/blog/blob/master/ormin.rst#ormin)
 (DSL ORM, Raw SQL Performance, JSON WebSockets, Undocumented).
