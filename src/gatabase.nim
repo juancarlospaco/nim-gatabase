@@ -280,6 +280,17 @@ proc backupDatabase*(this: Gatabase, dbname, filename: string, dataOnly=false, i
   when not defined(release): echo cmd
   execCmdEx(cmd)
 
+template transaction*(this: Gatabase, body: untyped) =
+  ## Template that represents a generic SQL Transaction.
+  this.db.exec(sql"BEGIN;")
+  try:
+    body
+    this.db.exec(sql"COMMIT;")
+  except Exception as e:
+    this.db.exec(sql"ROLLBACK;")
+    when not defined(release): echo e.repr
+    raise e
+
 
 when not defined(sqlite):
   template document*(this: Gatabase, what, target, comment: string): untyped =
@@ -640,13 +651,17 @@ runnableExamples:
     echo database.backupDatabase("example.db", "backup0.sql")
     echo database.backupDatabase("example.db", "backup1.sql", dataOnly=true, inserts=true)
 
+    # Explicit SQL Transactions with auto Rollback when failed.
+    database.transaction:
+      echo database.db.getRow(sql"SELECT sqlite_version(); /* Inside a Transaction */")
+
     # Std Lib compatible
     echo database.db.getRow(sql"SELECT sqlite_version(); /* Still compatible with Std Lib */")
 
     database.close()
 
 
-when isMainModule:
+when isMainModule and not defined(sqlite):
   {.hint: "This is for Demo purposes only!.", passL: "-s", passC: "-flto" .}
   # Database init (change to your user and password).
   var database = Gatabase(user: "juan", password: "juan", host: "localhost",
@@ -724,6 +739,10 @@ when isMainModule:
   # Backups
   echo database.backupDatabase("database", "backup0.sql")
   echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true)
+
+  # Explicit SQL Transactions with auto Rollback when failed.
+  database.transaction:
+    echo database.db.getRow(sql"SELECT NOW(); /* Inside a Transaction */")
 
   # Std Lib compatible
   echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
