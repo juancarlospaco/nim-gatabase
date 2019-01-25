@@ -5,7 +5,7 @@
 
 # Features
 
-- [Postgres >= 10](https://www.postgresql.org) and [SQLite](https://sqlite.org).
+- [Postgres >= 10](https://www.postgresql.org) and [SQLite](https://sqlite.org), Async and Sync.
 - UTF-8 encoding.
 - [All SQL are `const`.](https://nim-lang.org/docs/manual.html#statements-and-expressions-const-section)
 - Database user must have a password.
