@@ -147,7 +147,7 @@ proc asyncExample() {.async.} =
                                host: "localhost", dbname: "database",
                                port: Port(5432), timeout: 10, connectionCount: 2)
   database.connect()
-  var futures = newSeq[Future[seq[Row]]]()
+  var futures = @[Future[seq[Row]]]
   for i in 0..9:
     futures.add database.getAllRows(sql"SELECT NOW(), pg_sleep(1);", @[])
   for gatabaseFuture in futures:
@@ -248,5 +248,6 @@ _(You need a working Postgres server up & running to use it, but not to install 
 #### Extras
 
 - [Recommended tool for SQL, Open source Qt5/C++ WYSIWYG & Drag'n'Drop graphical query builder.](https://pgmodeler.io/screenshots)
+- [Learn SQL once, so you dont have to learn several ORMs, is actually very easy to learn.](https://pgexercises.com/questions/basic/selectall.html)
 - [For a lower-level ORM see ORMin.](https://github.com/Araq/blog/blob/master/ormin.rst#ormin)
 (DSL ORM, JSON WebSockets, Undocumented).
