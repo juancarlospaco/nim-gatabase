@@ -186,8 +186,7 @@ COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 
 # Install
 
-- `nimble install gatabase@0.1.0`
-- **Latest Stable Version 0.1.0**
+- `nimble install gatabase`
 
 
 # Use
@@ -227,7 +226,7 @@ Yes.
 
 Smaller binaries, less imports, more manual hand-crafted queries, simpler, etc.
 
-- SQLite mode dont support a lot of stuff ?.
+- SQLite mode dont support some stuff ?.
 
 We try to keep as similar as possible, but SQLite is very limited.
 
