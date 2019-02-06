@@ -27,7 +27,7 @@ else:
   include db_postgres
 
 when defined(sqlite) and defined(noFields):
-  {.fatal:"'-d:noFields -d:sqlite' must Not be used togheter, not supported by SQLite.".}
+  {.warning:"'-d:noFields -d:sqlite' must Not be used togheter, not supported by SQLite.".}
 
 
 # SQL common to both Postgres and SQLite ######################################
@@ -181,7 +181,7 @@ type
     else:
       user*, password*, host*, dbname*, uri*, encoding*: string
       timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
-      port: Port     ## Database port, Port type, Postgres default is 5432.
+      port*: Port     ## Database port, Port type, Postgres default is 5432.
 
 when not defined(sqlite):
   type
@@ -189,7 +189,7 @@ when not defined(sqlite):
       user*, password*, host*, dbname*, uri*, encoding*: string
       timeout*: byte ## Database connection Timeout, byte type, 1 ~ 255.
       connectionCount*: byte  ## Database connection pool count of workers, byte type, 1 ~ 255.
-      port: Port     ## Database port, Port type, Postgres default is 5432.
+      port*: Port     ## Database port, Port type, Postgres default is 5432.
       dbs*: seq[DbConn] ## Database connection instances (Async).
       isBusy*: seq[bool]   ## Status (Async).
 
