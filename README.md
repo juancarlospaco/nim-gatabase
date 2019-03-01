@@ -1,3 +1,5 @@
+# DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE
+
 # Nim-Gatabase
 
 ![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Postgres and SQLite high-level ORM for Nim")
