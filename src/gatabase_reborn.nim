@@ -17,6 +17,10 @@ macro query*(output: ormOutput, inner: untyped): auto =
     case node.kind
     of nnkCommand:
       case $node[0]
+      of "--":
+        limitArgs(node, 2)
+        doAssert node[1].strVal.len > 0, "SQL Comment must not be empty string"
+        sqls.add when defined(release): n else: "/* " & $node[1] & " */" & n
       of "offset":
         limitArgs(node, 2)
         sqls.add if isQuestionChar(node[1]): "OFFSET ?" & n else: "OFFSET " & $node[1].intVal.Natural & n
@@ -72,10 +76,11 @@ macro query*(output: ormOutput, inner: untyped): auto =
 when isMainModule:
   ############################### Compile-Time ################################
   const foo = query sql:
-    select(foo, bar, baz)  # This can have comments here.
-    `from` things          ## This can have comments here.
+    select(foo, bar, baz)
+    `from` things  # This can have comments here.
     where("cost > 30", "foo > 9")
     offset 9
+    `--` "SQL Style Comments"
     limit 1
     order by desc
   echo foo.string
