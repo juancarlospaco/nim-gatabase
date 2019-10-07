@@ -28,9 +28,15 @@ macro query*(output: ormOutput, inner: untyped): auto =
         limitArgs(node, 2)
         sqls.add if isQuestionChar(node[1]): "LIMIT ?" & n else: "LIMIT " & $node[1].intVal.Positive & n
       of "order":
-        limitArgs(node, 2)
+        limitArgs2(node, 2)
         assert $node[1][0] == "by"
-        sqls.add if isQuestionChar(node[1][1]): "ORDER BY ?" & n else: "ORDER BY " & $node[1][1] & n
+        if isQuestionChar(node[1][1]):
+          sqls.add "ORDER BY ?" & n
+        elif node.len == 2: sqls.add "ORDER BY " & $node[1][1] & n
+        else:
+          var tmp: seq[string]
+          for item in node[1][1..^1]: tmp.add $item
+          sqls.add "ORDER BY " & tmp.join", " & n
       of "from":
         limitArgs(node, 2)
         sqls.add if isQuestionChar(node[1]): "FROM ?" & n else: "FROM " & $node[1] & n
@@ -43,9 +49,14 @@ macro query*(output: ormOutput, inner: untyped): auto =
         elif isAsteriskChar(node[1]): sqls.add "SELECT *" & n
         elif node.len == 2: sqls.add "SELECT " & $node[1] & n
         else:
-          var tmp: seq[string]
-          for item in node[1..^1]: tmp.add $item
-          sqls.add "SELECT " & tmp.join", " & n
+          if $node[1] == "distinct":  # SELECT DISTINCT
+            var tmp: seq[string]
+            for item in node[2..^1]: tmp.add $item
+            sqls.add "SELECT DISTINCT " & tmp.join", " & n
+          else:
+            var tmp: seq[string]
+            for item in node[1..^1]: tmp.add $item
+            sqls.add "SELECT " & tmp.join", " & n
       of "where":
         limitArgs2(node, 2)
         if isQuestionChar(node[1]): sqls.add "WHERE ?" & n
@@ -53,7 +64,7 @@ macro query*(output: ormOutput, inner: untyped): auto =
         else:
           var tmp: seq[string]
           for item in node[1..^1]: tmp.add $item
-          sqls.add "WHERE " & tmp.join", " & n
+          sqls.add "WHERE " & tmp.join" " & n
       else: doAssert false, inner.lineInfo
     else: doAssert false, inner.lineInfo
   sqls.add (when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n")
@@ -76,13 +87,13 @@ macro query*(output: ormOutput, inner: untyped): auto =
 when isMainModule:
   ############################### Compile-Time ################################
   const foo = query sql:
-    select(foo, bar, baz)
+    select(`distinct`, foo, bar, baz)
     `from` things                     # This can have comments here.
     where("cost > 30", "foo > 9")     ## This can have comments here.
     offset 9
     `--` "SQL Style Comments"
     limit 1
-    order by desc
+    order by something, desc
   echo foo.string
 
   const bar = query sql:
