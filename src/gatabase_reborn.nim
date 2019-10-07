@@ -50,8 +50,8 @@ macro query*(output: ormOutput, inner: untyped): auto =
           var tmp: seq[string]
           for item in node[1..^1]: tmp.add $item
           sqls.add "WHERE " & tmp.join", " & n
-      else: assert false, inner.lineInfo
-    else: assert false, inner.lineInfo
+      else: doAssert false, inner.lineInfo
+    else: doAssert false, inner.lineInfo
   sqls.add (when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n")
   when defined(dev): echo sqls
   sqls = case $output
