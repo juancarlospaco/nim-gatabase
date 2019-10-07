@@ -1,64 +1,55 @@
-import macros, db_common
+import macros, db_common, strutils
 
 type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
-  tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql
+  tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared
 
-template isQuestionChar(n: NimNode): bool = n.kind == nnkCharLit and n.intVal == 63
-template isAsteriskChar(n: NimNode): bool = n.kind == nnkCharLit and n.intVal == 42
+template isQuestionChar(v: NimNode): bool = v.kind == nnkCharLit and v.intVal == 63
+template isAsteriskChar(v: NimNode): bool = v.kind == nnkCharLit and v.intVal == 42
+template limitArgs(v: NimNode, l: Positive) = doAssert v.len == l, "Wrong SQL Syntax: " & v.lineInfo
+template limitArgs2(v: NimNode, l: Positive) = doAssert v.len >= l, "Wrong SQL Syntax: " & v.lineInfo
+
 
 macro query*(output: ormOutput, inner: untyped): auto =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL).
   const n = when defined(release): " " else: "\n"
-  const errWrongSql = "Gatabase Compile-Time ORM found 1 wrong SQL Syntax: "
   var sqls: string
   for node in inner:
     case node.kind
     of nnkCommand:
       case $node[0]
       of "offset":
-        assert node.len == 2, errWrongSql & "offset Positive " & node.lineInfo
-        if isQuestionChar(node[1]):
-          sqls.add "OFFSET ?" & n
-        else:
-          sqls.add "OFFSET " & $node[1].intVal.Positive & n
+        limitArgs(node, 2)
+        sqls.add if isQuestionChar(node[1]): "OFFSET ?" & n else: "OFFSET " & $node[1].intVal.Natural & n
       of "limit":
-        assert node.len == 2, errWrongSql & "limit Positive " & node.lineInfo
-        if isQuestionChar(node[1]):
-          sqls.add "LIMIT ?" & n
-        else:
-          sqls.add "LIMIT " & $node[1].intVal.Positive & n
+        limitArgs(node, 2)
+        sqls.add if isQuestionChar(node[1]): "LIMIT ?" & n else: "LIMIT " & $node[1].intVal.Positive & n
       of "order":
-        assert node.len == 2, errWrongSql & "order by " & node.lineInfo
-        assert $node[1][0] == "by", errWrongSql & "order by"
-        if isQuestionChar(node[1][1]):
-          sqls.add "ORDER BY ?" & n
-        else:
-          sqls.add "ORDER BY " & $node[1][1] & n
+        limitArgs(node, 2)
+        assert $node[1][0] == "by"
+        sqls.add if isQuestionChar(node[1][1]): "ORDER BY ?" & n else: "ORDER BY " & $node[1][1] & n
       of "from":
-        assert node.len == 2, errWrongSql & "`from` " & node.lineInfo
-        if isQuestionChar(node[1]):
-          sqls.add "FROM ?" & n
-        else:
-          sqls.add "FROM " & $node[1] & n
+        limitArgs(node, 2)
+        sqls.add if isQuestionChar(node[1]): "FROM ?" & n else: "FROM " & $node[1] & n
       else: assert false, inner.lineInfo
     of nnkCall:
       case $node[0]
       of "select":
-        assert node.len >= 2, errWrongSql & "select " & node.lineInfo
-        if isQuestionChar(node[1]):
-          sqls.add "SELECT ?" & n
-        elif isAsteriskChar(node[1]):
-          sqls.add "SELECT *" & n
+        limitArgs2(node, 2)
+        if isQuestionChar(node[1]): sqls.add "SELECT ?" & n
+        elif isAsteriskChar(node[1]): sqls.add "SELECT *" & n
+        elif node.len == 2: sqls.add "SELECT " & $node[1] & n
         else:
-          sqls.add "SELECT "
-          sqls.add $node[1]
-          sqls.add n
+          var tmp: seq[string]
+          for item in node[1..^1]: tmp.add $item
+          sqls.add "SELECT " & tmp.join", " & n
       of "where":
-        assert node.len >= 2, errWrongSql & "where " & node.lineInfo
-        if isQuestionChar(node[1]):
-          sqls.add "WHERE ?" & n
+        limitArgs2(node, 2)
+        if isQuestionChar(node[1]): sqls.add "WHERE ?" & n
+        elif node.len == 2: sqls.add "WHERE " & $node[1] & n
         else:
-          sqls.add "WHERE " & $node[1] & n
+          var tmp: seq[string]
+          for item in node[1..^1]: tmp.add $item
+          sqls.add "WHERE " & tmp.join", " & n
       else: assert false, inner.lineInfo
     else: assert false, inner.lineInfo
   sqls.add (when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n")
@@ -71,15 +62,18 @@ macro query*(output: ormOutput, inner: untyped): auto =
     of "tryInsertID": "tryInsertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of "insertID": "insertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of "execAffectedRows": "execAffectedRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    else: "sql(\"\"\"" & sqls & "\"\"\")"
+    of "sqlPrepared":  # SqlPrepared for Postgres, sql""" query """ for SQLite.
+      when defined(postgres): "prepare(db, \"\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
+      else: "sql(\"\"\"" & sqls & "\"\"\")"
+    else: "sql(\"\"\"" & sqls & "\"\"\")"  # sql is sql""" query """ for SQLite
   result = parseStmt sqls
 
 
 when isMainModule:
   ############################### Compile-Time ################################
   const foo = query sql:
-    select(foo, bar, baz)
-    `from`things
+    select(foo, bar, baz)  # This can have comments here.
+    `from` things          ## This can have comments here.
     where("cost > 30", "foo > 9")
     offset 9
     limit 1
@@ -87,8 +81,8 @@ when isMainModule:
   echo foo.string
 
   const bar = query sql:
-    select('*')
-    `from`'?'
+    select(oneElementAlone)
+    `from` '?'
     where("cost > 30", "foo > 9")
     offset '?'
     limit '?'
@@ -96,37 +90,37 @@ when isMainModule:
   echo bar.string
 
   const baz = query sql:
-    select('?')
-    `from`'?'
-    where("cost > 30", "foo > 9")
+    select('*')
+    `from` stuffs
+    where("answer = 42", "power > 9000", "doge = ?", "catto = -999")
     offset 9223372036854775807
     limit 9223372036854775807
     order by asc
   echo baz.string
 
 
-  ################################## Run-Time #################################
-  import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
-  let db = db_sqlite.open(":memory:", "", "", "")  # Just for demostrations.
-  const args = ["args", "and", "db", "must", "be", "on", "pre-existing", "variables"]
+  # ################################## Run-Time #################################
+  # import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
+  # let db = db_sqlite.open(":memory:", "", "", "")  # Just for demostrations.
+  # const args = ["args", "and", "db", "must", "be", "on", "pre-existing", "variables"]
 
-  let runTimeTryQuery = query tryExec:
-    select('?')
-    `from`'?'
-    where("cost > 30", "foo > 9")
-    offset 9223372036854775807
-    limit 9223372036854775807
-    order by asc
-  echo runTimeTryQuery
+  # let runTimeTryQuery = query tryExec:
+  #   select('?')
+  #   `from`'?'
+  #   where("cost > 30", "foo > 9")
+  #   offset 9223372036854775807
+  #   limit 9223372036854775807
+  #   order by asc
+  # echo runTimeTryQuery
 
-  let runTimeQuery = query tryInsertID:
-    select('?')
-    `from`'?'
-    where("cost > 30", "foo > 9")
-    offset 9223372036854775807
-    limit 9223372036854775807
-    order by asc
-  echo runTimeQuery
+  # let runTimeQuery = query tryInsertID:
+  #   select('?')
+  #   `from`'?'
+  #   where("cost > 30", "foo > 9")
+  #   offset 9223372036854775807
+  #   limit 9223372036854775807
+  #   order by asc
+  # echo runTimeQuery
 
 
   # Copied from https://github.com/Araq/ormin/blob/master/examples/forum/forum.nim
@@ -139,11 +133,11 @@ when isMainModule:
   #   limit 9
   #   offset 42
 
-  let thisThread = query sql:
-    select(id)
-    `from` thread
-    where("id == 42")
-  echo thisThread.string
+  # let thisThread = query sql:
+  #   select(id)
+  #   `from` thread
+  #   where("id == 42")
+  # echo thisThread.string
 
   # query:
   #   delete antibot
