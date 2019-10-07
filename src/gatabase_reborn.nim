@@ -77,8 +77,8 @@ when isMainModule:
   ############################### Compile-Time ################################
   const foo = query sql:
     select(foo, bar, baz)
-    `from` things  # This can have comments here.
-    where("cost > 30", "foo > 9")
+    `from` things                     # This can have comments here.
+    where("cost > 30", "foo > 9")     ## This can have comments here.
     offset 9
     `--` "SQL Style Comments"
     limit 1
