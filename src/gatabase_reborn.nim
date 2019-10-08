@@ -4,79 +4,86 @@ type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
   tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared
 
 template isQuestionChar(v: NimNode): bool = v.kind == nnkCharLit and v.intVal == 63
-template isAsteriskChar(v: NimNode): bool = v.kind == nnkCharLit and v.intVal == 42
-template limitArgs(v: NimNode, l: Positive) = doAssert v.len == l, "Wrong SQL Syntax: " & v.lineInfo
-template limitArgs2(v: NimNode, l: Positive) = doAssert v.len >= l, "Wrong SQL Syntax: " & v.lineInfo
+
+template sqlComment(comment: string): string =
+  assert comment.len > 0, "SQL Comment must not be empty string"
+  when defined(release): n
+  else:
+    if comment.countLines == 1: "-- " & $comment.strip & n
+    else: "/* " & $comment.strip & " */" & n
+
+template offsets(value: NimNode): string =
+  doAssert value.kind in {nnkIntLit, nnkCharLit}, "OFFSET must be Natural or '?'"
+  if isQuestionChar(value): "OFFSET ?" & n
+  else: "OFFSET " & $value.intVal.Natural & n
+
+template limits(value: NimNode): string =
+  doAssert value.kind in {nnkIntLit, nnkCharLit}, "LIMIT must be Positive or '?'"
+  if isQuestionChar(value): "LIMIT ?" & n
+  else: "LIMIT " & $value.intVal.Positive & n
+
+template froms(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "FROM must be string or '?'"
+  if isQuestionChar(value): "FROM ?" & n
+  else: "FROM " & $value.strVal & n
+
+template wheres(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE must be string or '?'"
+  if isQuestionChar(value): "WHERE ?" & n
+  else: "WHERE " & $value.strVal & n
+
+template orderbys(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "ORDER BY must be string or '?'"
+  if isQuestionChar(value): "ORDER BY ?" & n
+  else:
+    if value.strVal == "asc": "ORDER BY ASC" & n
+    elif value.strVal == "desc": "ORDER BY DESC" & n
+    else: "ORDER BY " & $value.strVal & n
+
+template selects(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT must be string or '?'"
+  if isQuestionChar(value): "SELECT ?" & n
+  elif value.kind == nnkCharLit: "SELECT *" & n
+  else: "SELECT " & $value.strVal & n
+
+template selects2(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT must be string or '?'"
+  if isQuestionChar(value): "SELECT DISTINCT ?" & n
+  elif value.kind == nnkCharLit: "SELECT DISTINCT *" & n
+  else: "SELECT DISTINCT " & $value.strVal & n
 
 
 macro query*(output: ormOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL).
   const n = when defined(release): " " else: "\n"
-  const stringLikeKind = {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}
   var sqls: string
   for node in inner:
-    case node.kind
-    of nnkCommand:
-      case $node[0]
-      of "--":
-        limitArgs(node, 2)
-        doAssert node[1].kind in stringLikeKind, "SQL Comment must be string"
-        doAssert node[1].strVal.len > 0, "SQL Comment must not be empty string"
-        sqls.add when defined(release): n else: "/* " & $node[1] & " */" & n
-      of "offset":
-        limitArgs(node, 2)
-        sqls.add if isQuestionChar(node[1]): "OFFSET ?" & n else: "OFFSET " & $node[1].intVal.Natural & n
-      of "limit":
-        limitArgs(node, 2)
-        sqls.add if isQuestionChar(node[1]): "LIMIT ?" & n else: "LIMIT " & $node[1].intVal.Positive & n
-      of "order":
-        limitArgs2(node, 2)
-        assert $node[1][0] == "by"
-        if isQuestionChar(node[1][1]):
-          sqls.add "ORDER BY ?" & n
-        elif node.len == 2: sqls.add "ORDER BY " & $node[1][1] & n
-        else:
-          var tmp: seq[string]
-          for item in node[1][1..^1]: tmp.add $item
-          sqls.add "ORDER BY " & tmp.join", " & n
-      of "from":
-        limitArgs(node, 2)
-        sqls.add if isQuestionChar(node[1]): "FROM ?" & n else: "FROM " & $node[1] & n
-      of "where":
-        limitArgs(node, 2)
-        doAssert node[1].kind in stringLikeKind, "WHERE argument must be string"
-        sqls.add if isQuestionChar(node[1]): "WHERE ?" & n else: "WHERE " & $node[1] & n
-      of "select":
-        limitArgs2(node, 2)
-        if isQuestionChar(node[1]): sqls.add "SELECT ?" & n
-        elif isAsteriskChar(node[1]): sqls.add "SELECT *" & n
-        elif node.len == 2: sqls.add "SELECT " & $node[1] & n
-        else:
-          if $node[1] == "distinct":  # SELECT DISTINCT
-            var tmp: seq[string]
-            for item in node[2..^1]: tmp.add $item
-            sqls.add "SELECT DISTINCT " & tmp.join", " & n
-          else:
-            var tmp: seq[string]
-            for item in node[1..^1]: tmp.add $item
-            sqls.add "SELECT " & tmp.join", " & n
-      else: assert false, inner.lineInfo
+    doAssert node.kind == nnkCommand, "Wrong Syntax on SQL DSL, must be nnkCommand"
+    case normalize($node[0])
+    of "--": sqls.add sqlComment($node[1])
+    of "offset": sqls.add offsets(node[1])
+    of "limit": sqls.add limits(node[1])
+    of "from": sqls.add froms(node[1])
+    of "where": sqls.add wheres(node[1])
+    of "order", "orderby": sqls.add orderbys(node[1])
+    of "select": sqls.add selects(node[1])
+    of "selectdistinct": sqls.add selects2(node[1])
     else: doAssert false, inner.lineInfo
-  assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty"
+  assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
-  sqls = case $output
-    of "tryExec": "tryExec(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of "getRow": "getRow(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of "getAllRows": "getAllRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of "getValue": "getValue(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of "tryInsertID": "tryInsertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of "insertID": "insertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of "execAffectedRows": "execAffectedRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of "sqlPrepared":  # SqlPrepared for Postgres, sql""" query """ for SQLite.
-      when defined(postgres): "prepare(db, \"\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
+  sqls = case parseEnum[ormOutput]($output)
+    of tryExec: "tryExec(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of getRow: "getRow(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of getAllRows: "getAllRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of getValue: "getValue(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of tryInsertID: "tryInsertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of insertID: "insertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of execAffectedRows: "execAffectedRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of sqlPrepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
+      when defined(postgres): "prepare(db, \"" & inner.lineInfo.normalize & "\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
       else: "sql(\"\"\"" & sqls & "\"\"\")"
-    else: "sql(\"\"\"" & sqls & "\"\"\")"  # sql is sql""" query """ for SQLite
+    else: "sql(\"\"\"" & sqls & "\"\"\")" # sql is sql""" query """ for SQLite
   # when defined(dev): echo sqls
   result = parseStmt sqls
 
@@ -86,31 +93,31 @@ when isMainModule:
   # SQL Queries are Minified for Release builds, Pretty-Printed for Debug builds
   # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
   const foo = query sql:
-    select `distinct`, foo, bar, baz
-    `from` things                     # This can have comments here.
-    where "cost > 30 or foo > 9"      ## This can have comments here.
+    select "foo, bar, baz"
+    `from`"things"               # This can have comments here.
+    where "cost > 30 or foo > 9" ## This can have comments here.
     offset 9
-    `--` "SQL Style Comments"  # SQL Comments are stripped for Release builds.
+    `--`"SQL Style Comments"     # SQL Comments are stripped for Release builds.
     limit 1
-    order by something, desc
+    orderby "something"
   echo foo.string
 
-  let bar = query sql:  # Replace sql here with 1 of tryExec,getRow,getValue,etc
-    select oneElementAlone
-    `from` '?'
-    where "cost > 30 and foo > 9"
-    offset '?'  # '?' produces ? on output to be replaced by values from args.
-    limit '?'   # Other than '?' and '*' might produce compile error.
-    order by '?'
+  let bar = query sql: # Replace sql here with 1 of tryExec,getRow,getValue,etc
+    selectdistinct "oneElementAlone"
+    `from`'?'
+    where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
+    offset '?'    # '?' produces ? on output to be replaced by values from args.
+    limit '?'
+    orderby '?'
   echo bar.string
 
-  var baz = query sql:  # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
-    select '*'  # '*' produces * on output to allow SELECT * FROM table
-    `from` stuffs
+  var baz = query sql: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
+    select '*'         # '*' produces * on output to allow SELECT * FROM table
+    `from`"stuffs"
     where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
     offset 2147483647
     limit 2147483647
-    order by asc
+    orderby "asc"
   echo baz.string
 
   # ################################## Run-Time #################################
