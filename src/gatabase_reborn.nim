@@ -82,6 +82,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       when defined(postgres): "prepare(db, \"\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
       else: "sql(\"\"\"" & sqls & "\"\"\")"
     else: "sql(\"\"\"" & sqls & "\"\"\")"  # sql is sql""" query """ for SQLite
+  # when defined(dev): echo sqls
   result = parseStmt sqls
 
 
@@ -111,7 +112,7 @@ when isMainModule:
   const baz = query sql:
     select('*')
     `from` stuffs
-    where("answer = 42", "power > 9000", "doge = ?", "catto = -999")
+    where("answer = 42", "power > 9000", "doge = ?", "catto = 666")
     offset 2147483647
     limit 2147483647
     order by asc
