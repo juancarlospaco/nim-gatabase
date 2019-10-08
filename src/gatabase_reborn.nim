@@ -9,7 +9,7 @@ template limitArgs(v: NimNode, l: Positive) = doAssert v.len == l, "Wrong SQL Sy
 template limitArgs2(v: NimNode, l: Positive) = doAssert v.len >= l, "Wrong SQL Syntax: " & v.lineInfo
 
 
-macro query*(output: ormOutput, inner: untyped): auto =
+macro query*(output: ormOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL).
   const n = when defined(release): " " else: "\n"
   var sqls: string
