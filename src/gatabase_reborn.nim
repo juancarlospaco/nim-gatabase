@@ -1,6 +1,6 @@
 import macros, db_common, strutils
 
-type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
+type ormOutput* = enum  ## All outputs of ORM, some compile-time, some run-time.
   tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared
 
 template isQuestionChar(v: NimNode): bool = v.kind == nnkCharLit and v.intVal == 63
@@ -56,18 +56,41 @@ template selects2(value: NimNode): string =
 macro query*(output: ormOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL).
   const n = when defined(release): " " else: "\n"
+  const err0 = "Wrong Syntax, Nested Queries not supported, repeated call found"
+  var offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed: bool
   var sqls: string
   for node in inner:
-    doAssert node.kind == nnkCommand, "Wrong Syntax on SQL DSL, must be nnkCommand"
+    doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
     case normalize($node[0])
     of "--": sqls.add sqlComment($node[1])
-    of "offset": sqls.add offsets(node[1])
-    of "limit": sqls.add limits(node[1])
-    of "from": sqls.add froms(node[1])
-    of "where": sqls.add wheres(node[1])
-    of "order", "orderby": sqls.add orderbys(node[1])
-    of "select": sqls.add selects(node[1])
-    of "selectdistinct": sqls.add selects2(node[1])
+    of "offset":
+      doAssert not offsetUsed, err0
+      sqls.add offsets(node[1])
+      offsetUsed = true
+    of "limit":
+      doAssert not limitUsed, err0
+      sqls.add limits(node[1])
+      limitUsed = true
+    of "from":
+      doAssert not fromUsed, err0
+      sqls.add froms(node[1])
+      fromUsed = true
+    of "where":
+      doAssert not whereUsed, err0
+      sqls.add wheres(node[1])
+      whereUsed = true
+    of "order", "orderby":
+      doAssert not orderUsed, err0
+      sqls.add orderbys(node[1])
+      orderUsed = true
+    of "select":
+      doAssert not selectUsed, err0
+      sqls.add selects(node[1])
+      selectUsed = true
+    of "selectdistinct":
+      doAssert not selectUsed, err0
+      sqls.add selects2(node[1])
+      selectUsed = true
     else: doAssert false, inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n"
@@ -94,31 +117,28 @@ when isMainModule:
   # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
   const foo = query sql:
     select "foo, bar, baz"
-    `from`"things"               # This can have comments here.
+    `from` "things"               # This can have comments here.
     where "cost > 30 or foo > 9" ## This can have comments here.
     offset 9
-    `--`"SQL Style Comments"     # SQL Comments are stripped for Release builds.
+    `--` "SQL Style Comments"     # SQL Comments are stripped for Release builds.
     limit 1
     orderby "something"
-  echo foo.string
 
   let bar = query sql: # Replace sql here with 1 of tryExec,getRow,getValue,etc
     selectdistinct "oneElementAlone"
-    `from`'?'
+    `from` '?'
     where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
     offset '?'    # '?' produces ? on output to be replaced by values from args.
     limit '?'
     orderby '?'
-  echo bar.string
 
   var baz = query sql: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
     select '*'         # '*' produces * on output to allow SELECT * FROM table
-    `from`"stuffs"
+    `from` "stuffs"
     where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
     offset 2147483647
     limit 2147483647
     orderby "asc"
-  echo baz.string
 
   # ################################## Run-Time #################################
   # import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
