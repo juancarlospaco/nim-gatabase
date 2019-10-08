@@ -87,12 +87,14 @@ macro query*(output: ormOutput, inner: untyped): untyped =
 
 when isMainModule:
   ############################### Compile-Time ################################
+  # SQL Queries are Minified for Release builds, Pretty-Printed for Debug builds
+  # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
   const foo = query sql:
     select(`distinct`, foo, bar, baz)
     `from` things                     # This can have comments here.
     where("cost > 30", "foo > 9")     ## This can have comments here.
     offset 9
-    `--` "SQL Style Comments"  # This is converted to SQL Comments, but stripped for Release builds.
+    `--` "SQL Style Comments"  # SQL Comments are stripped for Release builds.
     limit 1
     order by something, desc
   echo foo.string
@@ -110,8 +112,8 @@ when isMainModule:
     select('*')
     `from` stuffs
     where("answer = 42", "power > 9000", "doge = ?", "catto = -999")
-    offset 9223372036854775800
-    limit 9223372036854775800
+    offset 2147483647
+    limit 2147483647
     order by asc
   echo baz.string
 
