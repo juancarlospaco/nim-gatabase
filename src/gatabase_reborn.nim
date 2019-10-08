@@ -92,7 +92,7 @@ when isMainModule:
     `from` things                     # This can have comments here.
     where("cost > 30", "foo > 9")     ## This can have comments here.
     offset 9
-    `--` "SQL Style Comments"
+    `--` "SQL Style Comments"  # This is converted to SQL Comments, but stripped for Release builds.
     limit 1
     order by something, desc
   echo foo.string
