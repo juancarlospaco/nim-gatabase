@@ -12,6 +12,7 @@ template limitArgs2(v: NimNode, l: Positive) = doAssert v.len >= l, "Wrong SQL S
 macro query*(output: ormOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL).
   const n = when defined(release): " " else: "\n"
+  const stringLikeKind = {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}
   var sqls: string
   for node in inner:
     case node.kind
@@ -19,6 +20,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       case $node[0]
       of "--":
         limitArgs(node, 2)
+        doAssert node[1].kind in stringLikeKind, "SQL Comment must be string"
         doAssert node[1].strVal.len > 0, "SQL Comment must not be empty string"
         sqls.add when defined(release): n else: "/* " & $node[1] & " */" & n
       of "offset":
@@ -40,9 +42,10 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       of "from":
         limitArgs(node, 2)
         sqls.add if isQuestionChar(node[1]): "FROM ?" & n else: "FROM " & $node[1] & n
-      else: assert false, inner.lineInfo
-    of nnkCall:
-      case $node[0]
+      of "where":
+        limitArgs(node, 2)
+        doAssert node[1].kind in stringLikeKind, "WHERE argument must be string"
+        sqls.add if isQuestionChar(node[1]): "WHERE ?" & n else: "WHERE " & $node[1] & n
       of "select":
         limitArgs2(node, 2)
         if isQuestionChar(node[1]): sqls.add "SELECT ?" & n
@@ -57,15 +60,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
             var tmp: seq[string]
             for item in node[1..^1]: tmp.add $item
             sqls.add "SELECT " & tmp.join", " & n
-      of "where":
-        limitArgs2(node, 2)
-        if isQuestionChar(node[1]): sqls.add "WHERE ?" & n
-        elif node.len == 2: sqls.add "WHERE " & $node[1] & n
-        else:
-          var tmp: seq[string]
-          for item in node[1..^1]: tmp.add $item
-          sqls.add "WHERE " & tmp.join" " & n
-      else: doAssert false, inner.lineInfo
+      else: assert false, inner.lineInfo
     else: doAssert false, inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty"
   sqls.add when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n"
@@ -91,33 +86,32 @@ when isMainModule:
   # SQL Queries are Minified for Release builds, Pretty-Printed for Debug builds
   # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
   const foo = query sql:
-    select(`distinct`, foo, bar, baz)
+    select `distinct`, foo, bar, baz
     `from` things                     # This can have comments here.
-    where("cost > 30", "foo > 9")     ## This can have comments here.
+    where "cost > 30 or foo > 9"      ## This can have comments here.
     offset 9
     `--` "SQL Style Comments"  # SQL Comments are stripped for Release builds.
     limit 1
     order by something, desc
   echo foo.string
 
-  const bar = query sql:
-    select(oneElementAlone)
+  let bar = query sql:  # Replace sql here with 1 of tryExec,getRow,getValue,etc
+    select oneElementAlone
     `from` '?'
-    where("cost > 30", "foo > 9")
-    offset '?'
-    limit '?'
+    where "cost > 30 and foo > 9"
+    offset '?'  # '?' produces ? on output to be replaced by values from args.
+    limit '?'   # Other than '?' and '*' might produce compile error.
     order by '?'
   echo bar.string
 
-  const baz = query sql:
-    select('*')
+  var baz = query sql:  # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
+    select '*'  # '*' produces * on output to allow SELECT * FROM table
     `from` stuffs
-    where("answer = 42", "power > 9000", "doge = ?", "catto = 666")
+    where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
     offset 2147483647
     limit 2147483647
     order by asc
   echo baz.string
-
 
   # ################################## Run-Time #################################
   # import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
