@@ -110,8 +110,8 @@ when isMainModule:
     select('*')
     `from` stuffs
     where("answer = 42", "power > 9000", "doge = ?", "catto = -999")
-    offset 9223372036854775807
-    limit 9223372036854775807
+    offset 9223372036854775800
+    limit 9223372036854775800
     order by asc
   echo baz.string
 
