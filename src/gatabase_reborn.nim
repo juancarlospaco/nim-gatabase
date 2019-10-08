@@ -67,6 +67,7 @@ macro query*(output: ormOutput, inner: untyped): auto =
           sqls.add "WHERE " & tmp.join" " & n
       else: doAssert false, inner.lineInfo
     else: doAssert false, inner.lineInfo
+  doAssert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty"
   sqls.add (when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n")
   when defined(dev): echo sqls
   sqls = case $output
