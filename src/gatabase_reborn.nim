@@ -1,7 +1,8 @@
 import macros, db_common, strutils
 
-type ormOutput* = enum  ## All outputs of ORM, some compile-time, some run-time.
-  tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared
+type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
+  tryExec, getRow, getAllRows, getValue, tryInsertID,
+  insertID, execAffectedRows, sql, sqlPrepared, anonFunc
 
 template isQuestionChar(v: NimNode): bool = v.kind == nnkCharLit and v.intVal == 63
 
@@ -103,6 +104,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of tryInsertID: "tryInsertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of insertID: "insertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of execAffectedRows: "execAffectedRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
+    of anonFunc: "(func (): SqlQuery = sql(\"\"\"" & sqls & "\"\"\"))"
     of sqlPrepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
       when defined(postgres): "prepare(db, \"" & inner.lineInfo.normalize & "\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
       else: "sql(\"\"\"" & sqls & "\"\"\")"
@@ -128,12 +130,12 @@ when isMainModule:
     selectdistinct "oneElementAlone"
     `from` '?'
     where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
-    offset '?'    # '?' produces ? on output to be replaced by values from args.
+    offset '?'         # '?' produces ? on output to be replaced by values from args.
     limit '?'
     orderby '?'
 
-  var baz = query sql: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
-    select '*'         # '*' produces * on output to allow SELECT * FROM table
+  var baz = query anonFunc: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
+    select '*'              # '*' produces * on output to allow SELECT * FROM table
     `from` "stuffs"
     where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
     offset 2147483647
