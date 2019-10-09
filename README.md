@@ -1,8 +1,8 @@
-# DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE,DEPRECATED, DONT USE
+# Gatabase
 
-# Nim-Gatabase
+![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/gatabase.png "Compile-Time ORM for Nim")
 
-![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Postgres and SQLite high-level ORM for Nim")
+![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Compile-Time ORM for Nim")
 
 
 # Features
@@ -35,155 +35,331 @@
 - **Pull Requests welcome!.**
 
 
-# Fields
-
-- `StringField`
-- `Int8Field`
-- `Int16Field`
-- `Int32Field`
-- `IntField`
-- `Float32Field`
-- `FloatField`
-- `BoolField`
-- `PDocumentField`
-- `ColorField`
-- `HashField`
-- `HttpCodeField`
-- `PegField`
-
-
 # Use
 
-```nim
-import gatabase
-
-# Database init (change to your user and password). For SQLite compile with -d:sqlite
-var database = Gatabase(user: "MyUserHere", password: "Passw0rd!", host: "localhost",
-                        dbname: "database", port: 5432, timeout: 42)
-database.connect()
-
-# Engine
-echo gatabaseVersion
-echo gatabaseIsPostgres
-echo gatabaseIsFields
-echo database.uri
-echo database.enableHstore()  # Postgres HSTORE Extension.
-echo database.getVersion()
-echo database.getEnv()
-echo database.getPid()
-echo database.listAllUsers()
-echo database.listAllDatabases()
-echo database.listAllSchemas()
-echo database.listAllTables()
-echo database.getCurrentUser()
-echo database.getCurrentDatabase()
-echo database.getCurrentSchema()
-echo database.getLoggedInUsers()
-echo database.forceCommit()
-echo database.forceRollback()
-echo database.forceReloadConfig()
-echo database.isUserConnected(username = "juan")
-echo database.getDatabaseSize(databasename = "database")  
-echo database.getTableSize(tablename = "mytable")
-
-# Database
-echo database.createDatabase("testing", "This is a Documentation Comment")
-echo database.grantSelect("testing")
-echo database.grantAll("testing")
-echo database.getDatabaseSize()
-echo database.renameDatabase("testing", "testing2")
-echo database.getTop(3)
-echo database.dropDatabase("testing2")
-
-# User
-echo database.createUser("pepe", "PaSsW0rD!", "This is a Documentation Comment")
-echo database.changePasswordUser("pepe", "p@ssw0rd")
-echo database.renameUser("pepe", "BongoCat")
-echo database.dropUser("BongoCat")
-
-# Schema
-echo database.createSchema("memes", "This is a Documentation Comment", autocommit=false)
-echo database.renameSchema("memes", "foo")
-echo database.dropSchema("foo")
-
-when not defined(noFields): # Compile with `-d:noFields` to disable Fields feature.
-  let   # Fields
-    a = newInt8Field(int8.high, "name0", "Help here", "Error here")
-    b = newInt16Field(int16.high, "name1", "Help here", "Error here")
-    c = newInt32Field(int32.high, "name2", "Help here", "Error here")
-    d = newIntField(int.high, "name3", "Help here", "Error here")
-    e = newFloat32Field(42.0.float32, "name4", "Help here", "Error here")
-    f = newFloatField(666.0.float64, "name5", "Help here", "Error here")
-    g = newBoolField(true, "name6", "Help here", "Error here")
-    # fails = newInt8Field(int64.high, "name9", "Input an int8", "Integer overflow error")
-  assert a is Field
-  assert b is Field
-
-  # Tables
-  echo database.createTable("table_name", fields = @[a, b, c, d, e, f, g],
-                            "This is a Documentation Comment")
-  echo database.getAllRows("table_name", limit=255, offset=2, `distinct`=true)
-  echo database.searchColumns("table_name", "name0", $int8.high, 255)
-  echo database.changeAutoVacuumTable("table_name", true)
-  echo database.getTableSize(tablename = "table_name")
-  echo database.renameTable("table_name", "cats")
-  echo database.dropTable("cats")
-
-# Table Helpers (ready-made "Users" table from 3 templates to choose)
-echo database.createTableUsers(tablename="usuarios", kind="medium")
-echo database.dropTable("usuarios")
-
-# Backups
-echo database.backupDatabase("database", "backup0.sql").output
-echo database.backupDatabase("database", "backup1.sql", dataOnly=true, inserts=true).output
-
-# db_postgres compatible (Raw Queries)
-echo database.db.getRow(sql"SELECT current_database(); /* Still compatible with Std Lib */")
-
-database.close()
-
-
-## Async Postgres Gatabase Example.
-proc asyncExample() {.async.} =
-  var database = AsyncGatabase(user: "juan", password: "juan",
-                               host: "localhost", dbname: "database",
-                               port: Port(5432), timeout: 10, connectionCount: 2)
-  database.connect()
-  var futures = @[Future[seq[Row]]]
-  for i in 0..9:
-    futures.add database.getAllRows(sql"SELECT NOW(), pg_sleep(1);", @[])
-  for gatabaseFuture in futures:
-    echo(await gatabaseFuture)
-  database.close()
-
-waitFor asyncExample()
-
-
-# Check the Docs for more...
-```
-
-**Creating a Table with Fields:**
+- Gatabase is designed as a simplified [Strong Static Typed](https://en.wikipedia.org/wiki/Type_system#Static_type_checking) [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language) [Sugar](https://en.wikipedia.org/wiki/Syntactic_sugar).
+- Gatabase syntax is almost the same as SQL syntax, no new ORM to learn ([learn SQL](https://pgexercises.com/questions/basic/selectall.html)).
+- SQL is Minified when build for Release, Pretty-Printed when build for Debug.
 
 ```nim
-echo database.createTable(tablename="table_name", fields = @[a, b, c, d, e, f, g], comment="This is a Documentation Comment", autocommit=true)
+let variable = query sql:
+  select  '*'
+  `from`  "clients"
+  groupby "country"
+  orderby "desc"
 ```
 
-**Produces the SQL:**
+### Comments
 
 ```sql
-CREATE TABLE IF NOT EXISTS table_name(
-  id SERIAL PRIMARY KEY,
-  name0 smallint DEFAULT 127,
-  name1 smallint DEFAULT 32767,
-  name2 integer DEFAULT 2147483647,
-  name3 bigint DEFAULT 9223372036854775807,
-  name4 decimal DEFAULT 42.0,
-  name5 decimal DEFAULT 666.0,
-  name6 boolean DEFAULT true
-); /* This is a Documentation Comment */
-
-COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
+-- SQL Comments are supported, but stripped when build for Release. This is SQL.
 ```
+
+```nim
+`--` "SQL Comments are supported, but stripped when build for Release. This is Nim."
+```
+
+### Wildcards
+
+- Nim `'*'` generates SQL `*`. Nim `'?'` generates `?` to be replaced by values. No other `char` is needed.
+
+### SELECT & FROM
+
+```sql
+SELECT *
+FROM sometable
+```
+
+```nim
+select '*'
+`from` "sometable"
+```
+
+---
+
+```sql
+SELECT somecolumn
+FROM sometable
+```
+
+```nim
+select "somecolumn"
+`from` "sometable"
+```
+
+---
+
+```sql
+SELECT DISTINCT somecolumn
+```
+
+```nim
+selectdistinct "somecolumn"
+```
+
+### MIN & MAX
+
+```sql
+SELECT MIN(somecolumn)
+```
+
+```nim
+selectmin "somecolumn"
+```
+
+---
+
+```sql
+SELECT MAX(somecolumn)
+```
+
+```nim
+selectmax "somecolumn"
+```
+
+### COUNT & AVG & SUM
+
+```sql
+SELECT COUNT(somecolumn)
+```
+
+```nim
+selectcount "somecolumn"
+```
+
+---
+
+```sql
+SELECT AVG(somecolumn)
+```
+
+```nim
+selectavg "somecolumn"
+```
+
+---
+
+```sql
+SELECT SUM(somecolumn)
+```
+
+```nim
+selectsum "somecolumn"
+```
+
+### TOP
+
+```sql
+SELECT TOP 5 *
+```
+
+```nim
+selecttop "5"
+```
+
+### WHERE
+
+```sql
+SELECT somecolumn
+FROM sometable
+WHERE power > 9000
+```
+
+```nim
+select "somecolumn"
+`from` "sometable"
+where "power > 9000"
+```
+
+### LIMIT & OFFSET
+
+```sql
+OFFSET 9
+LIMIT 42
+```
+
+```nim
+offset 9
+limit 42
+```
+
+### INSERT
+
+```sql
+INSERT INTO tablename
+```
+
+```nim
+insertinto "tablename"
+```
+
+### DELETE
+
+```sql
+DELETE debts
+```
+
+```nim
+delete "debts"
+```
+
+### ORDER BY
+
+```sql
+ORDER BY ASC
+```
+
+```nim
+orderby "asc"
+```
+
+---
+
+```sql
+ORDER BY DESC
+```
+
+```nim
+orderby "desc"
+```
+
+### UPDATE
+
+```sql
+UPDATE tablename
+SET key0 = value0, key1 = value1
+```
+
+```nim
+update "tablename"
+`set` {"key0": "value0", "key1": "value1"}
+```
+
+### CASE
+
+```sql
+CASE
+  WHEN foo > 10 THEN 9
+  WHEN bar < 42 THEN 5
+  ELSE 0
+END
+```
+
+```nim
+`case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
+```
+
+### UNION
+
+```sql
+UNION ALL
+```
+
+```nim
+union true
+```
+
+---
+
+```sql
+UNION
+```
+
+```nim
+union false
+```
+
+### GROUP BY
+
+```sql
+GROUP BY country
+```
+
+```nim
+groupby "country"
+```
+
+### JOIN
+
+```sql
+FULL JOIN tablename
+```
+
+```nim
+fulljoin "tablename"
+```
+
+---
+
+```sql
+INNER JOIN tablename
+```
+
+```nim
+innerjoin "tablename"
+```
+
+---
+
+```sql
+LEFT JOIN tablename
+```
+
+```nim
+leftjoin "tablename"
+```
+
+---
+
+```sql
+RIGHT JOIN tablename
+```
+
+```nim
+rightjoin "tablename"
+```
+
+### HAVING
+
+```sql
+HAVING beer > 5
+```
+
+```nim
+having "beer > 5"
+```
+
+### IS NULL
+
+```sql
+IS NULL
+```
+
+```nim
+isnull true
+```
+
+---
+
+```sql
+IS NOT NULL
+```
+
+```nim
+isnull false
+```
+
+
+
+
+
+# Output
+
+ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates different output code. Examples:
+
+- `query anonFunc:` generates 1 anonimous inlined function `(func (): SqlQuery = ... )`.
+- `query sqlPrepared:` generates 1 Postgres Stored Procedure of `SqlPrepared` type.
+- `query tryExec:` generates code for 1 `tryExec()` function, etc etc.
 
 
 # Install
@@ -191,13 +367,9 @@ COMMENT ON TABLE table_name IS 'This is a Documentation Comment';
 - `nimble install gatabase`
 
 
-# Use
+# Requisites
 
-Lets say you have an example file that uses Gatabase ORM, how to Compile it?.
-
-- For Postgres `nim c yourfile.nim`.
-- For SQLite `nim c -d:sqlite yourfile.nim`.
-- For Postgres without Fields feature `nim c -d:noFields yourfile.nim`.
+- **None.** _(You need a working Postgres server up & running to use it, but not to install it)_
 
 
 # FAQ
@@ -224,31 +396,12 @@ Yes.
 
 Yes.
 
-- Whats `-d:noFields` for ?.
-
-Smaller binaries, less imports, more manual hand-crafted queries, simpler, etc.
-
 - SQLite mode dont support some stuff ?.
 
 We try to keep as similar as possible, but SQLite is very limited.
 
-- I dont want to pass the Table name every time I use a function ?.
-
-https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement
-
 </details>
 
 
-# Requisites
-
-- None.
-
-_(You need a working Postgres server up & running to use it, but not to install it)_
-
-
-#### Extras
-
 - [Recommended tool for SQL, Open source Qt5/C++ WYSIWYG & Drag'n'Drop graphical query builder.](https://pgmodeler.io/screenshots)
 - [Learn SQL once, so you dont have to learn several ORMs, is actually very easy to learn.](https://pgexercises.com/questions/basic/selectall.html)
-- [For a lower-level ORM see ORMin.](https://github.com/Araq/blog/blob/master/ormin.rst#ormin)
-(DSL ORM, JSON WebSockets, Undocumented).
