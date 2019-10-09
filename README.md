@@ -331,6 +331,12 @@ IS NOT NULL
 isnull false
 ```
 
+# Output
+
+ORM Output is choosed from `ormOutput` of `enum` type. Examples:
+
+- `query anonFunc:` generates 1 anonimous function `(func (): SqlQuery = ... )`
+- `query sqlPrepared:` generates 1 Postgres Stored Procedure of `SqlPrepared` type.
 
 
 # Install
