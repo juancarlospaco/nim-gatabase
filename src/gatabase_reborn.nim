@@ -1,5 +1,5 @@
 ## Gatabase: Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
-import macros, db_common, strutils
+import macros, db_common, strutils, tables
 
 type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
   tryExec, getRow, getAllRows, getValue, tryInsertID,
@@ -33,6 +33,21 @@ template wheres(value: NimNode): string =
   doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE must be string or '?'"
   if isQuestionChar(value): "WHERE ?" & n
   else: "WHERE " & $value.strVal & n
+
+template whereNots(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE NOT must be string or '?'"
+  if isQuestionChar(value): "WHERE NOT ?" & n
+  else: "WHERE NOT " & $value.strVal & n
+
+template whereExists(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE EXISTS must be string or '?'"
+  if isQuestionChar(value): "WHERE EXISTS ?" & n
+  else: "WHERE EXISTS " & $value.strVal & n
+
+template whereNotExists(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE NOT EXISTS must be string or '?'"
+  if isQuestionChar(value): "WHERE NOT EXISTS ?" & n
+  else: "WHERE NOT EXISTS " & $value.strVal & n
 
 template orderbys(value: NimNode): string =
   doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "ORDER BY must be string or '?'"
@@ -163,6 +178,9 @@ template updates(value: NimNode): string =
   if isQuestionChar(value): "UPDATE ?" & n
   else: "UPDATE " & $value.strVal & n   # TODO: SET
 
+template unions(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit}, "UNION argument must be string"
+  if $value == "all": "UNION ALL" & n else: "UNION" & n
 
 
 macro query*(output: ormOutput, inner: untyped): untyped =
@@ -193,6 +211,18 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of "where":
       doAssert not whereUsed, err0
       sqls.add wheres(node[1])
+      whereUsed = true
+    of "wherenot":
+      doAssert not whereUsed, err0
+      sqls.add whereNots(node[1])
+      whereUsed = true
+    of "whereexists":
+      doAssert not whereUsed, err0
+      sqls.add whereExists(node[1])
+      whereUsed = true
+    of "wherenotexists":
+      doAssert not whereUsed, err0
+      sqls.add whereNotExists(node[1])
       whereUsed = true
     of "order", "orderby":
       doAssert not orderUsed, err0
@@ -290,9 +320,24 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       doAssert not updateUsed, err0
       sqls.add updates(node[1])
       updateUsed = true
+    of "union":
+      fromUsed = false  # Union can "Reset" select, from, where to be re-used
+      whereUsed = false
+      selectUsed = false
+      likeUsed = false
+      betweenUsed = false
+      sqls.add unions(node[1])
+    of "case":
+      doAssert node[1].kind in {nnkTableConstr}, "CASE argument must be Table[string, string]"
+      doAssert node[1].len > 0, "CASE argument must be 1 Non Empty Table[string, string]"
+      sqls.add "(CASE" & n
+      for tableValue in node[1]:
+        if tableValue[0].strVal == "default":
+          sqls.add "  ELSE " & tableValue[1].strVal & n
+        else:
+          sqls.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
+      sqls.add "END)" & n
     else: doAssert false, inner.lineInfo
-
-
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
@@ -354,6 +399,8 @@ when isMainModule:
     insert "dffd"
     isnull true
     update "sdsad"
+    union "all"
+    `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
     #like "sdsd"
 
   # ################################## Run-Time #################################
