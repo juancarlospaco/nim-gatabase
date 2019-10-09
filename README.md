@@ -106,17 +106,43 @@ where "power > 9000"
 ### ORDER BY
 
 ```sql
-SELECT somecolumn
-FROM sometable
-WHERE power > 9000
 ORDER BY ASC
 ```
 
 ```nim
-select "somecolumn"
-`from` "sometable"
-where "power > 9000"
 orderby "asc"
+```
+
+---
+
+```sql
+ORDER BY DESC
+```
+
+```nim
+orderby "desc"
+```
+
+### INSERT
+
+```sql
+INSERT INTO tablename
+```
+
+```nim
+insert "tablename"
+```
+
+### UPDATE
+
+```sql
+UPDATE tablename
+SET key0 = value0, key1 = value1
+```
+
+```nim
+update "tablename"
+`set` {"key0": "value0", "key1": "value1"}
 ```
 
 
