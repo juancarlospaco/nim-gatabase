@@ -154,13 +154,20 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of "case":
       doAssert node[1].kind in {nnkTableConstr}, "CASE argument must be Table"
       doAssert node[1].len > 0, "CASE argument must be 1 Non Empty Table"
-      sqls.add static("(CASE" & n)
+      sqls.add static(n & "(CASE" & n)
       for tableValue in node[1]:
         if tableValue[0].strVal == "default":
           sqls.add "  ELSE " & tableValue[1].strVal & n
         else:
           sqls.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
       sqls.add static("END)" & n)
+    of "set":
+      doAssert node[1].kind in {nnkTableConstr}, "SET argument must be Table"
+      doAssert node[1].len > 0, "SET argument must be 1 Non Empty Table"
+      var temp: seq[string]
+      for tableValue in node[1]:
+        temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
+      sqls.add "SET " & temp.join", "
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
@@ -229,6 +236,7 @@ when isMainModule:
     isnull true
     update "table"
     union true
+    `set`  {"key0": "true", "key1": "false", "key2": "NULL", "key3": "NULL"}
     `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
     `--`"Query is Minified for Release builds, Pretty-Printed for Debug builds"
 
