@@ -9,7 +9,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
   when not declared(db): {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
   const err0 = "Wrong Syntax, deep nested SubQueries are not supported yet, repeated call found"
-  var offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed, deleteUsed, likeUsed,
+  var offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed, deleteUsed, likeUsed, valuesUsed,
     betweenUsed, joinUsed, groupbyUsed, havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
   var sqls: string
   for node in inner:
@@ -24,6 +24,10 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       doAssert not limitUsed, err0
       sqls.add limits(node[1])
       limitUsed = true
+    of "values":
+      doAssert not valuesUsed, err0
+      sqls.add values(node[1])
+      valuesUsed = true
     of "from":
       doAssert not fromUsed, err0
       sqls.add froms(node[1])
@@ -221,6 +225,7 @@ when isMainModule:
     having "currency"
     into "dsfsdfd"
     insert "happiness"
+    values 9
     isnull true
     update "table"
     union true
