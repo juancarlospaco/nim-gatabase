@@ -53,7 +53,7 @@
 
 ### Wildcards
 
-- SQL `*` is `'*'`. Nim `'?'` generates `?` to be replaced by values. No other `char` is needed.
+- Nim `'*'` generates SQL `*`. Nim `'?'` generates `?` to be replaced by values. No other `char` is needed.
 
 ### SELECT & FROM
 
