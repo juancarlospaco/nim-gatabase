@@ -37,7 +37,7 @@
 
 # Use
 
-- Gatabase is designed as a simplified Typed [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language).
+- Gatabase is designed as a simplified [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language).
 - Gatabase syntax is almost the same as SQL syntax, no new ORM to learn.
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug.
 
@@ -50,6 +50,11 @@
 ```nim
 `--` "SQL Comments are supported, but stripped when build for Release. This is Nim."
 ```
+
+### Wildcards
+
+- SQL `*` is `'*'` on Nim.
+- Nim `'?'` generates `?` to be replaced by values from args.
 
 ### SELECT & FROM
 
@@ -121,7 +126,7 @@ INSERT INTO tablename
 ```
 
 ```nim
-insert "tablename"
+insertinto "tablename"
 ```
 
 ### DELETE
@@ -132,16 +137,6 @@ DELETE debts
 
 ```nim
 delete "debts"
-```
-
-### HAVING
-
-```sql
-HAVING beer > 5
-```
-
-```nim
-having "beer > 5"
 ```
 
 ### ORDER BY
@@ -260,7 +255,15 @@ RIGHT JOIN tablename
 rightjoin "tablename"
 ```
 
+### HAVING
 
+```sql
+HAVING beer > 5
+```
+
+```nim
+having "beer > 5"
+```
 
 ### IS NULL
 
