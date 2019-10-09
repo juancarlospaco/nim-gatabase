@@ -231,7 +231,7 @@ when isMainModule:
   ################################### Run-Time #################################
   import db_sqlite # `db: DbConn` and `args: varargs` must exist previously.
   let db = db_sqlite.open(":memory:", "", "", "") # Just for demostrations.
-  const args = ["args", "and", "db", "variables", "must", "exist"]
+  const args = ["args", "and", "db", "variables", "must", "exist"] # Fake args.
 
   let runTimeTryQuery {.used.} = query tryExec:
     select '*'
