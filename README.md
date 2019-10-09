@@ -38,7 +38,7 @@
 # Use
 
 - Gatabase is designed as a simplified [Strong Static Typed](https://en.wikipedia.org/wiki/Type_system#Static_type_checking) [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language) [Sugar](https://en.wikipedia.org/wiki/Syntactic_sugar).
-- Gatabase syntax is almost the same as SQL syntax, no new ORM to learn.
+- Gatabase syntax is almost the same as SQL syntax, no new ORM to learn ([learn SQL](https://pgexercises.com/questions/basic/selectall.html)).
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug.
 
 ### Comments
@@ -334,7 +334,7 @@ isnull false
 
 # Output
 
-ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates code. Examples:
+ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates different output code. Examples:
 
 - `query anonFunc:` generates 1 anonimous inlined function `(func (): SqlQuery = ... )`.
 - `query sqlPrepared:` generates 1 Postgres Stored Procedure of `SqlPrepared` type.
