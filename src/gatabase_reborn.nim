@@ -233,7 +233,7 @@ when isMainModule:
   let db = db_sqlite.open(":memory:", "", "", "") # Just for demostrations.
   const args = ["args", "and", "db", "variables", "must", "exist"] # Fake args.
 
-  let runTimeTryQuery {.used.} = query tryExec:
+  let runTime_tryExec {.used.} = query tryExec:
     select '*'
     `from`'?'
     where "costs > 9 or rank > 1 and level < 99"
@@ -241,7 +241,7 @@ when isMainModule:
     limit 1
     orderby "asc"
 
-  let runTimeQuery {.used.} = query tryInsertID:
+  let runTime_tryInsertID {.used.} = query tryInsertID:
     select '*'
     `from`'?'
     where "foo > 1 and foo < 9 and foo <> 42"
