@@ -150,14 +150,14 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of "case":
       doAssert node[1].kind in {nnkTableConstr}, "CASE argument must be Table"
       doAssert node[1].len > 0, "CASE argument must be 1 Non Empty Table"
-      sqls.add "(CASE" & n
+      sqls.add static("(CASE" & n)
       for tableValue in node[1]:
         if tableValue[0].strVal == "default":
           sqls.add "  ELSE " & tableValue[1].strVal & n
         else:
           sqls.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
-      sqls.add "END)" & n
-    else: doAssert false, "Unknown error on SQL DSL: " & inner.lineInfo
+      sqls.add static("END)" & n)
+    else: doAssert false, "Unknown error on ORMs SQL DSL: " & inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
