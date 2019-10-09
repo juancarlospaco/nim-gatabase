@@ -174,7 +174,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of sqlPrepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
       when defined(postgres): # db_postgres.prepare() returns 1 SqlPrepared.
         "prepare(db, \"" & inner.lineInfo.normalize & "\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
-      else: "sql(\"\"\"" & sqls & "\"\"\")"  # SQLite wont support prepared.
+      else: "sql(\"\"\"" & sqls & "\"\"\")" # SQLite wont support prepared.
     else: "sql(\"\"\"" & sqls & "\"\"\")" # sql is sql""" query """ for SQLite
   result = parseStmt sqls
 
@@ -193,7 +193,7 @@ when isMainModule:
   let bar {.used.} = query sql:
     `--`"Replace sql here ^ with 1 of tryExec,getRow,tryInsertID,sqlPrepared"
     selectdistinct "oneElementAlone"
-    `from` '?'
+    `from`'?'
     where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
     `--`"The '?' produces ? on output, to be replaced by values from args."
     offset '?'
@@ -203,7 +203,7 @@ when isMainModule:
   var baz {.used.} = query anonFunc:
     select '*'
     `--`"The '*' produces * on output to allow stuff like:  SELECT * FROM table"
-    `from` "stuffs"
+    `from`"stuffs"
     where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
     offset 2147483647
     limit 2147483647
@@ -229,13 +229,13 @@ when isMainModule:
 
 
   ################################### Run-Time #################################
-  import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
-  let db = db_sqlite.open(":memory:", "", "", "")  # Just for demostrations.
+  import db_sqlite # `db: DbConn` and `args: varargs` must exist previously.
+  let db = db_sqlite.open(":memory:", "", "", "") # Just for demostrations.
   const args = ["args", "and", "db", "variables", "must", "exist"]
 
   let runTimeTryQuery {.used.} = query tryExec:
     select '*'
-    `from` '?'
+    `from`'?'
     where "costs > 9 or rank > 1 and level < 99"
     offset 0
     limit 1
@@ -243,7 +243,7 @@ when isMainModule:
 
   let runTimeQuery {.used.} = query tryInsertID:
     select '*'
-    `from` '?'
+    `from`'?'
     where "foo > 1 and foo < 9 and foo <> 42"
     offset 1
     limit 2147483647
