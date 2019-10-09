@@ -148,8 +148,8 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       betweenUsed = false
       sqls.add unions(node[1])
     of "case":
-      doAssert node[1].kind in {nnkTableConstr}, "CASE argument must be Table[string, string]"
-      doAssert node[1].len > 0, "CASE argument must be 1 Non Empty Table[string, string]"
+      doAssert node[1].kind in {nnkTableConstr}, "CASE argument must be Table"
+      doAssert node[1].len > 0, "CASE argument must be 1 Non Empty Table"
       sqls.add "(CASE" & n
       for tableValue in node[1]:
         if tableValue[0].strVal == "default":
@@ -157,9 +157,9 @@ macro query*(output: ormOutput, inner: untyped): untyped =
         else:
           sqls.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
       sqls.add "END)" & n
-    else: doAssert false, inner.lineInfo
+    else: doAssert false, "Unknown error on SQL DSL: " & inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
-  sqls.add when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n"
+  sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
   sqls = case parseEnum[ormOutput]($output)
     of tryExec: "tryExec(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
@@ -171,10 +171,11 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of execAffectedRows: "execAffectedRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of anonFunc: "(func (): SqlQuery = sql(\"\"\"" & sqls & "\"\"\"))"
     of sqlPrepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
-      when defined(postgres): "prepare(db, \"" & inner.lineInfo.normalize & "\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
+      when defined(postgres):
+        "prepare(db, \"" & inner.lineInfo.normalize & "\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
       else: "sql(\"\"\"" & sqls & "\"\"\")"
     else: "sql(\"\"\"" & sqls & "\"\"\")" # sql is sql""" query """ for SQLite
-  # when defined(dev): echo sqls
+  # echo sqls
   result = parseStmt sqls
 
 
