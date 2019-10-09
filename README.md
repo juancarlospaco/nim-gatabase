@@ -5,36 +5,6 @@
 ![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Compile-Time ORM for Nim")
 
 
-# Features
-
-- [Postgres >= 10](https://www.postgresql.org) and [SQLite](https://sqlite.org), Async and Sync.
-- UTF-8 encoding.
-- [All SQL are `const`.](https://nim-lang.org/docs/manual.html#statements-and-expressions-const-section)
-- Database user must have a password.
-- Database connection is to hostname.
-- [Self-Documentation Comments supported  (Postgres).](https://www.postgresql.org/docs/11/sql-comment.html)
-- [Configurable AutoVacuum supported  (Postgres).](https://www.postgresql.org/docs/11/runtime-config-autovacuum.html)
-- Backups for Databases supported.
-- The `timeout` argument is on Seconds.
-- `DISTINCT` supported on SQL, `bool` type, `false` by default.
-- `LIMIT` supported on SQL, `int` type, `int.high` by default.
-- `OFFSET` supported on SQL, `int` type, `0` by default.
-- No OS-specific code, so it should work on Linux, Windows and Mac.
-- Compatible with [`db_postgres`](https://nim-lang.org/docs/db_postgres.html) and [Ormin](https://github.com/Araq/ormin).
-- You can still use std lib `db_postgres` and `db_sqlite` as normal (same connection).
-- You can write with Gatabase and read with Ormin.
-- [Functional, all functions are `func` (Effects free).](https://nim-lang.org/docs/manual.html#procedures-func)
-- Debug raw SQL when not build for Release.
-- Table Helpers (ready-made Table templates for common uses).
-- Single file. 0 Dependency. Self-Documented.
-- Compile with `-d:sqlite` to enable SQLite and disable Postgres.
-- Compile with `-d:noFields` to disable Fields feature, for smaller binary (Kb), etc.
-- No code for Postgres when compiled for SQLite, no code for SQLite when compiled for Postgres.
-- Run `nim doc gatabase.nim` for more Documentation. `runnableExamples` provided.
-- Run `nim c -r gatabase.nim` for an Example.
-- **Pull Requests welcome!.**
-
-
 # Use
 
 - Gatabase is designed as a simplified [Strong Static Typed](https://en.wikipedia.org/wiki/Type_system#Static_type_checking) [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language) [Sugar](https://en.wikipedia.org/wiki/Syntactic_sugar).
