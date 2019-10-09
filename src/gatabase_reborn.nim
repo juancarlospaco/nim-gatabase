@@ -1,6 +1,6 @@
 ## Gatabase: Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
 import macros, db_common, strutils, tables
-include gatabase/templates  # Tiny compile-time internal templates that do 1 thing.
+include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
 type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
   tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared, anonFunc
@@ -141,7 +141,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       sqls.add updates(node[1])
       updateUsed = true
     of "union":
-      fromUsed = false  # Union can "Reset" select, from, where to be re-used
+      fromUsed = false # Union can "Reset" select, from, where to be re-used
       whereUsed = false
       selectUsed = false
       likeUsed = false
@@ -184,10 +184,10 @@ when isMainModule:
   # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
   const foo = query sql:
     select "foo, bar, baz"
-    `from` "things"               # This can have comments here.
+    `from`"things"               # This can have comments here.
     where "cost > 30 or foo > 9" ## This can have comments here.
     offset 9
-    `--` "SQL Style Comments"     # SQL Comments are stripped for Release builds.
+    `--`"SQL Style Comments"     # SQL Comments are stripped for Release builds.
     limit 1
     orderby "something"
 
