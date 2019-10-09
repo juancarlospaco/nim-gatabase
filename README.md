@@ -41,6 +41,14 @@
 - Gatabase syntax is almost the same as SQL syntax, no new ORM to learn ([learn SQL](https://pgexercises.com/questions/basic/selectall.html)).
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug.
 
+```nim
+let variable = query sql:
+  select  '*'
+  `from`  "clients"
+  groupby "country"
+  orderby "desc"
+```
+
 ### Comments
 
 ```sql
