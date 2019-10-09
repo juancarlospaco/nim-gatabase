@@ -3,7 +3,7 @@ import macros, db_common, strutils, tables
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
 type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
-  tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared, anonFunc
+  tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared, anonFunc, exec
 
 macro query*(output: ormOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
@@ -162,6 +162,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
   sqls = case parseEnum[ormOutput]($output)
+    of exec: "exec(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of tryExec: "tryExec(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of getRow: "getRow(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of getAllRows: "getAllRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
@@ -179,19 +180,18 @@ macro query*(output: ormOutput, inner: untyped): untyped =
 
 
 when isMainModule:
-  ############################### Compile-Time ################################
-  # SQL Queries are Minified for Release builds, Pretty-Printed for Debug builds
-  # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
+
   const foo {.used.} = query sql:
-    select "foo, bar, baz"
-    `from`"things"               # This can have comments here.
-    where "cost > 30 or taxes > 9 and rank <> 0" ## This can have comments here.
+    select "foo, bar, baz" # This can have comments here.
+    `from`"things"
+    where "cost > 30 or taxes > 9 and rank <> 0"
     offset 9
     `--`"SQL Style Comments. SQL Comments are stripped for Release builds."
     limit 1
     orderby "something"
 
-  let bar {.used.} = query sql: # Replace sql here with 1 of tryExec,getRow,getValue,etc
+  let bar {.used.} = query sql:
+    `--`"Replace sql here ^ with 1 of tryExec,getRow,tryInsertID,sqlPrepared"
     selectdistinct "oneElementAlone"
     `from` '?'
     where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
@@ -200,7 +200,7 @@ when isMainModule:
     limit '?'
     orderby '?'
 
-  var baz {.used.} = query anonFunc: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
+  var baz {.used.} = query anonFunc:
     select '*'
     `--`"The '*' produces * on output to allow stuff like:  SELECT * FROM table"
     `from` "stuffs"
@@ -209,7 +209,7 @@ when isMainModule:
     limit 2147483647
     orderby "asc"
 
-  const newfoo {.used.} = query sql:
+  let newfoo {.used.} = query sqlPrepared:
     `--`"More advanced stuff for more complex database queries"
     delete "debts"
     where "debt > 99"
@@ -217,6 +217,7 @@ when isMainModule:
     notbetween "666 and 999"
     innerjoin "something"
     groupby "taxes"
+    `--`"DSL works on const/let/var,compile-time/run-time,JS/NodeJS,NimScript"
     having "currency"
     into "dsfsdfd"
     insert "happiness"
@@ -224,29 +225,28 @@ when isMainModule:
     update "table"
     union true
     `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
+    `--`"Query is Minified for Release builds, Pretty-Printed for Debug builds"
 
-  # ################################## Run-Time #################################
-  # import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
-  # let db = db_sqlite.open(":memory:", "", "", "")  # Just for demostrations.
-  # const args = ["args", "and", "db", "must", "be", "on", "pre-existing", "variables"]
+  ################################### Run-Time #################################
+  import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
+  let db = db_sqlite.open(":memory:", "", "", "")  # Just for demostrations.
+  const args = ["args", "and", "db", "variables", "must", "exist"]
 
-  # let runTimeTryQuery = query tryExec:
-  #   select('?')
-  #   `from`'?'
-  #   where("cost > 30", "foo > 9")
-  #   offset 9223372036854775807
-  #   limit 9223372036854775807
-  #   order by asc
-  # echo runTimeTryQuery
+  let runTimeTryQuery {.used.} = query tryExec:
+    select '*'
+    `from` '?'
+    where "costs > 9 or rank > 1 and level < 99"
+    offset 0
+    limit 1
+    orderby "asc"
 
-  # let runTimeQuery = query tryInsertID:
-  #   select('?')
-  #   `from`'?'
-  #   where("cost > 30", "foo > 9")
-  #   offset 9223372036854775807
-  #   limit 9223372036854775807
-  #   order by asc
-  # echo runTimeQuery
+  let runTimeQuery {.used.} = query tryInsertID:
+    select '*'
+    `from` '?'
+    where "foo > 1 and foo < 9 and foo <> 42"
+    offset 1
+    limit 2147483647
+    orderby "desc"
 
 
   # Copied from https://github.com/Araq/ormin/blob/master/examples/forum/forum.nim
