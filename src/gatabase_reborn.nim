@@ -1,3 +1,4 @@
+## Gatabase: Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
 import macros, db_common, strutils
 
 type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
@@ -47,16 +48,46 @@ template selects(value: NimNode): string =
   elif value.kind == nnkCharLit: "SELECT *" & n
   else: "SELECT " & $value.strVal & n
 
-template selects2(value: NimNode): string =
+template selectDistincts(value: NimNode): string =
   doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT must be string or '?'"
   if isQuestionChar(value): "SELECT DISTINCT ?" & n
   elif value.kind == nnkCharLit: "SELECT DISTINCT *" & n
   else: "SELECT DISTINCT " & $value.strVal & n
 
-template selects3(value: NimNode): string =
+template selectTops(value: NimNode): string =
   doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT TOP must be string or '?'"
   if isQuestionChar(value): "SELECT TOP ? *" & n
   else: "SELECT TOP " & $value.strVal & " *" & n
+
+template selectMins(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT MIN must be string or '?'"
+  if isQuestionChar(value): "SELECT MIN(?)" & n
+  elif value.kind == nnkCharLit: "SELECT MIN(*)" & n
+  else: "SELECT MIN(" & $value.strVal & ")" & n
+
+template selectMaxs(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT MAX must be string or '?'"
+  if isQuestionChar(value): "SELECT MAX(?)" & n
+  elif value.kind == nnkCharLit: "SELECT MAX(*)" & n
+  else: "SELECT MAX(" & $value.strVal & ")" & n
+
+template selectCounts(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT COUNT must be string or '?'"
+  if isQuestionChar(value): "SELECT COUNT(?)" & n
+  elif value.kind == nnkCharLit: "SELECT COUNT(*)" & n
+  else: "SELECT COUNT(" & $value.strVal & ")" & n
+
+template selectAvgs(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT AVG must be string or '?'"
+  if isQuestionChar(value): "SELECT AVG(?)" & n
+  elif value.kind == nnkCharLit: "SELECT AVG(*)" & n
+  else: "SELECT AVG(" & $value.strVal & ")" & n
+
+template selectSums(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT SUM must be string or '?'"
+  if isQuestionChar(value): "SELECT SUM(?)" & n
+  elif value.kind == nnkCharLit: "SELECT SUM(*)" & n
+  else: "SELECT SUM(" & $value.strVal & ")" & n
 
 template deletes(value: NimNode): string =
   doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "DELETE must be string or '?'"
@@ -118,6 +149,22 @@ template intos(value: NimNode): string =
   if isQuestionChar(value): "INTO ?" & n
   else: "INTO " & $value.strVal & n
 
+template inserts(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "INSERT INTO must be string or '?'"
+  if isQuestionChar(value): "INSERT INTO ?" & n
+  else: "INSERT INTO " & $value.strVal & n
+
+template isnulls(value: NimNode): string =
+  doAssert value.kind == nnkIdent and parseBool($value), "INSERT INTO must be bool"
+  if parseBool($value): "IS NULL" & n else: "IS NOT NULL" & n
+
+template updates(value: NimNode): string =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "INSERT INTO must be string or '?'"
+  if isQuestionChar(value): "UPDATE ?" & n
+  else: "UPDATE " & $value.strVal & n   # TODO: SET
+
+
+
 macro query*(output: ormOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL). db needs to be defined.
   when not declared(db): {.hint: "db of type DbConn must be declared for the ORM to work properly".}
@@ -125,7 +172,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
   const err0 = "Wrong Syntax, Nested Queries not supported, repeated call found"
   var offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
     deleteUsed, likeUsed, betweenUsed, joinUsed, groupbyUsed, havingUsed,
-    intoUsed: bool
+    intoUsed, insertUsed, isnullUsed, updateUsed: bool
   var sqls: string
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
@@ -157,11 +204,31 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       selectUsed = true
     of "selectdistinct":
       doAssert not selectUsed, err0
-      sqls.add selects2(node[1])
+      sqls.add selectDistincts(node[1])
       selectUsed = true
     of "selecttop":
       doAssert not selectUsed, err0
-      sqls.add selects3(node[1])
+      sqls.add selectTops(node[1])
+      selectUsed = true
+    of "selectmin":
+      doAssert not selectUsed, err0
+      sqls.add selectMins(node[1])
+      selectUsed = true
+    of "selectmax":
+      doAssert not selectUsed, err0
+      sqls.add selectMaxs(node[1])
+      selectUsed = true
+    of "selectcount":
+      doAssert not selectUsed, err0
+      sqls.add selectCounts(node[1])
+      selectUsed = true
+    of "selectavg":
+      doAssert not selectUsed, err0
+      sqls.add selectAvgs(node[1])
+      selectUsed = true
+    of "selectsum":
+      doAssert not selectUsed, err0
+      sqls.add selectSums(node[1])
       selectUsed = true
     of "delete":
       doAssert not deleteUsed, err0
@@ -211,7 +278,21 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       doAssert not intoUsed, err0
       sqls.add intos(node[1])
       intoUsed = true
+    of "insert", "insertinto":
+      doAssert not insertUsed, err0
+      sqls.add inserts(node[1])
+      insertUsed = true
+    of "isnull":
+      doAssert not isnullUsed, err0
+      sqls.add isnulls(node[1])
+      isnullUsed = true
+    of "update":
+      doAssert not updateUsed, err0
+      sqls.add updates(node[1])
+      updateUsed = true
     else: doAssert false, inner.lineInfo
+
+
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: "; /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
@@ -270,7 +351,9 @@ when isMainModule:
     groupby "dsfsdf32432"
     having "sd;fsd;lfkl;k"
     into "dsfsdfd"
-
+    insert "dffd"
+    isnull true
+    update "sdsad"
     #like "sdsd"
 
   # ################################## Run-Time #################################
