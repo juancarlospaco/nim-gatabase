@@ -51,7 +51,7 @@
 `--` "SQL Comments are supported, but stripped when build for Release. This is Nim."
 ```
 
-### SELECT
+### SELECT & FROM
 
 ```sql
 SELECT *
@@ -158,6 +158,37 @@ END
 ```nim
 `case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
 ```
+
+### UNION
+
+```sql
+UNION ALL
+```
+
+```nim
+union true
+```
+
+```sql
+UNION
+```
+
+```nim
+union false
+```
+
+### LIMIT & OFFSET
+
+```sql
+OFFSET 9
+LIMIT 42
+```
+
+```nim
+offset 9
+limit 42
+```
+
 
 
 
