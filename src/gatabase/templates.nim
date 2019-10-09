@@ -236,7 +236,7 @@ template isnulls(value: NimNode): string =
 template updates(value: NimNode): string =
   isQuestionOrString(value)
   if isQuestionChar(value): static("UPDATE ?" & n)
-  else: "UPDATE " & $value.strVal & n # TODO: SET
+  else: "UPDATE " & $value.strVal & n
 
 
 template unions(value: NimNode): string =
