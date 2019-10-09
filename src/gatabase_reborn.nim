@@ -241,23 +241,23 @@ when isMainModule:
     `--`"Query is Minified for Release builds, Pretty-Printed for Debug builds"
 
 
-  ################################### Run-Time #################################
-  import db_sqlite # `db: DbConn` and `args: varargs` must exist previously.
-  let db = db_sqlite.open(":memory:", "", "", "") # Just for demostrations.
-  const args = ["args", "and", "db", "variables", "must", "exist"] # Fake args.
+  # when not defined(js): # This wont work on NimScript, because no db_sqlite.
+  #   import db_sqlite # `db: DbConn` and `args: varargs` must exist previously.
+  #   let db = db_sqlite.open(":memory:", "", "", "") # Just for demostrations.
+  #   const args = ["args", "and", "db", "variables", "must", "exist"] # Fake args.
 
-  let runTime_tryExec {.used.} = query tryExec:
-    select '*'
-    `from`'?'
-    where "costs > 9 or rank > 1 and level < 99"
-    offset 0
-    limit 1
-    orderby "asc"
+  #   let runTime_tryExec {.used.} = query tryExec:
+  #     select '*'
+  #     `from`'?'
+  #     where "costs > 9 or rank > 1 and level < 99"
+  #     offset 0
+  #     limit 1
+  #     orderby "asc"
 
-  let runTime_tryInsertID {.used.} = query tryInsertID:
-    select '*'
-    `from`'?'
-    where "foo > 1 and foo < 9 and foo <> 42"
-    offset 1
-    limit 2147483647
-    orderby "desc"
+  #   let runTime_tryInsertID {.used.} = query tryInsertID:
+  #     select '*'
+  #     `from`'?'
+  #     where "foo > 1 and foo < 9 and foo <> 42"
+  #     offset 1
+  #     limit 2147483647
+  #     orderby "desc"
