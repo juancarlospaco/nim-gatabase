@@ -43,7 +43,7 @@
 
 ### Comments
 
-```postgres
+```postgresql
 -- SQL Comments are supported, but stripped when build for Release. This is SQL.
 ```
 
@@ -53,7 +53,7 @@
 
 ### SELECT
 
-```postgres
+```postgresql
 SELECT *
 FROM sometable
 ```
@@ -105,7 +105,7 @@ where "power > 9000"
 
 ### ORDER BY
 
-```postgres
+```postgresql
 SELECT somecolumn
 FROM sometable
 WHERE power > 9000
