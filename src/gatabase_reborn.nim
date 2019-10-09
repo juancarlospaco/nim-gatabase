@@ -185,9 +185,9 @@ when isMainModule:
   const foo {.used.} = query sql:
     select "foo, bar, baz"
     `from`"things"               # This can have comments here.
-    where "cost > 30 or foo > 9" ## This can have comments here.
+    where "cost > 30 or taxes > 9 and rank <> 0" ## This can have comments here.
     offset 9
-    `--`"SQL Style Comments"     # SQL Comments are stripped for Release builds.
+    `--`"SQL Style Comments. SQL Comments are stripped for Release builds."
     limit 1
     orderby "something"
 
@@ -195,12 +195,14 @@ when isMainModule:
     selectdistinct "oneElementAlone"
     `from` '?'
     where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
-    offset '?'         # '?' produces ? on output to be replaced by values from args.
+    `--`"The '?' produces ? on output, to be replaced by values from args."
+    offset '?'
     limit '?'
     orderby '?'
 
   var baz {.used.} = query anonFunc: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
-    select '*'              # '*' produces * on output to allow SELECT * FROM table
+    select '*'
+    `--`"The '*' produces * on output to allow stuff like:  SELECT * FROM table"
     `from` "stuffs"
     where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
     offset 2147483647
@@ -208,20 +210,20 @@ when isMainModule:
     orderby "asc"
 
   const newfoo {.used.} = query sql:
-    delete "deletor"
-    where "dfgdf"
-    notlike "sds"
-    notbetween "dfd"
-    innerjoin "fdsf"
-    groupby "dsfsdf32432"
-    having "sd;fsd;lfkl;k"
+    `--`"More advanced stuff for more complex database queries"
+    delete "debts"
+    where "debt > 99"
+    notlike "boss"
+    notbetween "666 and 999"
+    innerjoin "something"
+    groupby "taxes"
+    having "currency"
     into "dsfsdfd"
-    insert "dffd"
+    insert "happiness"
     isnull true
-    update "sdsad"
+    update "table"
     union true
     `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
-    #like "sdsd"
 
   # ################################## Run-Time #################################
   # import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
