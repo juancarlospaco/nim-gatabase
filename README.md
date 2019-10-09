@@ -83,14 +83,31 @@ select "somecolumn"
 
 ```sql
 SELECT DISTINCT somecolumn
-FROM sometable
 ```
 
 ```nim
 selectdistinct "somecolumn"
-`from` "sometable"
 ```
 
+### MIN & MAX
+
+```sql
+SELECT MIN(somecolumn)
+```
+
+```nim
+selectmin "somecolumn"
+```
+
+---
+
+```sql
+SELECT MAX(somecolumn)
+```
+
+```nim
+selectmax "somecolumn"
+```
 
 ### WHERE
 
