@@ -53,7 +53,7 @@ template limits(value: NimNode): string =
 
 template values(value: NimNode): string =
   isQuestionOrPositive(value)
-  "VALUES (" & "?, ".repeat(value.intVal.Positive) & static(")" & n)
+  "VALUES ( " & "?, ".repeat(value.intVal.Positive) & static(" )" & n)
 
 
 template froms(value: NimNode): string =
