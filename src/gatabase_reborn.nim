@@ -227,6 +227,7 @@ when isMainModule:
     `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
     `--`"Query is Minified for Release builds, Pretty-Printed for Debug builds"
 
+
   ################################### Run-Time #################################
   import db_sqlite  # `db: DbConn` and `args: varargs` must exist previously.
   let db = db_sqlite.open(":memory:", "", "", "")  # Just for demostrations.
