@@ -39,25 +39,86 @@
 
 - Gatabase is designed as a simplified Typed [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language).
 - Gatabase syntax is almost the same as SQL syntax, no new ORM to learn.
+- SQL is Minified when build for Release, Pretty-Printed when build for Debug.
 
-## SELECT
+### Comments
+
+```postgres
+-- SQL Comments are supported, but stripped when build for Release. This is SQL.
+```
+
+```nim
+`--` "SQL Comments are supported, but stripped when build for Release. This is Nim."
+```
+
+### SELECT
 
 ```postgres
 SELECT *
+FROM sometable
 ```
 
 ```nim
 select '*'
+`from` "sometable"
 ```
 
+---
 
 ```postgres
-SELECT sometable
+SELECT somecolumn
+FROM sometable
 ```
 
 ```nim
-select "sometable"
+select "somecolumn"
+`from` "sometable"
 ```
+
+---
+
+```postgres
+SELECT DISTINCT somecolumn
+FROM sometable
+```
+
+```nim
+selectdistinct "somecolumn"
+`from` "sometable"
+```
+
+
+### WHERE
+
+```postgres
+SELECT somecolumn
+FROM sometable
+WHERE power > 9000
+```
+
+```nim
+select "somecolumn"
+`from` "sometable"
+where "power > 9000"
+```
+
+
+### ORDER BY
+
+```postgres
+SELECT somecolumn
+FROM sometable
+WHERE power > 9000
+ORDER BY ASC
+```
+
+```nim
+select "somecolumn"
+`from` "sometable"
+where "power > 9000"
+orderby "asc"
+```
+
 
 
 # Install
