@@ -145,6 +145,20 @@ update "tablename"
 `set` {"key0": "value0", "key1": "value1"}
 ```
 
+### CASE
+
+```sql
+CASE
+  WHEN foo > 10 THEN 9
+  WHEN bar < 42 THEN 5
+  ELSE 0
+END
+```
+
+```nim
+`case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
+```
+
 
 
 # Install
