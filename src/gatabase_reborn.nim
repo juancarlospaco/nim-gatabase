@@ -1,196 +1,16 @@
 ## Gatabase: Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
 import macros, db_common, strutils, tables
+include gatabase/templates  # Tiny compile-time internal templates that do 1 thing.
 
 type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
-  tryExec, getRow, getAllRows, getValue, tryInsertID,
-  insertID, execAffectedRows, sql, sqlPrepared, anonFunc
-
-template isQuestionChar(v: NimNode): bool = v.kind == nnkCharLit and v.intVal == 63
-
-template sqlComment(comment: string): string =
-  doAssert comment.len > 0, "SQL Comment must not be empty string"
-  when defined(release): n
-  else:
-    if comment.countLines == 1: "-- " & $comment.strip & n
-    else: "/* " & $comment.strip & " */" & n
-
-template offsets(value: NimNode): string =
-  doAssert value.kind in {nnkIntLit, nnkCharLit}, "OFFSET must be Natural or '?'"
-  if isQuestionChar(value): "OFFSET ?" & n
-  else: "OFFSET " & $value.intVal.Natural & n
-
-template limits(value: NimNode): string =
-  doAssert value.kind in {nnkIntLit, nnkCharLit}, "LIMIT must be Positive or '?'"
-  if isQuestionChar(value): "LIMIT ?" & n
-  else: "LIMIT " & $value.intVal.Positive & n
-
-template froms(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "FROM must be string or '?'"
-  if isQuestionChar(value): "FROM ?" & n
-  else: "FROM " & $value.strVal & n
-
-template wheres(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE must be string or '?'"
-  if isQuestionChar(value): "WHERE ?" & n
-  else: "WHERE " & $value.strVal & n
-
-template whereNots(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE NOT must be string or '?'"
-  if isQuestionChar(value): "WHERE NOT ?" & n
-  else: "WHERE NOT " & $value.strVal & n
-
-template whereExists(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE EXISTS must be string or '?'"
-  if isQuestionChar(value): "WHERE EXISTS ?" & n
-  else: "WHERE EXISTS " & $value.strVal & n
-
-template whereNotExists(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "WHERE NOT EXISTS must be string or '?'"
-  if isQuestionChar(value): "WHERE NOT EXISTS ?" & n
-  else: "WHERE NOT EXISTS " & $value.strVal & n
-
-template orderbys(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "ORDER BY must be string or '?'"
-  if isQuestionChar(value): "ORDER BY ?" & n
-  else:
-    if value.strVal == "asc": "ORDER BY ASC" & n
-    elif value.strVal == "desc": "ORDER BY DESC" & n
-    else: "ORDER BY " & $value.strVal & n
-
-template selects(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT must be string or '?'"
-  if isQuestionChar(value): "SELECT ?" & n
-  elif value.kind == nnkCharLit: "SELECT *" & n
-  else: "SELECT " & $value.strVal & n
-
-template selectDistincts(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT must be string or '?'"
-  if isQuestionChar(value): "SELECT DISTINCT ?" & n
-  elif value.kind == nnkCharLit: "SELECT DISTINCT *" & n
-  else: "SELECT DISTINCT " & $value.strVal & n
-
-template selectTops(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT TOP must be string or '?'"
-  if isQuestionChar(value): "SELECT TOP ? *" & n
-  else: "SELECT TOP " & $value.strVal & " *" & n
-
-template selectMins(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT MIN must be string or '?'"
-  if isQuestionChar(value): "SELECT MIN(?)" & n
-  elif value.kind == nnkCharLit: "SELECT MIN(*)" & n
-  else: "SELECT MIN(" & $value.strVal & ")" & n
-
-template selectMaxs(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT MAX must be string or '?'"
-  if isQuestionChar(value): "SELECT MAX(?)" & n
-  elif value.kind == nnkCharLit: "SELECT MAX(*)" & n
-  else: "SELECT MAX(" & $value.strVal & ")" & n
-
-template selectCounts(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT COUNT must be string or '?'"
-  if isQuestionChar(value): "SELECT COUNT(?)" & n
-  elif value.kind == nnkCharLit: "SELECT COUNT(*)" & n
-  else: "SELECT COUNT(" & $value.strVal & ")" & n
-
-template selectAvgs(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT AVG must be string or '?'"
-  if isQuestionChar(value): "SELECT AVG(?)" & n
-  elif value.kind == nnkCharLit: "SELECT AVG(*)" & n
-  else: "SELECT AVG(" & $value.strVal & ")" & n
-
-template selectSums(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "SELECT SUM must be string or '?'"
-  if isQuestionChar(value): "SELECT SUM(?)" & n
-  elif value.kind == nnkCharLit: "SELECT SUM(*)" & n
-  else: "SELECT SUM(" & $value.strVal & ")" & n
-
-template deletes(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "DELETE must be string or '?'"
-  if isQuestionChar(value): "DELETE FROM ?" & n
-  else: "DELETE FROM " & $value.strVal & n
-
-template likes(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "LIKE must be string or '?'"
-  if isQuestionChar(value): "LIKE ?" & n
-  else: "LIKE " & $value.strVal & n
-
-template notlikes(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "NOT LIKE must be string or '?'"
-  if isQuestionChar(value): "NOT LIKE ?" & n
-  else: "NOT LIKE " & $value.strVal & n
-
-template betweens(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "BETWEEN must be string or '?'"
-  if isQuestionChar(value): "BETWEEN ?" & n
-  else: "BETWEEN " & $value.strVal & n
-
-template notbetweens(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "NOT BETWEEN must be string or '?'"
-  if isQuestionChar(value): "NOT BETWEEN ?" & n
-  else: "NOT BETWEEN " & $value.strVal & n
-
-template innerjoins(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "INNER JOIN must be string or '?'"
-  if isQuestionChar(value): "INNER JOIN ?" & n
-  else: "INNER JOIN " & $value.strVal & n
-
-template leftjoins(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "LEFT JOIN must be string or '?'"
-  if isQuestionChar(value): "LEFT JOIN ?" & n
-  else: "LEFT JOIN " & $value.strVal & n
-
-template rightjoins(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "RIGHT JOIN must be string or '?'"
-  if isQuestionChar(value): "RIGHT JOIN ?" & n
-  else: "RIGHT JOIN " & $value.strVal & n
-
-template fulljoins(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "FULL OUTER JOIN must be string or '?'"
-  if isQuestionChar(value): "FULL OUTER JOIN ?" & n
-  else: "FULL OUTER JOIN " & $value.strVal & n
-
-template groupbys(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "GROUP BY must be string or '?'"
-  if isQuestionChar(value): "GROUP BY ?" & n
-  else: "GROUP BY " & $value.strVal & n
-
-template havings(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "HAVING must be string or '?'"
-  if isQuestionChar(value): "HAVING ?" & n
-  else: "HAVING " & $value.strVal & n
-
-template intos(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "INTO must be string or '?'"
-  if isQuestionChar(value): "INTO ?" & n
-  else: "INTO " & $value.strVal & n
-
-template inserts(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "INSERT INTO must be string or '?'"
-  if isQuestionChar(value): "INSERT INTO ?" & n
-  else: "INSERT INTO " & $value.strVal & n
-
-template isnulls(value: NimNode): string =
-  doAssert value.kind == nnkIdent and parseBool($value), "INSERT INTO must be bool"
-  if parseBool($value): "IS NULL" & n else: "IS NOT NULL" & n
-
-template updates(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "INSERT INTO must be string or '?'"
-  if isQuestionChar(value): "UPDATE ?" & n
-  else: "UPDATE " & $value.strVal & n   # TODO: SET
-
-template unions(value: NimNode): string =
-  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit}, "UNION argument must be string"
-  if $value == "all": "UNION ALL" & n else: "UNION" & n
-
+  tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared, anonFunc
 
 macro query*(output: ormOutput, inner: untyped): untyped =
-  ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL). db needs to be defined.
-  when not declared(db): {.hint: "db of type DbConn must be declared for the ORM to work properly".}
-  const n = when defined(release): " " else: "\n"
-  const err0 = "Wrong Syntax, Nested Queries not supported, repeated call found"
-  var offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
-    deleteUsed, likeUsed, betweenUsed, joinUsed, groupbyUsed, havingUsed,
-    intoUsed, insertUsed, isnullUsed, updateUsed: bool
+  ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
+  when not declared(db): {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
+  const err0 = "Wrong Syntax, deep nested SubQueries are not supported yet, repeated call found"
+  var offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed, deleteUsed, likeUsed,
+    betweenUsed, joinUsed, groupbyUsed, havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
   var sqls: string
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
@@ -362,14 +182,14 @@ when isMainModule:
   ############################### Compile-Time ################################
   # SQL Queries are Minified for Release builds, Pretty-Printed for Debug builds
   # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
-  # const foo = query sql:
-  #   select "foo, bar, baz"
-  #   `from` "things"               # This can have comments here.
-  #   where "cost > 30 or foo > 9" ## This can have comments here.
-  #   offset 9
-  #   `--` "SQL Style Comments"     # SQL Comments are stripped for Release builds.
-  #   limit 1
-  #   orderby "something"
+  const foo = query sql:
+    select "foo, bar, baz"
+    `from` "things"               # This can have comments here.
+    where "cost > 30 or foo > 9" ## This can have comments here.
+    offset 9
+    `--` "SQL Style Comments"     # SQL Comments are stripped for Release builds.
+    limit 1
+    orderby "something"
 
   # let bar = query sql: # Replace sql here with 1 of tryExec,getRow,getValue,etc
   #   selectdistinct "oneElementAlone"
@@ -399,7 +219,7 @@ when isMainModule:
     insert "dffd"
     isnull true
     update "sdsad"
-    union "all"
+    union true
     `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
     #like "sdsd"
 
