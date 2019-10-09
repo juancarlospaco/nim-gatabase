@@ -25,6 +25,12 @@ template isQuestionOrString(value: NimNode) =
   if value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit}: doAssert value.strVal.len > 0, "value must not be empty string"
 
 
+template isCharOrString(value: NimNode) =
+  doAssert value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit, nnkCharLit}, "value must be string or '?' or '*'"
+  if value.kind == nnkCharLit: doAssert value.intVal == 63 or value.intVal == 42, "value must be '?' or '*'"
+  if value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit}: doAssert value.strVal.len > 0, "value must not be empty string"
+
+
 template sqlComment(comment: string): string =
   doAssert comment.len > 0, "SQL Comment must not be empty string"
   when defined(release): n
@@ -85,55 +91,55 @@ template orderbys(value: NimNode): string =
 
 
 template selects(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT ?" & n)
   elif value.kind == nnkCharLit: static("SELECT *" & n)
   else: "SELECT " & $value.strVal & n
 
 
 template selectDistincts(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT DISTINCT ?" & n)
   elif value.kind == nnkCharLit: static("SELECT DISTINCT *" & n)
   else: "SELECT DISTINCT " & $value.strVal & n
 
 
 template selectTops(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT TOP ? *" & n)
   else: "SELECT TOP " & $value.strVal & " *" & n
 
 
 template selectMins(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT MIN(?)" & n)
   elif value.kind == nnkCharLit: static("SELECT MIN(*)" & n)
   else: "SELECT MIN(" & $value.strVal & ")" & n
 
 
 template selectMaxs(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT MAX(?)" & n)
   elif value.kind == nnkCharLit: static("SELECT MAX(*)" & n)
   else: "SELECT MAX(" & $value.strVal & ")" & n
 
 
 template selectCounts(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT COUNT(?)" & n)
   elif value.kind == nnkCharLit: static("SELECT COUNT(*)" & n)
   else: "SELECT COUNT(" & $value.strVal & ")" & n
 
 
 template selectAvgs(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT AVG(?)" & n)
   elif value.kind == nnkCharLit: static("SELECT AVG(*)" & n)
   else: "SELECT AVG(" & $value.strVal & ")" & n
 
 
 template selectSums(value: NimNode): string =
-  isQuestionOrString(value)
+  isCharOrString(value)
   if isQuestionChar(value): static("SELECT SUM(?)" & n)
   elif value.kind == nnkCharLit: static("SELECT SUM(*)" & n)
   else: "SELECT SUM(" & $value.strVal & ")" & n
