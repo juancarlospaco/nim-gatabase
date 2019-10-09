@@ -182,7 +182,7 @@ when isMainModule:
   ############################### Compile-Time ################################
   # SQL Queries are Minified for Release builds, Pretty-Printed for Debug builds
   # DSL works on const/let/var, compile-time/run-time, JS/NodeJS, NimScript, C++
-  const foo = query sql:
+  const foo {.used.} = query sql:
     select "foo, bar, baz"
     `from`"things"               # This can have comments here.
     where "cost > 30 or foo > 9" ## This can have comments here.
@@ -191,23 +191,23 @@ when isMainModule:
     limit 1
     orderby "something"
 
-  # let bar = query sql: # Replace sql here with 1 of tryExec,getRow,getValue,etc
-  #   selectdistinct "oneElementAlone"
-  #   `from` '?'
-  #   where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
-  #   offset '?'         # '?' produces ? on output to be replaced by values from args.
-  #   limit '?'
-  #   orderby '?'
+  let bar {.used.} = query sql: # Replace sql here with 1 of tryExec,getRow,getValue,etc
+    selectdistinct "oneElementAlone"
+    `from` '?'
+    where "nim > 9000 and nimwc > 9000 or pizza <> NULL and answer =~ 42"
+    offset '?'         # '?' produces ? on output to be replaced by values from args.
+    limit '?'
+    orderby '?'
 
-  # var baz = query anonFunc: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
-  #   select '*'              # '*' produces * on output to allow SELECT * FROM table
-  #   `from` "stuffs"
-  #   where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
-  #   offset 2147483647
-  #   limit 2147483647
-  #   orderby "asc"
+  var baz {.used.} = query anonFunc: # Replace sql here with 1 of tryInsertID,sqlPrepared,etc
+    select '*'              # '*' produces * on output to allow SELECT * FROM table
+    `from` "stuffs"
+    where "answer = 42 and power > 9000 or doge = ? and catto <> 666"
+    offset 2147483647
+    limit 2147483647
+    orderby "asc"
 
-  const newfoo = query sql:
+  const newfoo {.used.} = query sql:
     delete "deletor"
     where "dfgdf"
     notlike "sds"
