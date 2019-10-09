@@ -171,11 +171,10 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of execAffectedRows: "execAffectedRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
     of anonFunc: "(func (): SqlQuery = sql(\"\"\"" & sqls & "\"\"\"))"
     of sqlPrepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
-      when defined(postgres):
+      when defined(postgres): # db_postgres.prepare() returns 1 SqlPrepared.
         "prepare(db, \"" & inner.lineInfo.normalize & "\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
-      else: "sql(\"\"\"" & sqls & "\"\"\")"
+      else: "sql(\"\"\"" & sqls & "\"\"\")"  # SQLite wont support prepared.
     else: "sql(\"\"\"" & sqls & "\"\"\")" # sql is sql""" query """ for SQLite
-  # echo sqls
   result = parseStmt sqls
 
 
