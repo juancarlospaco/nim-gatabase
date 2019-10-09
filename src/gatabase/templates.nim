@@ -51,6 +51,11 @@ template limits(value: NimNode): string =
   else: "LIMIT " & $value.intVal.Positive & n
 
 
+template values(value: NimNode): string =
+  isQuestionOrPositive(value)
+  "VALUES (" & "?, ".repeat(value.intVal.Positive) & static(")" & n)
+
+
 template froms(value: NimNode): string =
   isQuestionOrString(value)
   if isQuestionChar(value): static("FROM ?" & n)
