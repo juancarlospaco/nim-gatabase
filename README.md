@@ -139,6 +139,16 @@ SELECT SUM(somecolumn)
 selectsum "somecolumn"
 ```
 
+### TOP
+
+```sql
+SELECT TOP 5 *
+```
+
+```nim
+selecttop "5"
+```
+
 ### WHERE
 
 ```sql
@@ -330,6 +340,9 @@ IS NOT NULL
 ```nim
 isnull false
 ```
+
+
+
 
 
 # Output
