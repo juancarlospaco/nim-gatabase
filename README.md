@@ -331,6 +331,7 @@ IS NOT NULL
 isnull false
 ```
 
+
 # Output
 
 ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates code. Examples:
