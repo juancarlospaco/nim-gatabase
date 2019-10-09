@@ -157,7 +157,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
         else:
           sqls.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
       sqls.add static("END)" & n)
-    else: doAssert false, "Unknown error on ORMs SQL DSL: " & inner.lineInfo
+    else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
