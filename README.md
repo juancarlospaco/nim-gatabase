@@ -109,6 +109,36 @@ SELECT MAX(somecolumn)
 selectmax "somecolumn"
 ```
 
+### COUNT & AVG & SUM
+
+```sql
+SELECT COUNT(somecolumn)
+```
+
+```nim
+selectcount "somecolumn"
+```
+
+---
+
+```sql
+SELECT AVG(somecolumn)
+```
+
+```nim
+selectavg "somecolumn"
+```
+
+---
+
+```sql
+SELECT SUM(somecolumn)
+```
+
+```nim
+selectsum "somecolumn"
+```
+
 ### WHERE
 
 ```sql
