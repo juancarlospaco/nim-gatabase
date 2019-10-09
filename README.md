@@ -210,6 +210,77 @@ UNION
 union false
 ```
 
+### GROUP BY
+
+```sql
+GROUP BY country
+```
+
+```nim
+groupby "country"
+```
+
+### JOIN
+
+```sql
+FULL JOIN tablename
+```
+
+```nim
+fulljoin "tablename"
+```
+
+---
+
+```sql
+INNER JOIN tablename
+```
+
+```nim
+innerjoin "tablename"
+```
+
+---
+
+```sql
+LEFT JOIN tablename
+```
+
+```nim
+leftjoin "tablename"
+```
+
+---
+
+```sql
+RIGHT JOIN tablename
+```
+
+```nim
+rightjoin "tablename"
+```
+
+
+
+### IS NULL
+
+```sql
+IS NULL
+```
+
+```nim
+isnull true
+```
+
+---
+
+```sql
+IS NOT NULL
+```
+
+```nim
+isnull false
+```
 
 
 
