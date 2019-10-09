@@ -102,6 +102,47 @@ select "somecolumn"
 where "power > 9000"
 ```
 
+### LIMIT & OFFSET
+
+```sql
+OFFSET 9
+LIMIT 42
+```
+
+```nim
+offset 9
+limit 42
+```
+
+### INSERT
+
+```sql
+INSERT INTO tablename
+```
+
+```nim
+insert "tablename"
+```
+
+### DELETE
+
+```sql
+DELETE debts
+```
+
+```nim
+delete "debts"
+```
+
+### HAVING
+
+```sql
+HAVING beer > 5
+```
+
+```nim
+having "beer > 5"
+```
 
 ### ORDER BY
 
@@ -121,16 +162,6 @@ ORDER BY DESC
 
 ```nim
 orderby "desc"
-```
-
-### INSERT
-
-```sql
-INSERT INTO tablename
-```
-
-```nim
-insert "tablename"
 ```
 
 ### UPDATE
@@ -169,24 +200,14 @@ UNION ALL
 union true
 ```
 
+---
+
 ```sql
 UNION
 ```
 
 ```nim
 union false
-```
-
-### LIMIT & OFFSET
-
-```sql
-OFFSET 9
-LIMIT 42
-```
-
-```nim
-offset 9
-limit 42
 ```
 
 
