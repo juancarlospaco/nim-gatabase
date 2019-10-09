@@ -333,10 +333,11 @@ isnull false
 
 # Output
 
-ORM Output is choosed from `ormOutput` of `enum` type. Examples:
+ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates code. Examples:
 
-- `query anonFunc:` generates 1 anonimous function `(func (): SqlQuery = ... )`
+- `query anonFunc:` generates 1 anonimous inlined function `(func (): SqlQuery = ... )`.
 - `query sqlPrepared:` generates 1 Postgres Stored Procedure of `SqlPrepared` type.
+- `query tryExec:` generates code for 1 `tryExec()` function, etc etc.
 
 
 # Install
