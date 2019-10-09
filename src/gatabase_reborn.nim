@@ -145,11 +145,11 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       sqls.add updates(node[1])
       updateUsed = true
     of "union":
-      fromUsed = false # Union can "Reset" select, from, where to be re-used
-      whereUsed = false
-      selectUsed = false
-      likeUsed = false
-      betweenUsed = false
+      offsetUsed = off # Union can "Reset" select,from,where,etc to be re-used
+      limitUsed = off; fromUsed = off; whereUsed = off; orderUsed = off
+      selectUsed = off; deleteUsed = off; likeUsed = off; valuesUsed = off
+      betweenUsed = off; joinUsed = off; groupbyUsed = off; havingUsed = off
+      intoUsed = off; insertUsed = off; isnullUsed = off; updateUsed = off
       sqls.add unions(node[1])
     of "case":
       doAssert node[1].kind in {nnkTableConstr}, "CASE argument must be Table"
@@ -236,7 +236,7 @@ when isMainModule:
     isnull true
     update "table"
     union true
-    `set`  {"key0": "true", "key1": "false", "key2": "NULL", "key3": "NULL"}
+    `set` {"key0": "true", "key1": "false", "key2": "NULL", "key3": "NULL"}
     `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
     `--`"Query is Minified for Release builds, Pretty-Printed for Debug builds"
 
