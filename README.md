@@ -320,9 +320,6 @@ isnull false
 ```
 
 
-
-
-
 # Output
 
 ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates different output code. Examples:
@@ -330,6 +327,8 @@ ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates
 - `query anonFunc:` generates 1 anonimous inlined function `(func (): SqlQuery = ... )`.
 - `query sqlPrepared:` generates 1 Postgres Stored Procedure of `SqlPrepared` type.
 - `query tryExec:` generates code for 1 `tryExec()` function, etc etc.
+
+See `nim doc gatabase.nim` and `runnableExamples`.
 
 
 # Install
