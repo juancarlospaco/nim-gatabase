@@ -30,10 +30,6 @@ let variable = query sql:
 `--` "SQL Comments are supported, but stripped when build for Release. This is Nim."
 ```
 
-### Wildcards
-
-- Nim `'*'` generates SQL `*`. Nim `'?'` generates `?` to be replaced by values. No other `char` is needed.
-
 
 ### SELECT & FROM
 
@@ -69,6 +65,7 @@ SELECT DISTINCT somecolumn
 selectdistinct "somecolumn"
 ```
 
+
 ### MIN & MAX
 
 ```sql
@@ -88,6 +85,7 @@ SELECT MAX(somecolumn)
 ```nim
 selectmax "somecolumn"
 ```
+
 
 ### COUNT & AVG & SUM
 
@@ -119,6 +117,7 @@ SELECT SUM(somecolumn)
 selectsum "somecolumn"
 ```
 
+
 ### TOP
 
 ```sql
@@ -128,6 +127,7 @@ SELECT TOP 5 *
 ```nim
 selecttop "5"
 ```
+
 
 ### WHERE
 
@@ -143,6 +143,7 @@ select "somecolumn"
 where "power > 9000"
 ```
 
+
 ### LIMIT & OFFSET
 
 ```sql
@@ -155,6 +156,7 @@ offset 9
 limit 42
 ```
 
+
 ### INSERT
 
 ```sql
@@ -165,6 +167,7 @@ INSERT INTO tablename
 insertinto "tablename"
 ```
 
+
 ### DELETE
 
 ```sql
@@ -174,6 +177,7 @@ DELETE debts
 ```nim
 delete "debts"
 ```
+
 
 ### ORDER BY
 
@@ -195,6 +199,7 @@ ORDER BY DESC
 orderby "desc"
 ```
 
+
 ### UPDATE
 
 ```sql
@@ -206,6 +211,7 @@ SET key0 = value0, key1 = value1
 update "tablename"
 `set` {"key0": "value0", "key1": "value1"}
 ```
+
 
 ### CASE
 
@@ -221,6 +227,7 @@ END
 `case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
 ```
 
+
 ### COMMENT
 
 ```sql
@@ -230,6 +237,7 @@ COMMENT ON TABLE myTable IS 'This is an SQL COMMENT on a TABLE'
 ```nim
 comment {"on": "TABLE", "myTable": "This is an SQL COMMENT on a TABLE"}
 ```
+
 
 ### UNION
 
@@ -251,6 +259,7 @@ UNION
 union false
 ```
 
+
 ### GROUP BY
 
 ```sql
@@ -260,6 +269,7 @@ GROUP BY country
 ```nim
 groupby "country"
 ```
+
 
 ### JOIN
 
@@ -301,6 +311,7 @@ RIGHT JOIN tablename
 rightjoin "tablename"
 ```
 
+
 ### HAVING
 
 ```sql
@@ -310,6 +321,7 @@ HAVING beer > 5
 ```nim
 having "beer > 5"
 ```
+
 
 ### IS NULL
 
@@ -330,6 +342,11 @@ IS NOT NULL
 ```nim
 isnull false
 ```
+
+
+### Wildcards
+
+- Nim `'*'` generates SQL `*`. Nim `'?'` generates `?` to be replaced by values. No other `char` is needed.
 
 
 # Output
