@@ -248,3 +248,59 @@ template updates(value: NimNode): string =
 template unions(value: NimNode): string =
   doAssert value.kind == nnkIdent and parseBool($value), "UNION must be bool"
   if parseBool($value): static("UNION ALL" & n) else: static("UNION" & n)
+
+
+template comments(value: NimNode): string =
+  isTable(value)
+  when defined(postgres):
+    var what, name, coment: string
+    for tableValue in value:
+      if tableValue[0].strVal == "on":
+        what = tableValue[1].strVal.strip
+        doAssert what.len > 0, "COMMENT 'on' value must not be empty string"
+      else:
+        name = tableValue[0].strVal.strip
+        coment = tableValue[1].strVal.strip
+        doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
+    "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
+  else: n
+
+
+template sets(value: NimNode): string =
+  isTable(node[1])
+  var temp: seq[string]
+  for tableValue in node[1]:
+    temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
+  "SET " & temp.join", "
+
+
+template cases(value: NimNode): string =
+  isTable(value)
+  var default, branches: string
+  for tableValue in value:
+    if tableValue[0].strVal == "default":
+      default = "  ELSE " & tableValue[1].strVal & n
+    else:
+      branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
+  n & "(CASE" & n & branches & default & "END)" & n
+
+
+template resetAllGuards() =
+  # Union can "Reset" select, from, where, etc to be re-used again on new query
+  offsetUsed = false
+  limitUsed = false
+  fromUsed = false
+  whereUsed = false
+  orderUsed = false
+  selectUsed = false
+  deleteUsed = false
+  likeUsed = false
+  valuesUsed = false
+  betweenUsed = false
+  joinUsed = false
+  groupbyUsed = false
+  havingUsed = false
+  intoUsed = false
+  insertUsed = false
+  isnullUsed = false
+  updateUsed = false
