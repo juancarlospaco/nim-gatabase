@@ -18,12 +18,7 @@ const exampleTable = sql"""
 suite "Gatabase ORM Tests":
 
   let db = db_sqlite.open(":memory:", "", "", "")  # Setup.
-
-  setup:
-    doAssert db.tryExec(exampleTable), "Error creating 'exampleTable'"
-
-  teardown:
-    doAssert db.tryExec(sql"DELETE FROM person"), "Error deleting 'exampleTable'"
+  doAssert db.tryExec(exampleTable), "Error creating 'exampleTable'"
 
 
   test "INSERT INTO":
@@ -32,23 +27,50 @@ suite "Gatabase ORM Tests":
       values (42, "maximus", true, "maximus.nimmer@nim-lang.org", 5.5)
 
 
-  test "SELECT FROM WHERE":
+  test "SELECT ... FROM ... WHERE":
     let example2 {.used.} = query TryExec:
       select '*'
       `from` "person"
       where "id = 42"
 
 
+  test "SELECT ... (comment) ... FROM ... COMMENT":
+    let example2 {.used.} = query TryExec:
+      select '*'
+      `--` "This is a comment, this will be strapped for Release builds"
+      `from` "person"
+      comment {"on": "TABLE", "person": "This is an SQL COMMENT on a TABLE"}
+
+
+  test "SELECT ... FROM ... LIMIT ... OFFSET":
+    let example2 {.used.} = query TryExec:
+      select '*'
+      `from` "person"
+      offset 0
+      limit 2
+
+
   test "INSERT INTO":
     let example3 {.used.} = query TryExec:
       insertinto "person"
-      values (42, "Nikola Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
+      values (99, "Nikola Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
+
+
+  test "UNION ... ORBER BY":
+    let example2 {.used.} = query TryExec:
+      select '*'
+      `from` "person"
+      where "id = 42"
+      union true
+      select '*'
+      `from` "person"
+      where "id = 99"
+      orderby "asc"
 
 
   test "DELETE FROM WHERE":
     let example9 {.used.} = query TryExec:
       delete "person"
       where "id = 42"
-
 
   close db  # TearDown.
