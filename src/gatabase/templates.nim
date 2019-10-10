@@ -32,9 +32,15 @@ template isCharOrString(value: NimNode) =
 
 
 template isTable(value: NimNode) =
-  doAssert node[1].kind in {nnkTableConstr}, "value must be Table"
-  doAssert node[1].len > 0, "value must be 1 Non Empty Table"
+  doAssert value.kind == nnkTableConstr, "value must be Table"
+  doAssert value.len > 0, "value must be 1 Non Empty Table"
   for t in value: doAssert t[0].strVal.len > 0, "Table keys must not be empty string"
+
+
+template isTuple(value: NimNode) =
+  echo value.kind
+  doAssert value.kind == nnkTupleTy, "values must be Tuple"
+  doAssert value.len > 0, "values must be 1 Non Empty Tuple"
 
 
 template sqlComment(comment: string): string =
@@ -57,9 +63,10 @@ template limits(value: NimNode): string =
   else: "LIMIT " & $value.intVal.Positive & n
 
 
-template values(value: NimNode): string =
-  isQuestionOrPositive(value)
-  "VALUES ( " & "?, ".repeat(value.intVal.Positive) & static(" )" & n)
+template values(value: Positive): string =
+  var temp: seq[string]
+  for i in 0 ..< value: temp.add "?"
+  "VALUES ( " & temp.join", " & static(" )" & n)
 
 
 template froms(value: NimNode): string =
