@@ -11,12 +11,15 @@
 - Gatabase syntax is almost the same as SQL syntax, no new ORM to learn ever again.
 - You can literally copy&paste a SQL query from StackOverflow to Gatabase and with few tiny syntax tweaks is running.
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
-- All SQL syntax is supported. `CASE`, `UNION`, `JOIN`, `COMMENT` supported. Deep nested SubQueries are not supported.
 
-- ✅ `--` (Comments).
+
+### Support
+
+- All SQL syntax is supported.
+- ✅ `--` (Human readable comments).
 - ✅ `COMMENT`.
 - ✅ `UNION`, `UNION ALL`.
-- ✅ `CASE` with `ELSE`.
+- ✅ `CASE` with `ELSE` with correct indentation.
 - ✅ `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
 - ✅ `OFFSET`.
 - ✅ `LIMIT`.
@@ -31,6 +34,8 @@
 - ✅ `INSERT INTO`.
 - ✅ `IS NULL`, `IS NOT NULL`.
 - ✅ `UPDATE`.
+- ✅ `SET`.
+- Deep nested SubQueries are not supported.
 
 
 ### Comments
