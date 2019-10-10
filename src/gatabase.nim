@@ -2,16 +2,19 @@
 import macros, db_common, strutils, tables
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
-type ormOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
-  tryExec, getRow, getAllRows, getValue, tryInsertID, insertID, execAffectedRows, sql, sqlPrepared, anonFunc, exec
+type GatabaseOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
+  TryExec, GetRow, GetAllRows, GetValue, TryInsertID, InsertID, ExecAffectedRows, Sql, Prepared, Func, Exec
 
-macro query*(output: ormOutput, inner: untyped): untyped =
+macro query*(output: GatabaseOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
   when not declared(db): {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
   const err0 = "Wrong Syntax, deep nested SubQueries are not supported yet, repeated call found"
-  var offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed, deleteUsed, likeUsed, valuesUsed,
-    betweenUsed, joinUsed, groupbyUsed, havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
-  var sqls: string
+  var
+    offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
+      deleteUsed, likeUsed, valuesUsed, betweenUsed, joinUsed, groupbyUsed,
+      havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
+    sqls: string
+    args: NimNode
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
     case normalize($node[0])
@@ -26,7 +29,8 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       limitUsed = true
     of "values":
       doAssert not valuesUsed, err0
-      sqls.add values(node[1])
+      sqls.add values(node[1].len)
+      args = node[1]
       valuesUsed = true
     of "from":
       doAssert not fromUsed, err0
@@ -154,31 +158,35 @@ macro query*(output: ormOutput, inner: untyped): untyped =
     of "comment":
       sqls.add comments(node[1])
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
-  assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
+  doAssert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
-  sqls = case parseEnum[ormOutput]($output)
-    of exec: "exec(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of tryExec: "tryExec(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of getRow: "getRow(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of getAllRows: "getAllRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of getValue: "getValue(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of tryInsertID: "tryInsertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of insertID: "insertID(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of execAffectedRows: "execAffectedRows(db, sql(\"\"\"" & sqls & "\"\"\"), args)"
-    of anonFunc: "(func (): SqlQuery = sql(\"\"\"" & sqls & "\"\"\"))"
-    of sqlPrepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
+  let
+    y = if args.len > 0: $toStrLit(args) else: ""
+    x = if y.len > 0: y[1..^2] else: y
+  sqls = case parseEnum[GatabaseOutput]($output)
+    of Exec: "exec(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of TryExec: "tryExec(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of GetRow: "getRow(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of GetAllRows: "getAllRows(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of GetValue: "getValue(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of TryInsertID: "tryInsertID(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of InsertID: "insertID(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of ExecAffectedRows: "execAffectedRows(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
+    of Func: "( func (): SqlQuery = sql( \"\"\"" & sqls & "\"\"\" ) )"
+    of Prepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
       when defined(postgres): # db_postgres.prepare() returns 1 SqlPrepared.
-        "prepare(db, \"" & inner.lineInfo.normalize & "\", sql(\"\"\"" & sqls & "\"\"\"), args.len)"
+        "prepare(db,\"" & inner.lineInfo.normalize & "\",sql(\"\"\"" & sqls & "\"\"\")," & $args.len & ")"
       else: "sql(\"\"\"" & sqls & "\"\"\")" # SQLite wont support prepared.
     else: "sql(\"\"\"" & sqls & "\"\"\")" # sql is sql""" query """ for SQLite
+  when defined(dev): echo sqls
   result = parseStmt sqls
 
 
 when isMainModule:
   #runnableExamples:
 
-  const foo {.used.} = query sql:
+  const foo {.used.} = query Sql:
     select "foo, bar, baz" # This can have comments here.
     `from`"things"
     where "cost > 30 or taxes > 9 and rank <> 0"
@@ -187,7 +195,7 @@ when isMainModule:
     limit 1
     orderby "something"
 
-  let bar {.used.} = query sql:
+  let bar {.used.} = query Sql:
     `--`"Replace sql here ^ with 1 of tryExec,getRow,tryInsertID,sqlPrepared"
     selectdistinct "oneElementAlone"
     `from`'?'
@@ -197,7 +205,7 @@ when isMainModule:
     limit '?'
     orderby '?'
 
-  var baz {.used.} = query anonFunc:
+  var baz {.used.} = query Func:
     select '*'
     `--`"The '*' produces * on output to allow stuff like:  SELECT * FROM table"
     `from`"stuffs"
@@ -206,7 +214,7 @@ when isMainModule:
     limit 2147483647
     orderby "asc"
 
-  let newfoo {.used.} = query sqlPrepared:
+  let newfoo {.used.} = query Prepared:
     `--`"More advanced stuff for more complex database queries"
     delete "debts"
     where "debt > 99"
@@ -218,7 +226,7 @@ when isMainModule:
     having "currency"
     into "dsfsdfd"
     insert "happiness"
-    values 9
+    #values 9
     isnull true
     update "table"
     union true
