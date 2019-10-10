@@ -56,7 +56,7 @@ suite "Gatabase ORM Tests":
       values (99, "Nikola Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
 
 
-  test "UNION ... ORBER BY":
+  test "UNION ALL ... ORBER BY ... IS NOT NULL":
     let example2 {.used.} = query TryExec:
       select '*'
       `from` "person"
@@ -64,7 +64,8 @@ suite "Gatabase ORM Tests":
       union true
       select '*'
       `from` "person"
-      where "id = 99"
+      where "name"
+      isnull false
       orderby "asc"
 
 
