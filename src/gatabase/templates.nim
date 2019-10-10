@@ -268,7 +268,7 @@ template comments(value: NimNode): string =
         doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
     doAssert onFound == 1, "COMMENT must have 1 'on' key, but found: " & $onFound
     "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
-  else: n
+  else: n # SQLite wont support COMMENT, is not part of SQL Standard neither.
 
 
 template sets(value: NimNode): string =
