@@ -160,8 +160,8 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   doAssert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
-  when defined(dev): echo sqls
-  let
+  #when defined(dev): echo sqls
+  let # This prepares the arguments from a Tuple into varargs "unpacked".
     y = if args.len > 0: $toStrLit(args) else: ""
     x = if y.len > 0: y[1..^2] else: y
   sqls = case parseEnum[GatabaseOutput]($output)
@@ -226,7 +226,6 @@ when isMainModule:
     having "currency"
     into "dsfsdfd"
     insert "happiness"
-    #values 9
     isnull true
     update "table"
     union true
