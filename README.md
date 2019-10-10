@@ -12,13 +12,6 @@
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
 - All the SQL syntax is supported. `CASE`, `UNION`, `JOIN` supported. Deep nested SubQueries are not supported.
 
-```nim
-let variable = query sql:
-  select  '*'
-  `from`  "clients"
-  groupby "country"
-  orderby "desc"
-```
 
 ### Comments
 
@@ -349,6 +342,23 @@ isnull false
 - Nim `'*'` ➡️ SQL `*`.
 - Nim `'?'` ➡️ SQL `?`.
 - No other `char` is needed.
+
+
+### Anti-Obfuscation
+
+Gatabase wont like Obfuscation, its code is easy to read and similar to Pretty-Printed SQL.
+
+**Compiles Ok:**
+```nim
+let variable = query sql:
+  select  '*'
+  `from`  "clients"
+  groupby "country"
+  orderby "desc"
+```
+
+**Fails to Compile:**
+`let variable = query sql: select '*' from "clients" groupby "country" orderby "desc"`
 
 
 # Output
