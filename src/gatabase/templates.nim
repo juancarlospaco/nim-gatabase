@@ -31,6 +31,12 @@ template isCharOrString(value: NimNode) =
   if value.kind in {nnkStrLit, nnkTripleStrLit, nnkRStrLit}: doAssert value.strVal.len > 0, "value must not be empty string"
 
 
+template isTable(value: NimNode) =
+  doAssert node[1].kind in {nnkTableConstr}, "value must be Table"
+  doAssert node[1].len > 0, "value must be 1 Non Empty Table"
+  for t in value: doAssert t[0].strVal.len > 0, "Table keys must not be empty string"
+
+
 template sqlComment(comment: string): string =
   doAssert comment.len > 0, "SQL Comment must not be empty string"
   when defined(release): n
