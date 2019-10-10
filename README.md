@@ -405,8 +405,32 @@ ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.githu
 - `query TryExec:` generates code for 1 [`tryExec()` function](https://nim-lang.github.io/Nim/db_postgres.html#tryExec%2CDbConn%2CSqlQuery%2Cvarargs%5Bstring%2C%5D), etc etc etc.
 - Compile using `-d:dev` for Debugging of the generated SQL.
 
-See `nim doc gatabase.nim`, `runnableExamples`, [`/tests/` folder](https://github.com/juancarlospaco/nim-gatabase/tree/master/tests), [Std Lib db_postgres](https://nim-lang.github.io/Nim/db_postgres.html) for more documentation.
+See `nim doc gatabase.nim`, `runnableExamples`, [Std Lib db_postgres](https://nim-lang.github.io/Nim/db_postgres.html) for more documentation.
 
+
+### Tests
+
+```console
+$ nimble test
+
+[Suite] Gatabase ORM Tests
+  [OK] let   INSERT INTO
+  [OK] let   SELECT ... FROM ... WHERE
+  [OK] let   SELECT ... (comment) ... FROM ... COMMENT
+  [OK] let   SELECT ... FROM ... LIMIT ... OFFSET
+  [OK] let   INSERT INTO
+  [OK] let   UNION ALL ... ORBER BY ... IS NOT NULL
+  [OK] let   SELECT DISTINCT ... FROM ... WHERE
+  [OK] const INSERT INTO
+  [OK] const SELECT ... FROM ... WHERE
+  [OK] const SELECT ... (comment) ... FROM ... COMMENT
+  [OK] const SELECT ... FROM ... LIMIT ... OFFSET
+  [OK] const INSERT INTO
+  [OK] const UNION ALL ... ORBER BY ... IS NOT NULL
+  [OK] const SELECT DISTINCT ... FROM ... WHERE
+  [OK] let   DELETE FROM WHERE
+
+```
 
 # Install
 
