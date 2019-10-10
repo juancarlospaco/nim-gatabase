@@ -12,6 +12,8 @@
 - You can literally [copy&paste a SQL query from StackOverflow](https://stackoverflow.com/questions/tagged/postgresql?tab=Frequent) to Gatabase and with few tiny syntax tweaks is running.
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
 
+*Syntax mimic will improve with time, but I think its good enought to release to users.*
+
 
 ### Support
 
