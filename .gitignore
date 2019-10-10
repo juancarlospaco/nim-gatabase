@@ -1,2 +1,4 @@
-nimcache/
+tests/
 *.sql
+*.c
+*.h
