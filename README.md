@@ -13,6 +13,25 @@
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
 - All SQL syntax is supported. `CASE`, `UNION`, `JOIN`, `COMMENT` supported. Deep nested SubQueries are not supported.
 
+- ✅ `--` (Comments).
+- ✅ `COMMENT`.
+- ✅ `UNION`, `UNION ALL`.
+- ✅ `CASE` with `ELSE`.
+- ✅ `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
+- ✅ `OFFSET`.
+- ✅ `LIMIT`.
+- ✅ `FROM`.
+- ✅ `WHERE`, `WHERE NOT`, `WHERE EXISTS`, `WHERE NOT EXISTS`.
+- ✅ `ORDER BY`.
+- ✅ `SELECT`, `SELECT *`, `SELECT DISTINCT`, `SELECT TOP`, `SELECT MIN`, `SELECT MAX`, `SELECT AVG`, `SELECT SUM`.
+- ✅ `DELETE FROM`.
+- ✅ `LIKE`, `NOT LIKE`.
+- ✅ `BETWEEN`, `NOT BETWEEN`.
+- ✅ `HAVING`.
+- ✅ `INSERT INTO`.
+- ✅ `IS NULL`, `IS NOT NULL`.
+- ✅ `UPDATE`.
+
 
 ### Comments
 
