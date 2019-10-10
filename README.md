@@ -359,13 +359,13 @@ let variable = query sql:
 
 **Fails to Compile:**
 
-`let variable = query sql: select '*' from "clients" groupby "country" orderby "desc"`
-
-`let variable = query sql:select'*' from"clients" groupby"country" orderby"desc"`
-
 `let variable = query sql: select('*') from("clients") groupby("country") orderby("desc")`
 
 `let variable = query sql: '*'.select() "clients".from() "country".groupby() "desc".orderby()`
+
+`let variable = query sql: select '*' from "clients" groupby "country" orderby "desc"`
+
+`let variable = query sql:select'*' from"clients" groupby"country" orderby"desc"`
 
 *This helps on big projects where each developer tries to use a different code style.*
 
