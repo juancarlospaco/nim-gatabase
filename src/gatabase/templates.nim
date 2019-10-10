@@ -254,7 +254,7 @@ template comments(value: NimNode): string =
   isTable(value)
   when defined(postgres):
     doAssert value.len == 2, "COMMENT wrong SQL syntax, must have exactly 2 keys"
-    doAssert value[0][0].strVal == "on", "COMMENT must have an 'on' key, is required and mandatory"
+    doAssert value[0][0].strVal == "on", "COMMENT must have 1 'on' key, as first key, is required and mandatory"
     var what, name, coment: string
     for tableValue in value:
       if tableValue[0].strVal == "on":
@@ -278,6 +278,7 @@ template sets(value: NimNode): string =
 
 template cases(value: NimNode): string =
   isTable(value)
+  doAssert value[0][^2].strVal == "default", "CASE must have 1 'default' key, as last key, is required and mandatory"
   var default, branches: string
   for tableValue in value:
     if tableValue[0].strVal == "default":
