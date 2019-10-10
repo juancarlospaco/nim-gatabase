@@ -16,7 +16,7 @@
 ### Support
 
 - All SQL standard syntax is supported.
-- ✅ `--` (Human readable comments).
+- ✅ `--` Human readable comments.
 - ✅ `COMMENT`.
 - ✅ `UNION`, `UNION ALL`.
 - ✅ `CASE` with multiple `WHEN` and `ELSE` with correct indentation.
