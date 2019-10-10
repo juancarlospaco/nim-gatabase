@@ -355,11 +355,11 @@ isnull false
 
 ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates different output code. Examples:
 
-- `query anonFunc:` generates 1 anonimous inlined function `(func (): SqlQuery = ... )`.
-- `query sqlPrepared:` generates 1 Postgres Stored Procedure of `SqlPrepared` type.
-- `query tryExec:` generates code for 1 `tryExec()` function, etc etc.
+- `query anonFunc:` generates 1 anonimous inlined function `( func (): SqlQuery = ... )`.
+- `query sqlPrepared:` generates 1 Postgres Stored Procedure of [`SqlPrepared` type](https://nim-lang.github.io/Nim/db_postgres.html#parameter-substitution).
+- `query tryExec:` generates code for 1 [`tryExec()` function](https://nim-lang.github.io/Nim/db_postgres.html#tryExec%2CDbConn%2CSqlQuery%2Cvarargs%5Bstring%2C%5D), etc etc.
 
-See `nim doc gatabase.nim` and `runnableExamples`.
+See `nim doc gatabase.nim`, `runnableExamples`, [Std Lib db_postgres](https://nim-lang.github.io/Nim/db_postgres.html) for more documentation.
 
 
 # Install
