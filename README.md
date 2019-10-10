@@ -35,7 +35,7 @@
 - ✅ `IS NULL`, `IS NOT NULL`.
 - ✅ `UPDATE`.
 - ✅ `SET`.
-- Deep nested SubQueries are not supported.
+- Deep nested SubQueries are not supported. Postgres version >=12.
 
 
 ### Comments
