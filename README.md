@@ -396,6 +396,23 @@ let variable = query Sql:
 *This helps on big projects where each developer tries to use a different code style.*
 
 
+# Your data, your way
+
+Nim has `template` is like a literal copy&paste of code in-place with no performance cost,
+that allows you to create your own custom ORM function callbacks, like the ones used on scripting languages.
+
+```nim
+template getMemes(): string =
+  result = query getValue:
+    select "url"
+    `from` "memes"
+    limit 1
+```
+
+Then you do `getMemes()` when you need it!. The API that fits your ideas.
+From this `MyClass.meta.Session.query(Memes).all().filter().first()` to `getMemes()`
+
+
 # Output
 
 ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
