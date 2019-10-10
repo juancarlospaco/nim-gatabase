@@ -8,7 +8,7 @@
 # Use
 
 - Gatabase is designed as 1 simplified [Strong Static Typed](https://en.wikipedia.org/wiki/Type_system#Static_type_checking) [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language) [Sugar](https://en.wikipedia.org/wiki/Syntactic_sugar).
-- Gatabase syntax is almost the same as SQL syntax, no new ORM to learn ever again, use any SQL WYSIWYG as your GUI.
+- Gatabase syntax is almost the same as SQL syntax, no new ORM to learn ever again, any SQL WYSIWYG is your GUI.
 - You can literally [copy&paste a SQL query from StackOverflow](https://stackoverflow.com/questions/tagged/postgresql?tab=Frequent) to Gatabase and with few tiny syntax tweaks is running.
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
 
