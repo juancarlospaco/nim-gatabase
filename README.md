@@ -428,7 +428,7 @@ $ nimble test
   [OK] const INSERT INTO
   [OK] const UNION ALL ... ORBER BY ... IS NOT NULL
   [OK] const SELECT DISTINCT ... FROM ... WHERE
-  [OK] let   DELETE FROM WHERE
+  [OK] var   DELETE FROM WHERE
 
 ```
 
