@@ -346,7 +346,9 @@ isnull false
 
 ### Wildcards
 
-- Nim `'*'` generates SQL `*`. Nim `'?'` generates `?` to be replaced by values. No other `char` is needed.
+- Nim `'*'` ➡️ SQL `*`.
+- Nim `'?'` ➡️ SQL `?` (to be replaced by values at run-time).
+- No other `char` is needed.
 
 
 # Output
