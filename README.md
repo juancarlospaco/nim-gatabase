@@ -433,7 +433,7 @@ $ nimble test
 
 ```
 
-- Tests use a real database SQLite on RAM `":memory:"`.
+- Tests use a real database SQLite on RAM `":memory:"` with a `"person"` table.
 
 
 # Install
