@@ -69,6 +69,13 @@ suite "Gatabase ORM Tests":
       orderby "asc"
 
 
+  test "SELECT DISTINCT ... FROM ... WHERE":
+    let example2 {.used.} = query TryExec:
+      selectdistinct "id"
+      `from`"person"
+      where "rank != 666.0"
+
+
   test "DELETE FROM WHERE":
     let example9 {.used.} = query TryExec:
       delete "person"
