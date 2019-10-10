@@ -3,7 +3,6 @@ import ../src/gatabase
 
 
 const exampleTable = sql"""
-
     create table if not exists person(
       id      integer     primary key,
       name    varchar(9)  not null unique,
@@ -11,7 +10,6 @@ const exampleTable = sql"""
       email   text        not null,
       rank    float       not null default 0.0
     );
-
   """
 
 
@@ -32,12 +30,6 @@ suite "Gatabase ORM Tests":
       select '*'
       `from`"person"
       where "id = 42"
-
-
-  # test "let   UPDATE ... SET":
-  #   let example2 {.used.} = query TryExec:
-  #     update "person"
-  #     `set` {"id": "1", "name": "Pepe", "active": "false", "email": "a@b.io", "rank": "1.0"}
 
 
   test "let   SELECT ... (comment) ... FROM ... COMMENT":
