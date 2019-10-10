@@ -432,6 +432,9 @@ $ nimble test
 
 ```
 
+- Tests use a real SQLite on RAM `":memory:"`.
+
+
 # Install
 
 - [`nimble install gatabase`](https://nimble.directory/pkg/gatabase "nimble install gatabase 👑 https://nimble.directory/pkg/gatabase")
