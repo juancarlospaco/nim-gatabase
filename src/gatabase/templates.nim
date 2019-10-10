@@ -253,6 +253,8 @@ template unions(value: NimNode): string =
 template comments(value: NimNode): string =
   isTable(value)
   when defined(postgres):
+    doAssert value.len == 2, "COMMENT wrong SQL syntax, must have exactly 2 keys"
+    doAssert value[0][0].strVal == "on", "COMMENT must have an 'on' key, is required and mandatory"
     var what, name, coment: string
     for tableValue in value:
       if tableValue[0].strVal == "on":
