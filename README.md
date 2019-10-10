@@ -406,7 +406,7 @@ See `nim doc gatabase.nim`, `runnableExamples`, [Std Lib db_postgres](https://ni
 
 # Install
 
-- [`nimble install gatabase`](https://nimble.directory/pkg/gatabase)
+- [`nimble install gatabase`](https://nimble.directory/pkg/gatabase "nimble install gatabase \n https://nimble.directory/pkg/gatabase")
 
 
 # Requisites
