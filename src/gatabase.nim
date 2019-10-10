@@ -153,13 +153,13 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       sqls.add unions(node[1])
     of "case":
       isTable(node[1])
-      sqls.add static(n & "(CASE" & n)
+      var default, branches: string
       for tableValue in node[1]:
         if tableValue[0].strVal == "default":
-          sqls.add "  ELSE " & tableValue[1].strVal & n
+          default = "  ELSE " & tableValue[1].strVal & n
         else:
-          sqls.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
-      sqls.add static("END)" & n)
+          branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
+      sqls.add static(n & "(CASE" & n) & branches & default & static("END)" & n)
     of "set":
       isTable(node[1])
       var temp: seq[string]
@@ -201,8 +201,8 @@ macro query*(output: ormOutput, inner: untyped): untyped =
   result = parseStmt sqls
 
 
-#when isMainModule:
-runnableExamples:
+when isMainModule:
+  #runnableExamples:
 
   const foo {.used.} = query sql:
     select "foo, bar, baz" # This can have comments here.
