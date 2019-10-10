@@ -278,14 +278,14 @@ template sets(value: NimNode): string =
 
 template cases(value: NimNode): string =
   isTable(value)
-  doAssert value[0][^2].strVal == "default", "CASE must have 1 'default' key, as last key, is required and mandatory"
+  doAssert value[^1][0].strVal == "default", "CASE must have 1 'default' key, as last key, is required and mandatory"
   var default, branches: string
   for tableValue in value:
     if tableValue[0].strVal == "default":
       default = "  ELSE " & tableValue[1].strVal & n
     else:
       branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
-  n & "(CASE" & n & branches & default & "END)" & n
+  n & static("(CASE" & n) & branches & default & static("END)" & n)
 
 
 template resetAllGuards() =
