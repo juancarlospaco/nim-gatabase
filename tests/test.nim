@@ -15,15 +15,15 @@ const exampleTable = sql"""
   """
 
 
-suite "Gatabase Compile-Time ORM Tests":
+suite "Gatabase ORM Tests":
 
-  let db {.global, used.} = db_sqlite.open(":memory:", "", "", "")
+  let db = db_sqlite.open(":memory:", "", "", "")  # Setup.
 
   setup:
-    doAssert db.tryExec(exampleTable), "Could not Create 'exampleTable'"
+    doAssert db.tryExec(exampleTable), "Error creating 'exampleTable'"
 
   teardown:
-    doAssert db.tryExec(sql"DELETE FROM person"), "Could not Delete 'exampleTable'"
+    doAssert db.tryExec(sql"DELETE FROM person"), "Error deleting 'exampleTable'"
 
 
   test "INSERT INTO":
@@ -39,7 +39,7 @@ suite "Gatabase Compile-Time ORM Tests":
       where "id = 42"
 
 
-  test "INSET INTO":
+  test "INSERT INTO":
     let example3 {.used.} = query TryExec:
       insertinto "person"
       values (42, "Nikola Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
@@ -51,4 +51,4 @@ suite "Gatabase Compile-Time ORM Tests":
       where "id = 42"
 
 
-  db.close  # TearDown.
+  close db  # TearDown.
