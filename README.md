@@ -346,7 +346,7 @@ isnull false
 
 ### Anti-Obfuscation
 
-Gatabase wont like Obfuscation, its code is easy to read and similar to Pretty-Printed SQL. `nimpretty` friendly. KISS.
+Gatabase wont like Obfuscation, its code is easy to read and similar to Pretty-Printed SQL. [`nimpretty` friendly](https://nim-lang.github.io/Nim/tools.html). [KISS](https://en.wikipedia.org/wiki/KISS_principle).
 
 **Compiles Ok:**
 ```nim
