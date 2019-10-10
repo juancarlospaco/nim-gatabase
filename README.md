@@ -399,7 +399,8 @@ let variable = query Sql:
 # Your data, your way
 
 Nim has `template` is like a literal copy&paste of code in-place with no performance cost,
-that allows you to create your own custom ORM function callbacks, like the ones used on scripting languages.
+that allows you to create your own custom ORM function callbacks on-the-fly,
+like the ones used on scripting languages.
 
 ```nim
 template getMemes(): string =
@@ -409,8 +410,9 @@ template getMemes(): string =
     limit 1
 ```
 
-Then you do `getMemes()` when you need it!. The API that fits your ideas.
-From this `MyClass.meta.Session.query(Memes).all().filter().first()` to `getMemes()`
+Then you do `getMemes()` when you need it❕. The API that fits your ideas.
+
+From this `MyClass.meta.Session.query(Memes).all().filter().first()` to `getMemes()`.
 
 
 # Output
