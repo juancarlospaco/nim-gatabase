@@ -365,6 +365,8 @@ let variable = query sql:
 
 `let variable = query sql: select('*') from("clients") groupby("country") orderby("desc")`
 
+`let variable = query sql: '*'.select() "clients".from() "country".groupby() "desc".orderby()`
+
 *This helps on big projects where each developer tries to use a different code style.*
 
 
