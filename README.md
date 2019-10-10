@@ -180,11 +180,13 @@ limit 42
 ### INSERT
 
 ```sql
-INSERT INTO tablename
+INSERT INTO person
+VALUES (42, 'Nikola Tesla', true, 'nikola.tesla@nim-lang.org', 9.6)
 ```
 
 ```nim
-insertinto "tablename"
+insertinto "person"
+values (42, "Nikola Tesla", true, "nikola.tesla@nim-lang.org", 9.6)
 ```
 
 
