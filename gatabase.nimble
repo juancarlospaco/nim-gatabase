@@ -5,6 +5,7 @@ author        = "Juan Carlos"
 description   = "Compile-Time ORM for Nim"
 license       = "MIT"
 srcDir        = "src"
+skipDirs      = @["tests"]
 
 
 # Dependencies
