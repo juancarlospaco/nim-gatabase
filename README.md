@@ -428,6 +428,7 @@ $ nimble test
   [OK] const INSERT INTO
   [OK] const UNION ALL ... ORBER BY ... IS NOT NULL
   [OK] const SELECT DISTINCT ... FROM ... WHERE
+  [OK] var   CASE
   [OK] var   DELETE FROM WHERE
 
 ```
