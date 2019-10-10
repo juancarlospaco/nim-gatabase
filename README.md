@@ -15,7 +15,7 @@
 
 ### Support
 
-- All SQL syntax is supported.
+- All SQL standard syntax is supported.
 - ✅ `--` (Human readable comments).
 - ✅ `COMMENT`.
 - ✅ `UNION`, `UNION ALL`.
