@@ -145,40 +145,14 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       sqls.add updates(node[1])
       updateUsed = true
     of "union":
-      offsetUsed = off # Union can "Reset" select,from,where,etc to be re-used
-      limitUsed = off; fromUsed = off; whereUsed = off; orderUsed = off
-      selectUsed = off; deleteUsed = off; likeUsed = off; valuesUsed = off
-      betweenUsed = off; joinUsed = off; groupbyUsed = off; havingUsed = off
-      intoUsed = off; insertUsed = off; isnullUsed = off; updateUsed = off
+      resetAllGuards()
       sqls.add unions(node[1])
     of "case":
-      isTable(node[1])
-      var default, branches: string
-      for tableValue in node[1]:
-        if tableValue[0].strVal == "default":
-          default = "  ELSE " & tableValue[1].strVal & n
-        else:
-          branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
-      sqls.add static(n & "(CASE" & n) & branches & default & static("END)" & n)
+      sqls.add cases(node[1])
     of "set":
-      isTable(node[1])
-      var temp: seq[string]
-      for tableValue in node[1]:
-        temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
-      sqls.add "SET " & temp.join", "
+      sqls.add sets(node[1])
     of "comment":
-      isTable(node[1])
-      when defined(postgres):
-        var what, name, coment: string
-        for tableValue in node[1]:
-          if tableValue[0].strVal == "on":
-            what = tableValue[1].strVal.strip
-            doAssert what.len > 0, "COMMENT 'on' value must not be empty string"
-          else:
-            name = tableValue[0].strVal.strip
-            coment = tableValue[1].strVal.strip
-            doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
-        sqls.add "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
+      sqls.add comments(node[1])
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
