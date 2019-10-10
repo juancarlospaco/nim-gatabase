@@ -412,7 +412,7 @@ template getMemes(): string =
 
 Then you do `getMemes()` when you need it❕. The API that fits your ideas.
 
-From this `MyClass.meta.Session.query(Memes).all().filter().first()` to `getMemes()`.
+From this `MyClass.meta.Session.query(Memes).all().filter().first()` to this `getMemes()`.
 
 
 # Output
