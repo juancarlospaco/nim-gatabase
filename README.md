@@ -377,7 +377,7 @@ Gatabase wont like Obfuscation, its code is easy to read and similar to Pretty-P
 
 **Compiles Ok:**
 ```nim
-let variable = query sql:
+let variable = query Sql:
   select  '*'
   `from`  "clients"
   groupby "country"
@@ -386,21 +386,21 @@ let variable = query sql:
 
 **Fails to Compile:**
 
-- `let variable = query sql: select('*') from("clients") groupby("country") orderby("desc")`
-- `let variable = query sql: '*'.select() "clients".from() "country".groupby() "desc".orderby()`
-- `let variable = query sql: select '*' from "clients" groupby "country" orderby "desc"`
-- `let variable = query sql:select'*' from"clients" groupby"country" orderby"desc"`
+- `let variable = query Sql: select('*') from("clients") groupby("country") orderby("desc")`
+- `let variable = query Sql: '*'.select() "clients".from() "country".groupby() "desc".orderby()`
+- `let variable = query Sql: select '*' from "clients" groupby "country" orderby "desc"`
+- `let variable = query Sql:select'*' from"clients" groupby"country" orderby"desc"`
 
 *This helps on big projects where each developer tries to use a different code style.*
 
 
 # Output
 
-ORM Output is choosed from `ormOutput` of [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
+ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
 
-- `query anonFunc:` generates 1 [anonymous inlined function](https://nim-lang.github.io/Nim/manual.html#procedures-anonymous-procs) `( func (): SqlQuery = ... )`.
-- `query sqlPrepared:` generates 1 Postgres Stored Procedure of [`SqlPrepared` type](https://nim-lang.github.io/Nim/db_postgres.html#parameter-substitution).
-- `query tryExec:` generates code for 1 [`tryExec()` function](https://nim-lang.github.io/Nim/db_postgres.html#tryExec%2CDbConn%2CSqlQuery%2Cvarargs%5Bstring%2C%5D), etc etc etc.
+- `query Func:` generates 1 [anonymous inlined function](https://nim-lang.github.io/Nim/manual.html#procedures-anonymous-procs) `( func (): SqlQuery = ... )`.
+- `query SqlPrepared:` generates 1 Postgres Stored Procedure of [`SqlPrepared` type](https://nim-lang.github.io/Nim/db_postgres.html#parameter-substitution).
+- `query TryExec:` generates code for 1 [`tryExec()` function](https://nim-lang.github.io/Nim/db_postgres.html#tryExec%2CDbConn%2CSqlQuery%2Cvarargs%5Bstring%2C%5D), etc etc etc.
 - Compile using `-d:dev` for Debugging of the generated SQL.
 
 See `nim doc gatabase.nim`, `runnableExamples`, [Std Lib db_postgres](https://nim-lang.github.io/Nim/db_postgres.html) for more documentation.
