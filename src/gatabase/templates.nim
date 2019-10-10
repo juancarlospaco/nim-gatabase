@@ -242,7 +242,7 @@ template inserts(value: NimNode): string =
 
 
 template isnulls(value: NimNode): string =
-  doAssert value.kind == nnkIdent and parseBool($value), "IS NULL must be bool"
+  doAssert value.kind == nnkIdent and parseBool($value) is bool, "IS NULL must be bool"
   if parseBool($value): static("IS NULL" & n) else: static("IS NOT NULL" & n)
 
 
