@@ -34,6 +34,12 @@ suite "Gatabase ORM Tests":
       where "id = 42"
 
 
+  # test "let   UPDATE ... SET":
+  #   let example2 {.used.} = query TryExec:
+  #     update "person"
+  #     `set` {"id": "1", "name": "Pepe", "active": "false", "email": "a@b.io", "rank": "1.0"}
+
+
   test "let   SELECT ... (comment) ... FROM ... COMMENT":
     let example2 {.used.} = query TryExec:
       select '*'
@@ -130,8 +136,12 @@ suite "Gatabase ORM Tests":
       `from`"person"
       where "rank != 666.0"
 
+  test "var   CASE":
+    var example2 {.used.} = query Sql:
+      `case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
 
-  test "let   DELETE FROM WHERE":
+
+  test "var   DELETE FROM WHERE":
     var example9 {.used.} = query TryExec:
       delete "person"
       where "id = 42"
