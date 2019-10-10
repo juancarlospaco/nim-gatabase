@@ -346,7 +346,7 @@ isnull false
 
 ### Anti-Obfuscation
 
-Gatabase wont like Obfuscation, its code is easy to read and similar to Pretty-Printed SQL. `nimpretty` friendly.
+Gatabase wont like Obfuscation, its code is easy to read and similar to Pretty-Printed SQL. `nimpretty` friendly. KISS.
 
 **Compiles Ok:**
 ```nim
@@ -360,6 +360,8 @@ let variable = query sql:
 **Fails to Compile:**
 
 `let variable = query sql: select '*' from "clients" groupby "country" orderby "desc"`
+
+`let variable = query sql:select'*' from"clients" groupby"country" orderby"desc"`
 
 
 # Output
