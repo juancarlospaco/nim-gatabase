@@ -239,27 +239,6 @@ comment {"on": "TABLE", "myTable": "This is an SQL COMMENT on a TABLE"}
 ```
 
 
-### UNION
-
-```sql
-UNION ALL
-```
-
-```nim
-union true
-```
-
----
-
-```sql
-UNION
-```
-
-```nim
-union false
-```
-
-
 ### GROUP BY
 
 ```sql
@@ -320,6 +299,27 @@ HAVING beer > 5
 
 ```nim
 having "beer > 5"
+```
+
+
+### UNION
+
+```sql
+UNION ALL
+```
+
+```nim
+union true
+```
+
+---
+
+```sql
+UNION
+```
+
+```nim
+union false
 ```
 
 
