@@ -19,7 +19,7 @@
 - ✅ `--` (Human readable comments).
 - ✅ `COMMENT`.
 - ✅ `UNION`, `UNION ALL`.
-- ✅ `CASE` with `ELSE` with correct indentation.
+- ✅ `CASE` with multiple `WHEN` and `ELSE` with correct indentation.
 - ✅ `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
 - ✅ `OFFSET`.
 - ✅ `LIMIT`.
