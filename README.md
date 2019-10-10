@@ -34,6 +34,7 @@ let variable = query sql:
 
 - Nim `'*'` generates SQL `*`. Nim `'?'` generates `?` to be replaced by values. No other `char` is needed.
 
+
 ### SELECT & FROM
 
 ```sql
@@ -218,6 +219,16 @@ END
 
 ```nim
 `case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
+```
+
+### COMMENT
+
+```sql
+COMMENT ON TABLE myTable IS 'This is an SQL COMMENT on a TABLE'
+```
+
+```nim
+comment {"on": "TABLE", "myTable": "This is an SQL COMMENT on a TABLE"}
 ```
 
 ### UNION
