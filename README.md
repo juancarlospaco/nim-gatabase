@@ -353,7 +353,7 @@ isnull false
 
 # Output
 
-ORM Output is choosed from `ormOutput` of `enum` type, MetaProgramming generates different output code. Examples:
+ORM Output is choosed from `ormOutput` of [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
 
 - `query anonFunc:` generates 1 anonimous inlined function `( func (): SqlQuery = ... )`.
 - `query sqlPrepared:` generates 1 Postgres Stored Procedure of [`SqlPrepared` type](https://nim-lang.github.io/Nim/db_postgres.html#parameter-substitution).
