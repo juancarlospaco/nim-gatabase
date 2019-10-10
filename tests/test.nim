@@ -17,7 +17,7 @@ const exampleTable = sql"""
 
 suite "Gatabase ORM Tests":
 
-  let db = db_sqlite.open(":memory:", "", "", "")  # Setup.
+  let db = db_sqlite.open(":memory:", "", "", "") # Setup.
   doAssert db.tryExec(exampleTable), "Error creating 'exampleTable'"
 
 
@@ -30,22 +30,22 @@ suite "Gatabase ORM Tests":
   test "SELECT ... FROM ... WHERE":
     let example2 {.used.} = query TryExec:
       select '*'
-      `from` "person"
+      `from`"person"
       where "id = 42"
 
 
   test "SELECT ... (comment) ... FROM ... COMMENT":
     let example2 {.used.} = query TryExec:
       select '*'
-      `--` "This is a comment, this will be strapped for Release builds"
-      `from` "person"
+      `--`"This is a comment, this will be strapped for Release builds"
+      `from`"person"
       comment {"on": "TABLE", "person": "This is an SQL COMMENT on a TABLE"}
 
 
   test "SELECT ... FROM ... LIMIT ... OFFSET":
     let example2 {.used.} = query TryExec:
       select '*'
-      `from` "person"
+      `from`"person"
       offset 0
       limit 2
 
@@ -59,11 +59,11 @@ suite "Gatabase ORM Tests":
   test "UNION ALL ... ORBER BY ... IS NOT NULL":
     let example2 {.used.} = query TryExec:
       select '*'
-      `from` "person"
+      `from`"person"
       where "id = 42"
       union true
       select '*'
-      `from` "person"
+      `from`"person"
       where "name"
       isnull false
       orderby "asc"
@@ -74,4 +74,4 @@ suite "Gatabase ORM Tests":
       delete "person"
       where "id = 42"
 
-  close db  # TearDown.
+  close db # TearDown.
