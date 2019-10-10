@@ -152,8 +152,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
       intoUsed = off; insertUsed = off; isnullUsed = off; updateUsed = off
       sqls.add unions(node[1])
     of "case":
-      doAssert node[1].kind in {nnkTableConstr}, "CASE argument must be Table"
-      doAssert node[1].len > 0, "CASE argument must be 1 Non Empty Table"
+      isTable(node[1])
       sqls.add static(n & "(CASE" & n)
       for tableValue in node[1]:
         if tableValue[0].strVal == "default":
@@ -162,12 +161,24 @@ macro query*(output: ormOutput, inner: untyped): untyped =
           sqls.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
       sqls.add static("END)" & n)
     of "set":
-      doAssert node[1].kind in {nnkTableConstr}, "SET argument must be Table"
-      doAssert node[1].len > 0, "SET argument must be 1 Non Empty Table"
+      isTable(node[1])
       var temp: seq[string]
       for tableValue in node[1]:
         temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
       sqls.add "SET " & temp.join", "
+    of "comment":
+      isTable(node[1])
+      when defined(postgres):
+        var what, name, coment: string
+        for tableValue in node[1]:
+          if tableValue[0].strVal == "on":
+            what = tableValue[1].strVal.strip
+            doAssert what.len > 0, "COMMENT 'on' value must not be empty string"
+          else:
+            name = tableValue[0].strVal.strip
+            coment = tableValue[1].strVal.strip
+            doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
+        sqls.add "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
@@ -190,7 +201,7 @@ macro query*(output: ormOutput, inner: untyped): untyped =
   result = parseStmt sqls
 
 
-# when isMainModule:
+#when isMainModule:
 runnableExamples:
 
   const foo {.used.} = query sql:
@@ -237,6 +248,7 @@ runnableExamples:
     isnull true
     update "table"
     union true
+    comment {"on": "TABLE", "myTable": "This is an SQL COMMENT on a TABLE"}
     `set` {"key0": "true", "key1": "false", "key2": "NULL", "key3": "NULL"}
     `case` {"foo > 9": "true", "bar == 42": "false", "default": "NULL"}
     `--`"Query is Minified for Release builds, Pretty-Printed for Debug builds"
