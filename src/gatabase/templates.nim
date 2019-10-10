@@ -255,15 +255,18 @@ template comments(value: NimNode): string =
   when defined(postgres):
     doAssert value.len == 2, "COMMENT wrong SQL syntax, must have exactly 2 keys"
     doAssert value[0][0].strVal == "on", "COMMENT must have 1 'on' key, as first key, is required and mandatory"
+    var onFound: byte
     var what, name, coment: string
     for tableValue in value:
       if tableValue[0].strVal == "on":
         what = tableValue[1].strVal.strip
         doAssert what.len > 0, "COMMENT 'on' value must not be empty string"
+        inc onFound
       else:
         name = tableValue[0].strVal.strip
         coment = tableValue[1].strVal.strip
         doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
+    doAssert onFound == 1, "COMMENT must have 1 'on' key, but found: " & $onFound
     "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
   else: n
 
@@ -279,12 +282,15 @@ template sets(value: NimNode): string =
 template cases(value: NimNode): string =
   isTable(value)
   doAssert value[^1][0].strVal == "default", "CASE must have 1 'default' key, as last key, is required and mandatory"
+  var defaultFound: byte
   var default, branches: string
   for tableValue in value:
     if tableValue[0].strVal == "default":
       default = "  ELSE " & tableValue[1].strVal & n
+      inc defaultFound
     else:
       branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
+  doAssert defaultFound == 1, "CASE must have 1 'default' key, but found: " & $defaultFound
   n & static("(CASE" & n) & branches & default & static("END)" & n)
 
 
