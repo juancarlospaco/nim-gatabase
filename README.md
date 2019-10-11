@@ -489,7 +489,7 @@ row = result.fetchone()
 print(row)
 
 ```
-⬆️ CPython 3 + SQLAlchemy / ⬇️ Nim 1.0 + Gatabase
+⬆️ CPython 3 + SQLAlchemy  /  ⬇️ Nim 1.0 + Gatabase
 ```nim
 import db_sqlite, ../src/gatabase
 
