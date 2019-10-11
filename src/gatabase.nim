@@ -1,5 +1,5 @@
 ## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
-import macros, strutils
+import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
 type GatabaseOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
@@ -18,7 +18,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
   const err0 = "Wrong Syntax, nested SubQueries not supported, repeated call found. "
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
-    case normalize($node[0])
+    case $node[0]
     of "--": sqls.add sqlComment($node[1])
     of "offset":
       doAssert not offsetUsed, err0
@@ -40,22 +40,26 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       fromUsed = true
     of "where":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE without SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      WHERE without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add wheres(node[1])
       whereUsed = true
     of "wherenot":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE NOT without SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      WHERE NOT without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add whereNots(node[1])
       whereUsed = true
     of "whereexists":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      WHERE EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add whereExists(node[1])
       whereUsed = true
     of "wherenotexists":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE NOT EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      WHERE NOT EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add whereNotExists(node[1])
       whereUsed = true
     of "order", "orderby":
@@ -81,22 +85,26 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       deleteUsed = true
     of "like":
       doAssert not likeUsed and whereUsed, err0
-      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & "LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add likes(node[1])
       likeUsed = true
     of "notlike":
       doAssert not likeUsed and whereUsed, err0
-      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & "NOT LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      NOT LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add notlikes(node[1])
       likeUsed = true
     of "between":
       doAssert not betweenUsed and whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add betweens(node[1])
       betweenUsed = true
     of "notbetween":
       doAssert not betweenUsed and whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "NOT BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      NOT BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add notbetweens(node[1])
       betweenUsed = true
     of "groupby", "group":
@@ -150,7 +158,8 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       sqls.add unions(node[1])
     of "isnull":
       doAssert not isnullUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "IS NULL without SELECT nor INSERT nor UPDATE nor DELETE"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      IS NULL without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add isnulls(node[1])
       isnullUsed = true
     of "innerjoin":
