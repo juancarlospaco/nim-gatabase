@@ -37,12 +37,6 @@ template isTable(value: NimNode) =
   for t in value: doAssert t[0].strVal.len > 0, "Table keys must not be empty string"
 
 
-template isTuple(value: NimNode) =
-  echo value.kind
-  doAssert value.kind == nnkTupleTy, "values must be Tuple"
-  doAssert value.len > 0, "values must be 1 Non Empty Tuple"
-
-
 template sqlComment(comment: string): string =
   doAssert comment.len > 0, "SQL Comment must not be empty string"
   when defined(release): n
