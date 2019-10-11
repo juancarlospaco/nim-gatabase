@@ -516,7 +516,7 @@ echo row
 ```
 
 
-### Smart SQL Syntax Checking
+# Smart SQL Syntax Checking
 
 It will perform a SQL Syntax checking at compile-time. Examples here Fail **intentionally**:
 
