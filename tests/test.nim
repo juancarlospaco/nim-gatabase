@@ -36,7 +36,7 @@ suite "Gatabase ORM Tests":
       select '*'
       `--`"This is a comment, this will be strapped for Release builds"
       `from`"person"
-      comment {"on": "TABLE", "person": "This is an SQL COMMENT on a TABLE"}
+      commentontable {"person": "This is an SQL COMMENT on a TABLE"}
 
 
   test "let   SELECT ... FROM ... LIMIT ... OFFSET":
@@ -91,7 +91,7 @@ suite "Gatabase ORM Tests":
       select '*'
       `--`"This is a comment, this will be strapped for Release builds"
       `from`"person"
-      comment {"on": "TABLE", "person": "This is an SQL COMMENT on a TABLE"}
+      commentontable {"person": "This is an SQL COMMENT on a TABLE"}
 
 
   test "const SELECT ... FROM ... LIMIT ... OFFSET":
