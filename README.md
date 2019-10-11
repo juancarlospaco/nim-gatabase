@@ -491,7 +491,7 @@ print(row)
 ```
 ⬆️ CPython 3 + SQLAlchemy  /  ⬇️ Nim 1.0 + Gatabase
 ```nim
-import db_sqlite, ../src/gatabase
+import db_sqlite, gatabase
 
 let db = open(":memory:", "", "", "")
 db.exec(sql"""
