@@ -523,9 +523,6 @@ It will perform a SQL Syntax checking at compile-time. Examples here Fail **inte
 ```nim
 discard query Sql:
   where "failure"
-
-discard query Sql:
-  orderby "failure"
 ```
 
 Fails to compile as expected, with a friendly error:
