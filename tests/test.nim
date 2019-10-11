@@ -9,8 +9,7 @@ const exampleTable = sql"""
       active  bool        not null default true,
       email   text        not null,
       rank    float       not null default 0.0
-    );
-  """
+    ); """
 
 
 suite "Gatabase ORM Tests":
@@ -128,9 +127,25 @@ suite "Gatabase ORM Tests":
       `from`"person"
       where "rank != 666.0"
 
+
   test "var   CASE":
     var example2 {.used.} = query Sql:
       `case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
+
+
+  test "var   SELECT MAX .. WHERE EXISTS ... OFFSET ... LIMIT ... ORDER BY":
+    var foo {.used.} = query TryExec:
+      selectmax '*'
+      `--`   "This is a comment."
+      `from` "person"
+      `--`   "This is a comment."
+      whereexists  "rank > 0.0"
+      `--`   "This is a comment."
+      offset 0
+      `--`   "This is a comment."
+      limit  1
+      `--`   "This is a comment."
+      orderby "desc"
 
 
   test "var   DELETE FROM WHERE":
