@@ -131,7 +131,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       updateUsed = true
     of "set":
       {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
-      sqls.add sets(node[1])
+      sqls.add sets(node[1]) # Below put the less frequently used case branches.
     of "union":
       resetAllGuards()
       sqls.add unions(node[1])
@@ -156,23 +156,11 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       sqls.add fulljoins(node[1])
       joinUsed = true
     of "case": sqls.add cases(node[1])
-    of "commentonaggregate": sqls.add comments(node[1], "AGGREGATE")
-    of "commentoncast": sqls.add comments(node[1], "CAST")
-    of "commentoncollation": sqls.add comments(node[1], "COLLATION")
     of "commentoncolumn": sqls.add comments(node[1], "COLUMN")
-    of "commentonconstraint": sqls.add comments(node[1], "CONSTRAINT")
-    of "commentonconversion": sqls.add comments(node[1], "CONVERSION")
     of "commentondatabase": sqls.add comments(node[1], "DATABASE")
-    of "commentondomain": sqls.add comments(node[1], "DOMAIN")
-    of "commentonextension": sqls.add comments(node[1], "EXTENSION")
-    of "commentonforeigntable": sqls.add comments(node[1], "FOREIGN TABLE")
     of "commentonfunction": sqls.add comments(node[1], "FUNCTION")
     of "commentonindex": sqls.add comments(node[1], "INDEX")
-    of "commentonrole": sqls.add comments(node[1], "ROLE")
-    of "commentonschema": sqls.add comments(node[1], "SCHEMA")
-    of "commentonserver": sqls.add comments(node[1], "SERVER")
     of "commentontable": sqls.add comments(node[1], "TABLE")
-    of "commentonview": sqls.add comments(node[1], "VIEW")
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   doAssert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
