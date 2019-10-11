@@ -260,7 +260,17 @@ COMMENT ON TABLE myTable IS 'This is an SQL COMMENT on a TABLE'
 ```
 
 ```nim
-comment {"on": "TABLE", "myTable": "This is an SQL COMMENT on a TABLE"}
+commentontable {"myTable": "This is an SQL COMMENT on a TABLE"}
+```
+
+---
+
+```sql
+COMMENT ON COLUMN myColumn IS 'This is an SQL COMMENT on a COLUMN'
+```
+
+```nim
+commentontable {"myColumn": "This is an SQL COMMENT on a COLUMN"}
 ```
 
 
