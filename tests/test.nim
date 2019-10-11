@@ -136,15 +136,15 @@ suite "Gatabase ORM Tests":
   test "var   SELECT MAX .. WHERE EXISTS ... OFFSET ... LIMIT ... ORDER BY":
     var foo {.used.} = query TryExec:
       selectmax '*'
-      `--`   "This is a comment."
-      `from` "person"
-      `--`   "This is a comment."
-      whereexists  "rank > 0.0"
-      `--`   "This is a comment."
+      `--`"This is a comment."
+      `from`"person"
+      `--`"This is a comment."
+      whereexists "rank > 0.0"
+      `--`"This is a comment."
       offset 0
-      `--`   "This is a comment."
-      limit  1
-      `--`   "This is a comment."
+      `--`"This is a comment."
+      limit 1
+      `--`"This is a comment."
       orderby "desc"
 
 
