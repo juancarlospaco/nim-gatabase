@@ -16,8 +16,8 @@
 ### Support
 
 - All SQL standard syntax is supported.
-- ✅ `--` Human readable comments.
-- ✅ `COMMENT`.
+- ✅ `--` Human readable comments, multi-line comments produce multi-line SQL comments.
+- ✅ `COMMENT`, Postgres-only.
 - ✅ `UNION`, `UNION ALL`.
 - ✅ `CASE` with multiple `WHEN` and `ELSE` with correct indentation.
 - ✅ `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
