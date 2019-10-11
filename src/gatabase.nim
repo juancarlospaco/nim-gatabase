@@ -7,14 +7,15 @@ type GatabaseOutput* = enum ## All outputs of ORM, some compile-time, some run-t
 
 macro query*(output: GatabaseOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
-  when not declared(db): {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
-  const err0 = "Wrong Syntax, deep nested SubQueries are not supported yet, repeated call found"
+  when not defined(release) and not defined(danger) and not declared(db):
+    {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
   var
     offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
       deleteUsed, likeUsed, valuesUsed, betweenUsed, joinUsed, groupbyUsed,
       havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
     sqls: string
     args: NimNode
+  const err0 = "Wrong Syntax, deep nested SubQueries are not supported yet, repeated call found"
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
     case normalize($node[0])
