@@ -273,6 +273,16 @@ COMMENT ON COLUMN myColumn IS 'This is an SQL COMMENT on a COLUMN'
 commentontable {"myColumn": "This is an SQL COMMENT on a COLUMN"}
 ```
 
+---
+
+```sql
+COMMENT ON DATABASE myDatabase IS 'This is an SQL COMMENT on a DATABASE'
+```
+
+```nim
+commentondatabase {"myDatabase": "This is an SQL COMMENT on a DATABASE"}
+```
+
 
 ### GROUP BY
 
