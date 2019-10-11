@@ -448,6 +448,72 @@ this allows to support interesting features, like `CASE`, `UNION`, `COMMENT`, et
 When you get used to `template` it requires a lot less code to do the same than SQLAlchemy.
 
 
+```python
+from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy import Column, Integer, String, Boolean, Float
+
+engine = create_engine("sqlite:///:memory:", echo=False)
+engine.execute("""
+  create table if not exists person(
+    id      integer     primary key,
+    name    varchar(9)  not null unique,
+    active  bool        not null default true,
+    rank    float       not null default 0.0
+  ); """)
+
+
+meta = MetaData()
+persons = Table(
+  "person", meta,
+  Column("id", Integer, primary_key = True),
+  Column("name", String, nullable = False, unique = True),
+  Column("active", Boolean, nullable = False, default = True),
+  Column("rank", Float, nullable = False, default = 0.0),
+)
+
+
+conn = engine.connect()
+
+
+ins = persons.insert()
+ins = persons.insert().values(id = 42, name = "Pepe", active = True, rank = 9.6)
+result = conn.execute(ins)
+
+
+persons_query = persons.select()
+result = conn.execute(persons_query)
+row = result.fetchone()
+
+print(row)
+
+```
+
+```nim
+import db_sqlite, ../src/gatabase
+
+let db = open(":memory:", "", "", "")
+db.exec(sql"""
+  create table if not exists person(
+    id      integer     primary key,
+    name    varchar(9)  not null unique,
+    active  bool        not null default true,
+    rank    float       not null default 0.0
+  ); """)
+
+
+query Exec:
+  insertinto "person"
+  values (42, "Pepe", true, 9.6)
+
+
+let row = query GetRow:
+  select '*'
+  `from` "person"
+
+echo row
+```
+
+
 # Output
 
 ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
