@@ -1,4 +1,5 @@
 ## Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
+import strutils
 
 const n = when defined(release): " " else: "\n"
 
