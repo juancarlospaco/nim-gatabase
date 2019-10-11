@@ -69,26 +69,6 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not selectUsed, err0
       sqls.add selectTops(node[1])
       selectUsed = true
-    of "selectmin":
-      doAssert not selectUsed, err0
-      sqls.add selectMins(node[1])
-      selectUsed = true
-    of "selectmax":
-      doAssert not selectUsed, err0
-      sqls.add selectMaxs(node[1])
-      selectUsed = true
-    of "selectcount":
-      doAssert not selectUsed, err0
-      sqls.add selectCounts(node[1])
-      selectUsed = true
-    of "selectavg":
-      doAssert not selectUsed, err0
-      sqls.add selectAvgs(node[1])
-      selectUsed = true
-    of "selectsum":
-      doAssert not selectUsed, err0
-      sqls.add selectSums(node[1])
-      selectUsed = true
     of "delete":
       doAssert not deleteUsed, err0
       sqls.add deletes(node[1])
@@ -113,10 +93,6 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not groupbyUsed, err0
       sqls.add groupbys(node[1])
       groupbyUsed = true
-    of "having":
-      doAssert not havingUsed, err0
-      sqls.add havings(node[1])
-      havingUsed = true
     of "into":
       doAssert not intoUsed, err0
       sqls.add intos(node[1])
@@ -132,6 +108,30 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "set":
       {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
       sqls.add sets(node[1]) # Below put the less frequently used case branches.
+    of "having":
+      doAssert not havingUsed, err0
+      sqls.add havings(node[1])
+      havingUsed = true
+    of "selectmin":
+      doAssert not selectUsed, err0
+      sqls.add selectMins(node[1])
+      selectUsed = true
+    of "selectmax":
+      doAssert not selectUsed, err0
+      sqls.add selectMaxs(node[1])
+      selectUsed = true
+    of "selectcount":
+      doAssert not selectUsed, err0
+      sqls.add selectCounts(node[1])
+      selectUsed = true
+    of "selectavg":
+      doAssert not selectUsed, err0
+      sqls.add selectAvgs(node[1])
+      selectUsed = true
+    of "selectsum":
+      doAssert not selectUsed, err0
+      sqls.add selectSums(node[1])
+      selectUsed = true
     of "union":
       resetAllGuards()
       sqls.add unions(node[1])
