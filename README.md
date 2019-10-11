@@ -516,6 +516,24 @@ echo row
 ```
 
 
+### Smart SQL Syntax Checking
+
+It will perform a SQL Syntax checking at compile-time. Examples here Fail **intentionally**:
+
+```nim
+discard query Sql:
+  where "failure"
+
+discard query Sql:
+  orderby "failure"
+```
+
+Fails to compile as expected, with a friendly error:
+```
+gatabase.nim(48, 16) WHERE without SELECT nor INSERT nor UPDATE nor DELETE.
+```
+
+
 # Output
 
 ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
