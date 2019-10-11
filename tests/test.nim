@@ -21,7 +21,7 @@ suite "Gatabase ORM Tests":
   test "let   INSERT INTO":
     let example {.used.} = query TryExec:
       insertinto "person"
-      values (42, "maximus", true, "maximus.nimmer@nim-lang.org", 5.5)
+      values (42, "Maximus", true, "maximus.nimmer@nim-lang.org", 5.5)
 
 
   test "let   SELECT ... FROM ... WHERE":
@@ -50,7 +50,7 @@ suite "Gatabase ORM Tests":
   test "let   INSERT INTO":
     let example3 {.used.} = query Func:
       insertinto "person"
-      values (99, "Nikola Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
+      values (99, "Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
 
 
   test "let   UNION ALL ... ORBER BY ... IS NOT NULL":
