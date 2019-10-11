@@ -449,6 +449,8 @@ When you get used to `template` it requires a lot less code to do the same than 
 
 
 ```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy import Column, Integer, String, Boolean, Float
 
