@@ -160,7 +160,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   doAssert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
-  #when defined(dev): echo sqls
+  when defined(dev): echo sqls
   let # This prepares the arguments from a Tuple into varargs "unpacked".
     y = if args.len > 0: $toStrLit(args) else: ""
     x = if y.len > 0: y[1..^2] else: y
@@ -179,12 +179,12 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
         "prepare(db,\"" & inner.lineInfo.normalize & "\",sql(\"\"\"" & sqls & "\"\"\")," & $args.len & ")"
       else: "sql(\"\"\"" & sqls & "\"\"\")" # SQLite wont support prepared.
     else: "sql(\"\"\"" & sqls & "\"\"\")" # sql is sql""" query """ for SQLite
-  when defined(dev): echo sqls
+  # when defined(dev): echo sqls
   result = parseStmt sqls
 
 
-when isMainModule:
-  #runnableExamples:
+# when isMainModule:
+runnableExamples:
 
   const foo {.used.} = query Sql:
     select "foo, bar, baz" # This can have comments here.
