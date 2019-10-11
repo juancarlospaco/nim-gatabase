@@ -178,7 +178,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       when defined(postgres): # db_postgres.prepare() returns 1 SqlPrepared.
         "prepare(db,\"" & inner.lineInfo.normalize & "\",sql(\"\"\"" & sqls & "\"\"\")," & $args.len & ")"
       else: "sql(\"\"\"" & sqls & "\"\"\")" # SQLite wont support prepared.
-    else: "sql(\"\"\"" & sqls & "\"\"\")" # sql is sql""" query """ for SQLite
+    else: "sql(\"\"\"" & sqls & "\"\"\")" # Sql is sql""" query """ for SQLite
   # when defined(dev): echo sqls
   result = parseStmt sqls
 
