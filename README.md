@@ -475,6 +475,15 @@ $ nimble test
 
 <details>
 
+- This is not an ORM ?.
+
+[Wikipedia defines ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) as:
+
+> Object-relational mapping in computer science is a programming technique for converting
+> data between incompatible type systems using object-oriented programming languages.
+
+Feel free to contribute to Wikipedia.
+
 - Supports SQLite ?.
 
 Yes.
