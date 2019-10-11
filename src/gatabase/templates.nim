@@ -257,23 +257,15 @@ template unions(value: NimNode): string =
   if parseBool($value): static("UNION ALL" & n) else: static("UNION" & n)
 
 
-template comments(value: NimNode): string =
+template comments(value: NimNode, what: string): string =
   isTable(value)
-  when defined(postgres):
-    doAssert value.len == 2, "COMMENT wrong SQL syntax, must have exactly 2 keys"
-    doAssert value[0][0].strVal == "on", "COMMENT must have 1 'on' key, as first key, is required and mandatory"
-    var onFound: byte
-    var what, name, coment: string
+  when not defined(postgres):
+    doAssert value.len == 1, "COMMENT wrong SQL syntax, must have exactly 1 key"
+    var name, coment: string
     for tableValue in value:
-      if tableValue[0].strVal == "on":
-        what = tableValue[1].strVal.strip
-        doAssert what.len > 0, "COMMENT 'on' value must not be empty string"
-        inc onFound
-      else:
-        name = tableValue[0].strVal.strip
-        coment = tableValue[1].strVal.strip
-        doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
-    doAssert onFound == 1, "COMMENT must have 1 'on' key, but found: " & $onFound
+      name = tableValue[0].strVal.strip
+      coment = tableValue[1].strVal.strip
+      doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
     "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
   else: n # SQLite wont support COMMENT, is not part of SQL Standard neither.
 
