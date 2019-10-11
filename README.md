@@ -38,6 +38,11 @@
 - Deep nested SubQueries are not supported. Postgres version >=12.
 
 
+# Install
+
+- [`nimble install gatabase`](https://nimble.directory/pkg/gatabase "nimble install gatabase 👑 https://nimble.directory/pkg/gatabase")
+
+
 ### Comments
 
 ```sql
@@ -459,11 +464,6 @@ $ nimble test
 ```
 
 - Tests use a real database SQLite on RAM `":memory:"` with a `"person"` table.
-
-
-# Install
-
-- [`nimble install gatabase`](https://nimble.directory/pkg/gatabase "nimble install gatabase 👑 https://nimble.directory/pkg/gatabase")
 
 
 # Requisites
