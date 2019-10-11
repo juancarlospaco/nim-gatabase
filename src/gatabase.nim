@@ -15,7 +15,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
     sqls: string
     args: NimNode
-  const err0 = "Wrong Syntax, deep nested SubQueries are not supported yet, repeated call found"
+  const err0 = "Wrong Syntax, deep nested SubQueries are not supported, repeated call found"
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
     case normalize($node[0])
