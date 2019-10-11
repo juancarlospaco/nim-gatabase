@@ -109,22 +109,6 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not betweenUsed and whereUsed, err0
       sqls.add notbetweens(node[1])
       betweenUsed = true
-    of "innerjoin":
-      doAssert not joinUsed, err0
-      sqls.add innerjoins(node[1])
-      joinUsed = true
-    of "leftjoin":
-      doAssert not joinUsed, err0
-      sqls.add leftjoins(node[1])
-      joinUsed = true
-    of "rightjoin":
-      doAssert not joinUsed, err0
-      sqls.add rightjoins(node[1])
-      joinUsed = true
-    of "fulljoin":
-      doAssert not joinUsed, err0
-      sqls.add fulljoins(node[1])
-      joinUsed = true
     of "groupby", "group":
       doAssert not groupbyUsed, err0
       sqls.add groupbys(node[1])
@@ -141,23 +125,54 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not insertUsed, err0
       sqls.add inserts(node[1])
       insertUsed = true
-    of "isnull":
-      doAssert not isnullUsed, err0
-      sqls.add isnulls(node[1])
-      isnullUsed = true
     of "update":
       doAssert not updateUsed, err0
       sqls.add updates(node[1])
       updateUsed = true
+    of "set":
+      {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
+      sqls.add sets(node[1])
     of "union":
       resetAllGuards()
       sqls.add unions(node[1])
-    of "case":
-      sqls.add cases(node[1])
-    of "set":
-      sqls.add sets(node[1])
-    of "comment":
-      sqls.add comments(node[1])
+    of "isnull":
+      doAssert not isnullUsed, err0
+      sqls.add isnulls(node[1])
+      isnullUsed = true
+    of "innerjoin":
+      doAssert not joinUsed, err0
+      sqls.add innerjoins(node[1])
+      joinUsed = true
+    of "leftjoin":
+      doAssert not joinUsed, err0
+      sqls.add leftjoins(node[1])
+      joinUsed = true
+    of "rightjoin":
+      doAssert not joinUsed, err0
+      sqls.add rightjoins(node[1])
+      joinUsed = true
+    of "fulljoin":
+      doAssert not joinUsed, err0
+      sqls.add fulljoins(node[1])
+      joinUsed = true
+    of "case": sqls.add cases(node[1])
+    of "commentonaggregate": sqls.add comments(node[1], "AGGREGATE")
+    of "commentoncast": sqls.add comments(node[1], "CAST")
+    of "commentoncollation": sqls.add comments(node[1], "COLLATION")
+    of "commentoncolumn": sqls.add comments(node[1], "COLUMN")
+    of "commentonconstraint": sqls.add comments(node[1], "CONSTRAINT")
+    of "commentonconversion": sqls.add comments(node[1], "CONVERSION")
+    of "commentondatabase": sqls.add comments(node[1], "DATABASE")
+    of "commentondomain": sqls.add comments(node[1], "DOMAIN")
+    of "commentonextension": sqls.add comments(node[1], "EXTENSION")
+    of "commentonforeigntable": sqls.add comments(node[1], "FOREIGN TABLE")
+    of "commentonfunction": sqls.add comments(node[1], "FUNCTION")
+    of "commentonindex": sqls.add comments(node[1], "INDEX")
+    of "commentonrole": sqls.add comments(node[1], "ROLE")
+    of "commentonschema": sqls.add comments(node[1], "SCHEMA")
+    of "commentonserver": sqls.add comments(node[1], "SERVER")
+    of "commentontable": sqls.add comments(node[1], "TABLE")
+    of "commentonview": sqls.add comments(node[1], "VIEW")
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   doAssert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
