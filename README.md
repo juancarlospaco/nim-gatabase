@@ -413,6 +413,14 @@ Then you do `getMemes()` when you need it❕. The API that fits your ideas.
 From this `MyClass.meta.Session.query(Memes).all().filter().first()` to this `getMemes()`.
 
 
+# For Python Devs
+
+Remember on Python2 you had like `print "value"`?, on Nim you can do the same for any function,
+then we made functions to mimic basic standard SQL, like `select "value"` and it worked,
+its Type-Safe and valid Nim code, you have an ORM that gives you the freedom and power,
+this allows to support interesting features, like `CASE`, `UNION`, `COMMENT`, etc.
+
+
 # Output
 
 ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
