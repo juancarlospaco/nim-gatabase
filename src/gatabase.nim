@@ -1,4 +1,4 @@
-## Gatabase: Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
+## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
 import macros, db_common, strutils, tables
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
