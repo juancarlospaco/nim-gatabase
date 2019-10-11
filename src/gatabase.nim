@@ -15,7 +15,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
     sqls: string
     args: NimNode
-  const err0 = "Wrong Syntax, deep nested SubQueries are not supported, repeated call found"
+  const err0 = "Wrong Syntax, nested SubQueries not supported, repeated call found. "
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
     case normalize($node[0])
@@ -35,26 +35,32 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       valuesUsed = true
     of "from":
       doAssert not fromUsed, err0
+      doAssert selectUsed or deleteUsed, err0 & "FROM without SELECT nor DELETE"
       sqls.add froms(node[1])
       fromUsed = true
     of "where":
       doAssert not whereUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE without SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add wheres(node[1])
       whereUsed = true
     of "wherenot":
       doAssert not whereUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE NOT without SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add whereNots(node[1])
       whereUsed = true
     of "whereexists":
       doAssert not whereUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add whereExists(node[1])
       whereUsed = true
     of "wherenotexists":
       doAssert not whereUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "WHERE NOT EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add whereNotExists(node[1])
       whereUsed = true
     of "order", "orderby":
       doAssert not orderUsed, err0
+      doAssert selectUsed, err0 & "ORDER BY without SELECT"
       sqls.add orderbys(node[1])
       orderUsed = true
     of "select":
@@ -75,22 +81,27 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       deleteUsed = true
     of "like":
       doAssert not likeUsed and whereUsed, err0
+      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & "LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add likes(node[1])
       likeUsed = true
     of "notlike":
       doAssert not likeUsed and whereUsed, err0
+      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & "NOT LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add notlikes(node[1])
       likeUsed = true
     of "between":
       doAssert not betweenUsed and whereUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add betweens(node[1])
       betweenUsed = true
     of "notbetween":
       doAssert not betweenUsed and whereUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "NOT BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add notbetweens(node[1])
       betweenUsed = true
     of "groupby", "group":
       doAssert not groupbyUsed, err0
+      doAssert selectUsed, err0 & "GROUP BY without SELECT"
       sqls.add groupbys(node[1])
       groupbyUsed = true
     of "into":
@@ -107,9 +118,11 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       updateUsed = true
     of "set":
       {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
+      doAssert updateUsed, err0 & "SET without UPDATE"
       sqls.add sets(node[1]) # Below put the less frequently used case branches.
     of "having":
       doAssert not havingUsed, err0
+      doAssert groupbyUsed, err0 & "HAVING without GROUP BY"
       sqls.add havings(node[1])
       havingUsed = true
     of "selectmin":
@@ -137,22 +150,27 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       sqls.add unions(node[1])
     of "isnull":
       doAssert not isnullUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & "IS NULL without SELECT nor INSERT nor UPDATE nor DELETE"
       sqls.add isnulls(node[1])
       isnullUsed = true
     of "innerjoin":
       doAssert not joinUsed, err0
+      doAssert selectUsed, err0 & "INNER JOIN without SELECT"
       sqls.add innerjoins(node[1])
       joinUsed = true
     of "leftjoin":
       doAssert not joinUsed, err0
+      doAssert selectUsed, err0 & "LEFT JOIN without SELECT"
       sqls.add leftjoins(node[1])
       joinUsed = true
     of "rightjoin":
       doAssert not joinUsed, err0
+      doAssert selectUsed, err0 & "RIGHT JOIN without SELECT"
       sqls.add rightjoins(node[1])
       joinUsed = true
     of "fulljoin":
       doAssert not joinUsed, err0
+      doAssert selectUsed, err0 & "FULL JOIN without SELECT"
       sqls.add fulljoins(node[1])
       joinUsed = true
     of "case": sqls.add cases(node[1])
