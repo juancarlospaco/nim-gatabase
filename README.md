@@ -680,4 +680,4 @@ We try to keep as similar as possible, but SQLite is very limited.
 </details>
 
 
-[**&DoubleUpArrow;**](#Gatabase "Go to top")
+[  ⬆️  ⬆️  ⬆️  ⬆️  ](#Gatabase "Go to top")
