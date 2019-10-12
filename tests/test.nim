@@ -1,14 +1,15 @@
+## Gatabase Unittests, not using `assert` nor `check` because it `raise` if fail anyways.
 import unittest, db_sqlite
 import ../src/gatabase
 
 
 const exampleTable = sql"""
   create table if not exists person(
-    id      integer     primary key,
-    name    varchar(9)  not null unique,
-    active  bool        not null default true,
-    email   text        not null,
-    rank    float       not null default 0.0
+    id      integer      primary key,
+    name    varchar(99)  not null unique,
+    active  bool         not null default true,
+    email   text         not null,
+    rank    float        not null default 0.0
   ); """
 
 
@@ -21,7 +22,7 @@ suite "Gatabase ORM Tests":
   test "let   INSERT INTO":
     query Exec:
       insertinto "person"
-      values (42, "Maximus", true, "maximus.nimmer@nim-lang.org", 5.5)
+      values (42, "Graydon Hoare", true, "graydon.hoare@nim-lang.org", 5.5)
 
 
   test "let   SELECT ... FROM ... WHERE":
@@ -40,21 +41,21 @@ suite "Gatabase ORM Tests":
 
 
   test "let   SELECT ... FROM ... LIMIT ... OFFSET":
-    let example4 {.used.} = query TryExec:
+    query Exec:
       select '*'
       `from`"person"
-      offset 0
       limit 2
+      offset 0
 
 
   test "let   INSERT INTO":
-    let example5 {.used.} = query Func:
+    query Exec:
       insertinto "person"
-      values (99, "Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
+      values (99, "Ryan Dahl", false, "ryan.dahl@nim-lang.org", 9.6)
 
 
   test "let   UNION ALL ... ORBER BY ... IS NOT NULL":
-    let example6 {.used.} = query Sql:
+    query Exec:
       select '*'
       `from`"person"
       where "id = 42"
@@ -63,20 +64,19 @@ suite "Gatabase ORM Tests":
       `from`"person"
       where "name"
       isnull false
-      orderby "asc"
 
 
   test "let   SELECT DISTINCT ... FROM ... WHERE":
-    let example7 {.used.} = query Prepared:
+    query Exec:
       selectdistinct "id"
       `from`"person"
       where "rank != 666.0"
 
 
-  test "const INSERT INTO":
-    const example8 {.used.} = query Func:
+  test "let INSERT INTO":
+    query Exec:
       insertinto "person"
-      values (42, "maximus", true, "maximus.nimmer@nim-lang.org", 5.5)
+      values (9, "Guido van Rossum", true, "guido.v.rossum@nim-lang.org", 5.5)
 
 
   test "const SELECT ... FROM ... WHERE":
@@ -98,14 +98,14 @@ suite "Gatabase ORM Tests":
     const example11 {.used.} = query Func:
       select '*'
       `from`"person"
-      offset 0
       limit 2
+      offset 0
 
 
   test "const INSERT INTO":
     const example12 {.used.} = query Sql:
       insertinto "person"
-      values (99, "Nikola Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
+      values (99, "Rob Pike", false, "rob.pike@nim-lang.org", 9.6)
 
 
   test "const UNION ALL ... ORBER BY ... IS NOT NULL":
@@ -159,15 +159,15 @@ suite "Gatabase ORM Tests":
       `--`"This is a comment."
       whereexists "rank > 0.0"
       `--`"This is a comment."
-      offset 0
       `--`"This is a comment."
       limit 1
+      offset 0
       `--`"This is a comment."
       orderby "desc"
 
 
   test "var   DELETE FROM WHERE":
-    var lastone {.used.} = query TryExec:
+    query Exec:
       delete "person"
       where "id = 42"
 
