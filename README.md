@@ -651,6 +651,11 @@ $ nimble test
 - **None.** _(You need a working Postgres server up & running to use it, but not to install it)_
 
 
+## Stars
+
+[![Stars over time](https://starchart.cc/juancarlospaco/nim-gatabase.svg)](https://starchart.cc/ThomasTJdev/nim_websitecreator "Star Gatabase on GitHub!")
+
+
 # FAQ
 
 <details>
