@@ -121,6 +121,24 @@ suite "Gatabase ORM Tests":
       orderby "asc"
 
 
+  test "const INTERSECT ALL":
+    const example13a {.used.} = query Sql:
+      select '*'
+      `from`"person"
+      intersect true
+      select '*'
+      `from`"person"
+
+
+  test "const EXCEPT ALL":
+    const example13b {.used.} = query Sql:
+      select '*'
+      `from`"person"
+      `except` true
+      select '*'
+      `from`"person"
+
+
   test "const SELECT DISTINCT ... FROM ... WHERE":
     const example14 {.used.} = query Sql:
       selectdistinct "id"
