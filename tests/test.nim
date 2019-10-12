@@ -168,6 +168,5 @@ suite "Gatabase ORM Tests":
   test "var   DELETE FROM WHERE":
     query Exec:
       delete "person"
-      where "id = 42"
 
   close db # TearDown.
