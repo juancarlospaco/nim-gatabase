@@ -22,10 +22,14 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "--": sqls.add sqlComment($node[1])
     of "offset":
       doAssert not offsetUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      OFFSET without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add offsets(node[1])
       offsetUsed = true
     of "limit":
       doAssert not limitUsed, err0
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      LIMIT without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add limits(node[1])
       limitUsed = true
     of "values":
