@@ -432,7 +432,7 @@ isnull true
 ```sql
 IS NOT NULL
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 isnull false
 ```
