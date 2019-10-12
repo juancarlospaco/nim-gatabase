@@ -67,7 +67,7 @@ Intentionally not supported:
 SELECT *
 FROM sometable
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 select '*'
 `from` "sometable"
@@ -79,7 +79,7 @@ select '*'
 SELECT somecolumn
 FROM sometable
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 select "somecolumn"
 `from` "sometable"
@@ -90,7 +90,7 @@ select "somecolumn"
 ```sql
 SELECT DISTINCT somecolumn
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 selectdistinct "somecolumn"
 ```
@@ -101,7 +101,7 @@ selectdistinct "somecolumn"
 ```sql
 SELECT MIN(somecolumn)
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 selectmin "somecolumn"
 ```
@@ -111,7 +111,7 @@ selectmin "somecolumn"
 ```sql
 SELECT MAX(somecolumn)
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 selectmax "somecolumn"
 ```
@@ -122,7 +122,7 @@ selectmax "somecolumn"
 ```sql
 SELECT COUNT(somecolumn)
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 selectcount "somecolumn"
 ```
@@ -132,7 +132,7 @@ selectcount "somecolumn"
 ```sql
 SELECT AVG(somecolumn)
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 selectavg "somecolumn"
 ```
@@ -142,7 +142,7 @@ selectavg "somecolumn"
 ```sql
 SELECT SUM(somecolumn)
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 selectsum "somecolumn"
 ```
@@ -153,7 +153,7 @@ selectsum "somecolumn"
 ```sql
 SELECT TOP 5 *
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 selecttop "5"
 ```
@@ -166,7 +166,7 @@ SELECT somecolumn
 FROM sometable
 WHERE power > 9000
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 select "somecolumn"
 `from` "sometable"
@@ -180,7 +180,7 @@ where "power > 9000"
 OFFSET 9
 LIMIT 42
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 offset 9
 limit 42
@@ -193,7 +193,7 @@ limit 42
 INSERT INTO person
 VALUES (42, 'Nikola Tesla', true, 'nikola.tesla@nim-lang.org', 9.6)
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 insertinto "person"
 values (42, "Nikola Tesla", true, "nikola.tesla@nim-lang.org", 9.6)
@@ -205,7 +205,7 @@ values (42, "Nikola Tesla", true, "nikola.tesla@nim-lang.org", 9.6)
 ```sql
 DELETE debts
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 delete "debts"
 ```
@@ -216,7 +216,7 @@ delete "debts"
 ```sql
 ORDER BY ASC
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 orderby "asc"
 ```
@@ -226,7 +226,7 @@ orderby "asc"
 ```sql
 ORDER BY DESC
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 orderby "desc"
 ```
@@ -238,7 +238,7 @@ orderby "desc"
 UPDATE tablename
 SET key0 = value0, key1 = value1
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 update "tablename"
 `set` {"key0": "value0", "key1": "value1"}
@@ -254,7 +254,7 @@ CASE
   ELSE 0
 END
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 `case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
 ```
@@ -265,7 +265,7 @@ END
 ```sql
 COMMENT ON TABLE myTable IS 'This is an SQL COMMENT on a TABLE'
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 commentontable {"myTable": "This is an SQL COMMENT on a TABLE"}
 ```
@@ -275,7 +275,7 @@ commentontable {"myTable": "This is an SQL COMMENT on a TABLE"}
 ```sql
 COMMENT ON COLUMN myColumn IS 'This is an SQL COMMENT on a COLUMN'
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 commentontable {"myColumn": "This is an SQL COMMENT on a COLUMN"}
 ```
@@ -285,7 +285,7 @@ commentontable {"myColumn": "This is an SQL COMMENT on a COLUMN"}
 ```sql
 COMMENT ON DATABASE myDatabase IS 'This is an SQL COMMENT on a DATABASE'
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 commentondatabase {"myDatabase": "This is an SQL COMMENT on a DATABASE"}
 ```
@@ -296,7 +296,7 @@ commentondatabase {"myDatabase": "This is an SQL COMMENT on a DATABASE"}
 ```sql
 GROUP BY country
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 groupby "country"
 ```
@@ -307,7 +307,7 @@ groupby "country"
 ```sql
 FULL JOIN tablename
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 fulljoin "tablename"
 ```
@@ -317,7 +317,7 @@ fulljoin "tablename"
 ```sql
 INNER JOIN tablename
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 innerjoin "tablename"
 ```
@@ -327,7 +327,7 @@ innerjoin "tablename"
 ```sql
 LEFT JOIN tablename
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 leftjoin "tablename"
 ```
@@ -337,7 +337,7 @@ leftjoin "tablename"
 ```sql
 RIGHT JOIN tablename
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 rightjoin "tablename"
 ```
@@ -348,7 +348,7 @@ rightjoin "tablename"
 ```sql
 HAVING beer > 5
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 having "beer > 5"
 ```
@@ -359,7 +359,7 @@ having "beer > 5"
 ```sql
 UNION ALL
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 union true
 ```
@@ -369,7 +369,7 @@ union true
 ```sql
 UNION
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 union false
 ```
@@ -380,7 +380,7 @@ union false
 ```sql
 INTERSECT ALL
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 intersect true
 ```
@@ -390,7 +390,7 @@ intersect true
 ```sql
 INTERSECT
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 intersect false
 ```
@@ -401,7 +401,7 @@ intersect false
 ```sql
 EXCEPT ALL
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 `except` true
 ```
@@ -411,7 +411,7 @@ EXCEPT ALL
 ```sql
 EXCEPT
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 `except` false
 ```
@@ -422,7 +422,7 @@ EXCEPT
 ```sql
 IS NULL
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 isnull true
 ```
@@ -432,7 +432,7 @@ isnull true
 ```sql
 IS NOT NULL
 ```
- ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 isnull false
 ```
@@ -539,7 +539,7 @@ row = result.fetchone()
 print(row)
 
 ```
- ⬆️ CPython 3 + SQLAlchemy ⬆️ 🔛 ⬇️ Nim 1.0 + Gatabase ⬇️
+ ⬆️ CPython 3 + SQLAlchemy ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim 1.0 + Gatabase ⬇️
 ```nim
 import db_sqlite, gatabase
 
