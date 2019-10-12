@@ -55,7 +55,7 @@ Intentionally not supported:
 ```sql
 -- SQL Comments are supported, but stripped when build for Release. This is SQL.
 ```
- ⬆️ SQL ⬆️ 🔛 ⬇️ Nim ⬇️
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 `--` "SQL Comments are supported, but stripped when build for Release. This is Nim."
 ```
