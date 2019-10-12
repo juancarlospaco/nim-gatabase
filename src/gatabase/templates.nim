@@ -106,14 +106,20 @@ template orderbys(value: NimNode): string =
 template selects(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT ?" & n)
-  elif value.kind == nnkCharLit: static("SELECT *" & n)
+  elif value.kind == nnkCharLit:
+    when not defined(release) or not defined(danger):
+      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    "SELECT *" & n
   else: "SELECT " & $value.strVal & n
 
 
 template selectDistincts(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT DISTINCT ?" & n)
-  elif value.kind == nnkCharLit: static("SELECT DISTINCT *" & n)
+  elif value.kind == nnkCharLit:
+    when not defined(release) or not defined(danger):
+      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    "SELECT DISTINCT *" & n
   else: "SELECT DISTINCT " & $value.strVal & n
 
 
@@ -126,35 +132,50 @@ template selectTops(value: NimNode): string =
 template selectMins(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT MIN(?)" & n)
-  elif value.kind == nnkCharLit: static("SELECT MIN(*)" & n)
+  elif value.kind == nnkCharLit:
+    when not defined(release) or not defined(danger):
+      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    "SELECT MIN(*)" & n
   else: "SELECT MIN(" & $value.strVal & ")" & n
 
 
 template selectMaxs(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT MAX(?)" & n)
-  elif value.kind == nnkCharLit: static("SELECT MAX(*)" & n)
+  elif value.kind == nnkCharLit:
+    when not defined(release) or not defined(danger):
+      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    "SELECT MAX(*)" & n
   else: "SELECT MAX(" & $value.strVal & ")" & n
 
 
 template selectCounts(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT COUNT(?)" & n)
-  elif value.kind == nnkCharLit: static("SELECT COUNT(*)" & n)
+  elif value.kind == nnkCharLit:
+    when not defined(release) or not defined(danger):
+      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    "SELECT COUNT(*)" & n
   else: "SELECT COUNT(" & $value.strVal & ")" & n
 
 
 template selectAvgs(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT AVG(?)" & n)
-  elif value.kind == nnkCharLit: static("SELECT AVG(*)" & n)
+  elif value.kind == nnkCharLit:
+    when not defined(release) or not defined(danger):
+      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    "SELECT AVG(*)" & n
   else: "SELECT AVG(" & $value.strVal & ")" & n
 
 
 template selectSums(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT SUM(?)" & n)
-  elif value.kind == nnkCharLit: static("SELECT SUM(*)" & n)
+  elif value.kind == nnkCharLit:
+    when not defined(release) or not defined(danger):
+      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    "SELECT SUM(*)" & n
   else: "SELECT SUM(" & $value.strVal & ")" & n
 
 
