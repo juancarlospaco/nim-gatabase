@@ -661,6 +661,10 @@ No.
 
 No.
 
+- How is Parameter substitution done ?.
+
+It does NOT make Parameter substitution internally, its delegated to standard library.
+
 - This works with Synchronous code ?.
 
 Yes.
