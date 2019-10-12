@@ -201,7 +201,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
   let # This prepares the arguments from a Tuple into varargs "unpacked".
     y = if args.len > 0: $toStrLit(args) else: ""
     x = if y.len > 0: y[1..^2] else: y
-  sqls = case parseEnum[GatabaseOutput]($output)
+  sqls = case parseEnum[GatabaseOutput]($output)  # Multi-Output.
     of Exec: "exec(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
     of TryExec: "tryExec(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
     of GetRow: "getRow(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
