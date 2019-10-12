@@ -257,6 +257,11 @@ template intersects(value: NimNode): string =
   if parseBool($value): static("INTERSECT ALL" & n) else: static("INTERSECT" & n)
 
 
+template excepts(value: NimNode): string =
+  doAssert value.kind == nnkIdent and parseBool($value), "EXCEPT must be bool"
+  if parseBool($value): static("EXCEPT ALL" & n) else: static("EXCEPT" & n)
+
+
 template comments(value: NimNode, what: string): string =
   isTable(value)
   when not defined(postgres):
