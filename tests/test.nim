@@ -3,13 +3,13 @@ import ../src/gatabase
 
 
 const exampleTable = sql"""
-    create table if not exists person(
-      id      integer     primary key,
-      name    varchar(9)  not null unique,
-      active  bool        not null default true,
-      email   text        not null,
-      rank    float       not null default 0.0
-    ); """
+  create table if not exists person(
+    id      integer     primary key,
+    name    varchar(9)  not null unique,
+    active  bool        not null default true,
+    email   text        not null,
+    rank    float       not null default 0.0
+  ); """
 
 
 suite "Gatabase ORM Tests":
