@@ -466,7 +466,8 @@ engine.execute("""
     name    varchar(9)  not null unique,
     active  bool        not null default true,
     rank    float       not null default 0.0
-  ); """)
+  ); """
+)
 
 
 meta = MetaData()
