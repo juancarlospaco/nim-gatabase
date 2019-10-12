@@ -252,6 +252,11 @@ template unions(value: NimNode): string =
   if parseBool($value): static("UNION ALL" & n) else: static("UNION" & n)
 
 
+template intersects(value: NimNode): string =
+  doAssert value.kind == nnkIdent and parseBool($value), "INTERSECT must be bool"
+  if parseBool($value): static("INTERSECT ALL" & n) else: static("INTERSECT" & n)
+
+
 template comments(value: NimNode, what: string): string =
   isTable(value)
   when not defined(postgres):
