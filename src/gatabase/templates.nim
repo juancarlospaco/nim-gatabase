@@ -264,7 +264,7 @@ template excepts(value: NimNode): string =
 
 template comments(value: NimNode, what: string): string =
   isTable(value)
-  when not defined(postgres):
+  when defined(postgres):
     doAssert value.len == 1, "COMMENT wrong SQL syntax, must have exactly 1 key"
     var name, coment: string
     for tableValue in value:
