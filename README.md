@@ -568,7 +568,7 @@ echo row
 
 # Smart SQL Syntax Checking
 
-It will perform a SQL Syntax checking at compile-time. Examples here Fail **intentionally**:
+It will perform a SQL Syntax checking at compile-time. Examples here Fail **intentionally** as expected:
 
 ```nim
 discard query Sql:
@@ -580,7 +580,7 @@ Fails to compile as expected, with a friendly error:
 gatabase.nim(48, 16) WHERE without SELECT nor INSERT nor UPDATE nor DELETE.
 ```
 
-
+Typical error of making a `DELETE FROM` without `WHERE` that wipes the whole table:
 ```nim
 discard query Sql:
   delete "users"
