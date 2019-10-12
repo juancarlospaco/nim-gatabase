@@ -612,13 +612,15 @@ $ nimble test
   [OK] const SELECT ... FROM ... LIMIT ... OFFSET
   [OK] const INSERT INTO
   [OK] const UNION ALL ... ORBER BY ... IS NOT NULL
+  [OK] const INTERSECT ALL
+  [OK] const EXCEPT ALL
   [OK] const SELECT DISTINCT ... FROM ... WHERE
   [OK] var   CASE
+  [OK] var   SELECT MAX .. WHERE EXISTS ... OFFSET ... LIMIT ... ORDER BY
   [OK] var   DELETE FROM WHERE
-
 ```
 
-- Tests use a real database SQLite on RAM `":memory:"` with a `"person"` table.
+- Tests use a real database SQLite on RAM `":memory:"` with a `"person"` table. +20 Tests.
 
 
 # Requisites
