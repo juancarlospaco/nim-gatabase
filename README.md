@@ -39,7 +39,7 @@
 Intentionally not supported:
 - Deep nested SubQueries are not supported.
 - `TRUNCATE`, is the same as `DELETE FROM` without a `WHERE`.
-- `CREATE TABLE` and `DROP TABLE`, because is run only once, is left to the user.
+- `CREATE TABLE` and `DROP TABLE`, is left to the user.
 
 
 # Install
