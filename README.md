@@ -577,7 +577,7 @@ query Exec:
 
 Fails to compile as expected, with a friendly error:
 ```
-gatabase.nim(48, 16) WHERE without SELECT nor INSERT nor UPDATE nor DELETE.
+gatabase.nim(48, 16) Warning: WHERE without SELECT nor INSERT nor UPDATE nor DELETE.
 ```
 
 Typical error of making a `DELETE FROM` without `WHERE` that deletes all your data:
