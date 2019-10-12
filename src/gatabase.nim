@@ -21,18 +21,20 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong DSL Syntax, must be nnkCommand, but is " & $node.kind
     case $node[0]
-    of "offset":
-      doAssert not offsetUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
-      OFFSET without SELECT nor INSERT nor UPDATE nor DELETE"""
-      sqls.add offsets(node[1])
-      offsetUsed = true
     of "limit":
       doAssert not limitUsed, err0
+      doAssert fromUsed, err0 & "LIMIT without FROM"
       doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
       LIMIT without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add limits(node[1])
       limitUsed = true
+    of "offset":
+      doAssert not offsetUsed, err0
+      doAssert limitUsed, err0 & "OFFSET without LIMIT"
+      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      OFFSET without SELECT nor INSERT nor UPDATE nor DELETE"""
+      sqls.add offsets(node[1])
+      offsetUsed = true
     of "values":
       doAssert not valuesUsed, err0
       sqls.add values(node[1].len)
