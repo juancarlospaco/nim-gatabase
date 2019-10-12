@@ -493,7 +493,7 @@ From this `MyClass.meta.Session.query(Memes).all().filter().first()` to this `ge
 Remember on Python2 you had like `print "value"`?, on Nim you can do the same for any function,
 then we made functions to mimic basic standard SQL, like `select "value"` and it worked,
 its Type-Safe and valid Nim code, you have an ORM that gives you the freedom and power,
-this allows to support interesting features, like `CASE`, `UNION`, `COMMENT`, etc.
+this allows to support interesting features, like `CASE`, `UNION`, `INTERSECT`, `COMMENT`, etc.
 
 When you get used to `template` it requires a lot less code to do the same than SQLAlchemy.
 
