@@ -19,7 +19,6 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
     case $node[0]
-    of "--": sqls.add sqlComment($node[1])
     of "offset":
       doAssert not offsetUsed, err0
       doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
@@ -132,6 +131,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
       doAssert updateUsed, err0 & "SET without UPDATE"
       sqls.add sets(node[1]) # Below put the less frequently used case branches.
+    of "--": sqls.add sqlComment($node[1])
     of "having":
       doAssert not havingUsed, err0
       doAssert groupbyUsed, err0 & "HAVING without GROUP BY"
