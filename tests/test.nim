@@ -27,23 +27,23 @@ suite "Gatabase ORM Tests":
   test "let   SELECT ... FROM ... WHERE":
     query Exec:
       select '*'
-      `from`"person"
-      where "id = 42"
+      `from` "person"
+      where  "id = 42"
 
 
   test "let   SELECT ... (comment) ... FROM ... COMMENT":
     query Exec:
       select '*'
-      `--`"This is a comment, this will be strapped for Release builds"
-      `from`"person"
+      `--`   "This is a comment, this will be strapped for Release builds"
+      `from` "person"
       commentontable {"person": "This is an SQL COMMENT on a TABLE"}
 
 
   test "let   SELECT ... FROM ... LIMIT ... OFFSET":
     query Exec:
       select '*'
-      `from`"person"
-      limit 2
+      `from` "person"
+      limit  2
       offset 0
 
 
@@ -56,12 +56,12 @@ suite "Gatabase ORM Tests":
   test "let   UNION ALL ... ORBER BY ... IS NOT NULL":
     query Exec:
       select '*'
-      `from`"person"
-      where "id = 42"
-      union true
+      `from` "person"
+      where  "id = 42"
+      union  true
       select '*'
-      `from`"person"
-      where "name"
+      `from` "person"
+      where  "name"
       isnull false
 
 
@@ -81,23 +81,23 @@ suite "Gatabase ORM Tests":
   test "const SELECT ... FROM ... WHERE":
     const example9 {.used.} = query Sql:
       select '*'
-      `from`"person"
-      where "id = 42"
+      `from` "person"
+      where  "id = 42"
 
 
   test "const SELECT ... (comment) ... FROM ... COMMENT":
     const example10 {.used.} = query Prepared:
       select '*'
-      `--`"This is a comment, this will be strapped for Release builds"
-      `from`"person"
+      `--`   "This is a comment, this will be strapped for Release builds"
+      `from` "person"
       commentontable {"person": "This is an SQL COMMENT on a TABLE"}
 
 
   test "const SELECT ... FROM ... LIMIT ... OFFSET":
     const example11 {.used.} = query Func:
       select '*'
-      `from`"person"
-      limit 2
+      `from` "person"
+      limit  2
       offset 0
 
 
@@ -109,40 +109,40 @@ suite "Gatabase ORM Tests":
 
   test "const UNION ALL ... ORBER BY ... IS NOT NULL":
     const example13 {.used.} = query Prepared:
-      select '*'
-      `from`"person"
-      where "id = 42"
-      union true
-      select '*'
-      `from`"person"
-      where "name"
-      isnull false
+      select  '*'
+      `from`  "person"
+      where   "id = 42"
+      union   true
+      select  '*'
+      `from`  "person"
+      where   "name"
+      isnull  false
       orderby "asc"
 
 
   test "const INTERSECT ALL":
     const example13a {.used.} = query Sql:
       select '*'
-      `from`"person"
+      `from` "person"
       intersect true
       select '*'
-      `from`"person"
+      `from` "person"
 
 
   test "const EXCEPT ALL":
     const example13b {.used.} = query Sql:
       select '*'
-      `from`"person"
+      `from` "person"
       `except` true
       select '*'
-      `from`"person"
+      `from` "person"
 
 
   test "const SELECT DISTINCT ... FROM ... WHERE":
     const example14 {.used.} = query Sql:
       selectdistinct "id"
-      `from`"person"
-      where "rank != 666.0"
+      `from` "person"
+      where  "rank != 666.0"
 
 
   test "var   CASE":
@@ -153,15 +153,15 @@ suite "Gatabase ORM Tests":
   test "var   SELECT MAX .. WHERE EXISTS ... OFFSET ... LIMIT ... ORDER BY":
     var foo {.used.} = query TryExec:
       selectmax '*'
-      `--`"This is a comment."
-      `from`"person"
-      `--`"This is a comment."
+      `--`    "This is a comment."
+      `from`  "person"
+      `--`    "This is a comment."
       whereexists "rank > 0.0"
-      `--`"This is a comment."
-      `--`"This is a comment."
-      limit 1
-      offset 0
-      `--`"This is a comment."
+      `--`    "This is a comment."
+      `--`    "This is a comment."
+      limit   1
+      offset  0
+      `--`    "This is a comment."
       orderby "desc"
 
 
