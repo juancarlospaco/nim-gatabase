@@ -581,6 +581,17 @@ gatabase.nim(48, 16) WHERE without SELECT nor INSERT nor UPDATE nor DELETE.
 ```
 
 
+```nim
+discard query Sql:
+  delete "users"
+```
+
+Compiles but prints a friendly warning:
+```
+gatabase.nim(207, 57) Warning: DELETE FROM without WHERE
+```
+
+
 # Output
 
 ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
