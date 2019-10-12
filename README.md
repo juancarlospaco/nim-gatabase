@@ -375,6 +375,48 @@ union false
 ```
 
 
+### INTERSECT
+
+```sql
+INTERSECT ALL
+```
+
+```nim
+intersect true
+```
+
+---
+
+```sql
+INTERSECT
+```
+
+```nim
+intersect false
+```
+
+
+### EXCEPT
+
+```sql
+EXCEPT ALL
+```
+
+```nim
+`except` true
+```
+
+---
+
+```sql
+EXCEPT
+```
+
+```nim
+`except` false
+```
+
+
 ### IS NULL
 
 ```sql
