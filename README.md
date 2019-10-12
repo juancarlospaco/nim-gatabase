@@ -588,7 +588,18 @@ query Exec:
 
 Compiles but prints a friendly warning:
 ```
-gatabase.nim(207, 57) Warning: DELETE FROM without WHERE
+gatabase.nim(207, 57) Warning: DELETE FROM without WHERE.
+```
+
+Typical bad practice of using `SELECT *` everywhere:
+```nim
+query Exec:
+  select '*'
+```
+
+Compiles but prints a friendly warning:
+```
+gatabase.nim(20, 50) Warning: SELECT * is bad practice.
 ```
 
 
