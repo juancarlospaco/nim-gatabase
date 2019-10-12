@@ -591,7 +591,7 @@ Compiles but prints a friendly warning:
 gatabase.nim(207, 57) Warning: DELETE FROM without WHERE.
 ```
 
-Typical bad practice of using `SELECT *` everywhere:
+Typical [bad practice of using `SELECT *` everywhere](https://stackoverflow.com/a/3639964):
 ```nim
 query Exec:
   select '*'
