@@ -19,7 +19,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     args: NimNode
   const err0 = "Wrong Syntax, nested SubQueries not supported, repeated call found. "
   for node in inner:
-    doAssert node.kind == nnkCommand, "Wrong Syntax on DSL, must be nnkCommand"
+    doAssert node.kind == nnkCommand, "Wrong DSL Syntax, must be nnkCommand, but is " & $node.kind
     case $node[0]
     of "offset":
       doAssert not offsetUsed, err0
