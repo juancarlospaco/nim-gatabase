@@ -203,6 +203,8 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "commentonindex": sqls.add comments(node[1], "INDEX")
     of "commentontable": sqls.add comments(node[1], "TABLE")
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
+  when not defined(release) or not defined(danger):
+    if unlikely(deleteUsed and not whereUsed): {.warning: "DELETE FROM without WHERE".}
   doAssert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
