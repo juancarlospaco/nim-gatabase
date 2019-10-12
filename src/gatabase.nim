@@ -35,11 +35,6 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       OFFSET without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add offsets(node[1])
       offsetUsed = true
-    of "values":
-      doAssert not valuesUsed, err0
-      sqls.add values(node[1].len)
-      args = node[1]
-      valuesUsed = true
     of "from":
       doAssert not fromUsed, err0
       doAssert selectUsed or deleteUsed, err0 & "FROM without SELECT nor DELETE"
@@ -131,6 +126,11 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not updateUsed, err0
       sqls.add updates(node[1])
       updateUsed = true
+    of "values": # This 2 are the only ones that actually take values.
+      doAssert not valuesUsed, err0
+      sqls.add values(node[1].len)
+      args = node[1]
+      valuesUsed = true
     of "set":
       {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
       doAssert updateUsed, err0 & "SET without UPDATE"
