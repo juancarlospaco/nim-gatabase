@@ -16,15 +16,16 @@
 ### Support
 
 - All SQL standard syntax is supported.
-- ✅ `--` Human readable comments, multi-line comments produce multi-line SQL comments.
+- ✅ `--` Human readable comments, multi-line comments produce multi-line SQL comments, requires [Stropping](https://en.wikipedia.org/wiki/Stropping_(syntax)#Modern_use).
 - ✅ `COMMENT`, Postgres-only.
 - ✅ `UNION`, `UNION ALL`.
 - ✅ `INTERSECT`, `INTERSECT ALL`.
-- ✅ `CASE` with multiple `WHEN` and 1 `ELSE` with correct indentation.
+- ✅ `EXCEPT`, `EXCEPT ALL`, requires [Stropping](https://en.wikipedia.org/wiki/Stropping_(syntax)#Modern_use).
+- ✅ `CASE` with multiple `WHEN` and 1 `ELSE` with correct indentation, requires [Stropping](https://en.wikipedia.org/wiki/Stropping_(syntax)#Modern_use).
 - ✅ `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`.
 - ✅ `OFFSET`.
 - ✅ `LIMIT`.
-- ✅ `FROM`.
+- ✅ `FROM`, requires [Stropping](https://en.wikipedia.org/wiki/Stropping_(syntax)#Modern_use).
 - ✅ `WHERE`, `WHERE NOT`, `WHERE EXISTS`, `WHERE NOT EXISTS`.
 - ✅ `ORDER BY`.
 - ✅ `SELECT`, `SELECT *`, `SELECT DISTINCT`.
@@ -36,7 +37,7 @@
 - ✅ `INSERT INTO`.
 - ✅ `IS NULL`, `IS NOT NULL`.
 - ✅ `UPDATE`.
-- ✅ `SET`.
+- ✅ `SET`, requires [Stropping](https://en.wikipedia.org/wiki/Stropping_(syntax)#Modern_use).
 
 Intentionally not supported:
 - Deep nested SubQueries are not supported, because KISS.
