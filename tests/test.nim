@@ -32,7 +32,7 @@ suite "Gatabase ORM Tests":
 
 
   test "let   SELECT ... (comment) ... FROM ... COMMENT":
-    let example2 {.used.} = query TryExec:
+    let example3 {.used.} = query TryExec:
       select '*'
       `--`"This is a comment, this will be strapped for Release builds"
       `from`"person"
@@ -40,7 +40,7 @@ suite "Gatabase ORM Tests":
 
 
   test "let   SELECT ... FROM ... LIMIT ... OFFSET":
-    let example2 {.used.} = query TryExec:
+    let example4 {.used.} = query TryExec:
       select '*'
       `from`"person"
       offset 0
@@ -48,13 +48,13 @@ suite "Gatabase ORM Tests":
 
 
   test "let   INSERT INTO":
-    let example3 {.used.} = query Func:
+    let example5 {.used.} = query Func:
       insertinto "person"
       values (99, "Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
 
 
   test "let   UNION ALL ... ORBER BY ... IS NOT NULL":
-    let example2 {.used.} = query Sql:
+    let example6 {.used.} = query Sql:
       select '*'
       `from`"person"
       where "id = 42"
@@ -67,27 +67,27 @@ suite "Gatabase ORM Tests":
 
 
   test "let   SELECT DISTINCT ... FROM ... WHERE":
-    let example2 {.used.} = query Prepared:
+    let example7 {.used.} = query Prepared:
       selectdistinct "id"
       `from`"person"
       where "rank != 666.0"
 
 
   test "const INSERT INTO":
-    const example {.used.} = query Func:
+    const example8 {.used.} = query Func:
       insertinto "person"
       values (42, "maximus", true, "maximus.nimmer@nim-lang.org", 5.5)
 
 
   test "const SELECT ... FROM ... WHERE":
-    const example2 {.used.} = query Sql:
+    const example9 {.used.} = query Sql:
       select '*'
       `from`"person"
       where "id = 42"
 
 
   test "const SELECT ... (comment) ... FROM ... COMMENT":
-    const example2 {.used.} = query Prepared:
+    const example10 {.used.} = query Prepared:
       select '*'
       `--`"This is a comment, this will be strapped for Release builds"
       `from`"person"
@@ -95,7 +95,7 @@ suite "Gatabase ORM Tests":
 
 
   test "const SELECT ... FROM ... LIMIT ... OFFSET":
-    const example2 {.used.} = query Func:
+    const example11 {.used.} = query Func:
       select '*'
       `from`"person"
       offset 0
@@ -103,13 +103,13 @@ suite "Gatabase ORM Tests":
 
 
   test "const INSERT INTO":
-    const example3 {.used.} = query Sql:
+    const example12 {.used.} = query Sql:
       insertinto "person"
       values (99, "Nikola Tesla", false, "nikola.tesla@nim-lang.org", 9.6)
 
 
   test "const UNION ALL ... ORBER BY ... IS NOT NULL":
-    const example2 {.used.} = query Prepared:
+    const example13 {.used.} = query Prepared:
       select '*'
       `from`"person"
       where "id = 42"
@@ -122,14 +122,14 @@ suite "Gatabase ORM Tests":
 
 
   test "const SELECT DISTINCT ... FROM ... WHERE":
-    const example2 {.used.} = query Sql:
+    const example14 {.used.} = query Sql:
       selectdistinct "id"
       `from`"person"
       where "rank != 666.0"
 
 
   test "var   CASE":
-    var example2 {.used.} = query Sql:
+    var example15 {.used.} = query Sql:
       `case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
 
 
@@ -149,7 +149,7 @@ suite "Gatabase ORM Tests":
 
 
   test "var   DELETE FROM WHERE":
-    var example9 {.used.} = query TryExec:
+    var lastone {.used.} = query TryExec:
       delete "person"
       where "id = 42"
 
