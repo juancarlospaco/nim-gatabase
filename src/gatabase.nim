@@ -2,8 +2,10 @@
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
+
 type GatabaseOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
   TryExec, GetRow, GetAllRows, GetValue, TryInsertID, InsertID, ExecAffectedRows, Sql, Prepared, Func, Exec
+
 
 macro query*(output: GatabaseOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
