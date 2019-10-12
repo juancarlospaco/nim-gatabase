@@ -162,6 +162,10 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "union":
       resetAllGuards()
       sqls.add unions(node[1])
+    of "intersect":
+      resetAllGuards()
+      sqls.add intersects(node[1])
+    #EXCEPT
     of "isnull":
       doAssert not isnullUsed, err0
       doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
