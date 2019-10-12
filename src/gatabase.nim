@@ -214,5 +214,4 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
         "prepare(db,\"" & inner.lineInfo.normalize & "\",sql(\"\"\"" & sqls & "\"\"\")," & $args.len & ")"
       else: "sql(\"\"\"" & sqls & "\"\"\")" # SQLite wont support prepared.
     else: "sql(\"\"\"" & sqls & "\"\"\")" # Sql is sql""" query """ for SQLite
-  # when defined(dev): echo sqls
   result = parseStmt sqls
