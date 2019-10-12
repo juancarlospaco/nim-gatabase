@@ -571,7 +571,7 @@ echo row
 It will perform a SQL Syntax checking at compile-time. Examples here Fail **intentionally** as expected:
 
 ```nim
-discard query Sql:
+query Exec:
   where "failure"
 ```
 
@@ -582,7 +582,7 @@ gatabase.nim(48, 16) WHERE without SELECT nor INSERT nor UPDATE nor DELETE.
 
 Typical error of making a `DELETE FROM` without `WHERE` that deletes the whole table:
 ```nim
-discard query Sql:
+query Exec:
   delete "users"
 ```
 
