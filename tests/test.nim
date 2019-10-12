@@ -1,6 +1,5 @@
-## Gatabase Unittests, not using `assert` nor `check` because it `raise` if fail anyways.
-import unittest, db_sqlite
-import ../src/gatabase
+## Gatabase Unittests.
+import unittest, db_sqlite, ../src/gatabase  # Import LOCAL Gatabase
 
 
 const exampleTable = sql"""
