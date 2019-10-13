@@ -161,6 +161,18 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not selectUsed, err0
       sqls.add selectTrims(node[1])
       selectUsed = true
+    of "selectround2":
+      doAssert not selectUsed, err0
+      sqls.add selectRound2(node[1])
+      selectUsed = true
+    of "selectround4":
+      doAssert not selectUsed, err0
+      sqls.add selectRound4(node[1])
+      selectUsed = true
+    of "selectround6":
+      doAssert not selectUsed, err0
+      sqls.add selectRound6(node[1])
+      selectUsed = true
     of "union":
       resetAllGuards()
       sqls.add unions(node[1])
