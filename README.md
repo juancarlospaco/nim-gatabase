@@ -219,7 +219,7 @@ ORDER BY ASC
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-orderby "asc"
+orderby Desc
 ```
 
 ---
@@ -229,7 +229,7 @@ ORDER BY DESC
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-orderby "desc"
+orderby Asc
 ```
 
 
@@ -456,15 +456,15 @@ let variable = query Sql:
   select  '*'
   `from`  "clients"
   groupby "country"
-  orderby "desc"
+  orderby AscNullsLast
 ```
 
 **Fails to Compile:**
 
-- `let variable = query Sql: select('*') from("clients") groupby("country") orderby("desc")`
-- `let variable = query Sql: '*'.select() "clients".from() "country".groupby() "desc".orderby()`
-- `let variable = query Sql: select '*' from "clients" groupby "country" orderby "desc"`
-- `let variable = query Sql:select'*' from"clients" groupby"country" orderby"desc"`
+- `let variable = query Sql: select('*') from("clients") groupby("country") orderby(AscNullsLast)`
+- `let variable = query Sql: '*'.select() "clients".from() "country".groupby() AscNullsLast.orderby()`
+- `let variable = query Sql: select '*' from "clients" groupby "country" orderby AscNullsLast`
+- `let variable = query Sql:select'*' from"clients" groupby"country" orderby AscNullsLast`
 
 *This helps on big projects where each developer tries to use a different code style.*
 
