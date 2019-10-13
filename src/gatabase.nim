@@ -10,7 +10,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
   var
     offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
       deleteUsed, likeUsed, valuesUsed, betweenUsed, joinUsed, groupbyUsed,
-      havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed: bool
+      havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed, resetUsed: bool
     sqls: string
     args: NimNode
   const err0 = "Wrong Syntax, nested SubQueries not supported, repeated call found. "
@@ -108,6 +108,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       groupbyUsed = true
     of "into":
       doAssert not intoUsed, err0
+      doAssert selectUsed, err0 & "INTO without SELECT"
       sqls.add intos(node[1])
       intoUsed = true
     of "insert", "insertinto":
@@ -120,6 +121,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       updateUsed = true
     of "values": # This 2 are the only ones that actually take values.
       doAssert not valuesUsed, err0
+      doAssert insertUsed, err0 & "VALUES without INSERT INTO"
       sqls.add values(node[1].len)
       args = node[1]
       valuesUsed = true
@@ -174,14 +176,20 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       sqls.add selectRound6(node[1])
       selectUsed = true
     of "union":
+      doAssert not resetUsed, err0
       resetAllGuards()
       sqls.add unions(node[1])
+      resetUsed = true
     of "intersect":
+      doAssert not resetUsed, err0
       resetAllGuards()
       sqls.add intersects(node[1])
+      resetUsed = true
     of "except":
+      doAssert not resetUsed, err0
       resetAllGuards()
       sqls.add excepts(node[1])
+      resetUsed = true
     of "isnull":
       doAssert not isnullUsed, err0
       doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
