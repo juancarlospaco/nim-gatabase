@@ -37,14 +37,14 @@
 - ✅ `HAVING`.
 - ✅ `INSERT INTO`.
 - ✅ `IS NULL`, `IS NOT NULL`.
-- ✅ `UPDATE`.
-- ✅ `SET`, requires [Stropping](https://en.wikipedia.org/wiki/Stropping_(syntax)#Modern_use).
 
-Intentionally not supported:
+
+Not supported:
 - Deep nested SubQueries are not supported, because KISS.
 - `TRUNCATE`, because is the same as `DELETE FROM` without a `WHERE`.
 - `WHERE IN`, `WHERE NOT IN`, because is the same as `JOIN`, but `JOIN` is a lot faster.
 - `CREATE TABLE` and `DROP TABLE`, is left to the user.
+- [`UPDATE`]().
 
 
 # Install
@@ -273,19 +273,6 @@ ORDER BY DESC
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 orderby Desc
-```
-
-
-### UPDATE
-
-```sql
-UPDATE tablename
-SET key0 = value0, key1 = value1
-```
- ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
-```nim
-update "tablename"
-`set` {"key0": "value0", "key1": "value1"}
 ```
 
 
