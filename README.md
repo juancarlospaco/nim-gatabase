@@ -44,7 +44,7 @@ Not supported:
 - `TRUNCATE`, because is the same as `DELETE FROM` without a `WHERE`.
 - `WHERE IN`, `WHERE NOT IN`, because is the same as `JOIN`, but `JOIN` is a lot faster.
 - `CREATE TABLE` and `DROP TABLE`, is left to the user.
-- [`UPDATE`]().
+- [`UPDATE`](https://github.com/juancarlospaco/nim-gatabase/issues/2#issue-506354934).
 
 
 # Install
