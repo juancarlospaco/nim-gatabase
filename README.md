@@ -278,7 +278,7 @@ COMMENT ON COLUMN myColumn IS 'This is an SQL COMMENT on a COLUMN'
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-commentontable {"myColumn": "This is an SQL COMMENT on a COLUMN"}
+commentoncolumn {"myColumn": "This is an SQL COMMENT on a COLUMN"}
 ```
 
 ---
