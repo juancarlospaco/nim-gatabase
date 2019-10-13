@@ -152,11 +152,42 @@ selectsum "somecolumn"
 ### TRIM & LOWER
 
 ```sql
-SELECT trim(lower(somecolumn))
+SELECT trim(lower(somestringcolumn))
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-selecttrim "somecolumn"
+selecttrim "somestringcolumn"
+```
+
+
+### ROUND
+
+```sql
+SELECT round(somefloatcolumn, 2)
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+selectround2 "somefloatcolumn"
+```
+
+---
+
+```sql
+SELECT round(somefloatcolumn, 4)
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+selectround4 "somefloatcolumn"
+```
+
+---
+
+```sql
+SELECT round(somefloatcolumn, 6)
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+selectround6 "somefloatcolumn"
 ```
 
 
