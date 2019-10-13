@@ -603,7 +603,7 @@ Compiles but prints a friendly warning:
 gatabase.nim(20, 50) Warning: SELECT * is bad practice.
 ```
 
-Obviously non-SQL wont compile, even if its valid Nim:
+Non-SQL wont compile, even if its valid Nim:
 ```nim
 query Sql:
   discard
