@@ -147,11 +147,11 @@ suite "Gatabase ORM Tests":
 
   test "var   CASE":
     var example15 {.used.} = query Sql:
-      `case` {"foo > 10": "9", "bar < 42": "5", "default":  "0"}
+      `case` {"foo > 10": "9", "bar < 42": "5", "else":  "0"}
       `case` {
         "foo > 10": "9",
         "bar < 42": "5",
-        "default":  "0"
+        "else":  "0"
       }
 
 
