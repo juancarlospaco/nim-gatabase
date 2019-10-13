@@ -300,7 +300,11 @@ END
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-`case` {"foo > 10": "9", "bar < 42": "5", "default": "0"}
+`case` {
+  "foo > 10": "9",
+  "bar < 42": "5",
+  "default":  "0"
+}
 ```
 
 
