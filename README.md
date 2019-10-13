@@ -30,7 +30,7 @@
 - ✅ `ORDER BY`.
 - ✅ `SELECT`, `SELECT *`, `SELECT DISTINCT`.
 - ✅ `SELECT TOP`, `SELECT MIN`, `SELECT MAX`, `SELECT AVG`, `SELECT SUM`, `SELECT COUNT`.
-- ✅ `SELECT trim(lower( ))`, `SELECT round( )`, useful shortcuts.
+- ✅ `SELECT trim(lower( ))` for strings, `SELECT round( )` for floats, useful shortcuts.
 - ✅ `DELETE FROM`.
 - ✅ `LIKE`, `NOT LIKE`.
 - ✅ `BETWEEN`, `NOT BETWEEN`.
