@@ -149,6 +149,17 @@ selectsum "somecolumn"
 ```
 
 
+### TRIM & LOWER
+
+```sql
+SELECT trim(lower(somecolumn))
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+selecttrim "somecolumn"
+```
+
+
 ### TOP
 
 ```sql
