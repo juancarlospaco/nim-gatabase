@@ -603,6 +603,8 @@ echo row
 
 # Smart SQL Checking
 
+![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/sql_checking.png "Smart SQL Checking")
+
 It will perform a SQL Syntax checking at compile-time. Examples here Fail **intentionally** as expected:
 
 ```nim
