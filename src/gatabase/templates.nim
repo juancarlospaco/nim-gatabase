@@ -292,12 +292,6 @@ template isnulls(value: NimNode): string =
   if parseBool($value): static("IS NULL" & n) else: static("IS NOT NULL" & n)
 
 
-template updates(value: NimNode): string =
-  isQuestionOrString(value)
-  if isQuestionChar(value): static("UPDATE ?" & n)
-  else: "UPDATE " & $value.strVal & n
-
-
 template unions(value: NimNode): string =
   doAssert value.kind == nnkIdent and parseBool($value), "UNION must be bool"
   if parseBool($value): static("UNION ALL" & n) else: static("UNION" & n)
@@ -324,14 +318,6 @@ template comments(value: NimNode, what: string): string =
       doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
     "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
   else: n # SQLite wont support COMMENT, is not part of SQL Standard neither.
-
-
-template sets(value: NimNode): string =
-  isTable(node[1])
-  var temp: seq[string]
-  for tableValue in node[1]:
-    temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
-  "SET " & temp.join", "
 
 
 template cases(value: NimNode): string =
@@ -367,4 +353,18 @@ template resetAllGuards() =
   intoUsed = false
   insertUsed = false
   isnullUsed = false
-  updateUsed = false
+  # updateUsed = false
+
+
+# template sets(value: NimNode): string =
+#   isTable(node[1])
+#   var temp: seq[string]
+#   for tableValue in node[1]:
+#     temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
+#   "SET " & temp.join", "
+
+
+# template updates(value: NimNode): string =
+#   isQuestionOrString(value)
+#   if isQuestionChar(value): static("UPDATE ?" & n)
+#   else: "UPDATE " & $value.strVal & n
