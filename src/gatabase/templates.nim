@@ -362,8 +362,7 @@ template resetAllGuards() =
 #   for tableValue in node[1]:
 #     temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
 #   "SET " & temp.join", "
-
-
+#
 # template updates(value: NimNode): string =
 #   isQuestionOrString(value)
 #   if isQuestionChar(value): static("UPDATE ?" & n)
