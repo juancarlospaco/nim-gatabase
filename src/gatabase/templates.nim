@@ -194,6 +194,21 @@ template selectTrims(value: NimNode): string =
   "SELECT trim(lower(" & $value.strVal & static("))" & n)
 
 
+template selectRound2(value: NimNode): string =
+  isCharOrString(value)
+  "SELECT round(" & $value.strVal & static(", 2)" & n)
+
+
+template selectRound4(value: NimNode): string =
+  isCharOrString(value)
+  "SELECT round(" & $value.strVal & static(", 4)" & n)
+
+
+template selectRound6(value: NimNode): string =
+  isCharOrString(value)
+  "SELECT round(" & $value.strVal & static(", 6)" & n)
+
+
 template deletes(value: NimNode): string =
   isQuestionOrString(value)
   if isQuestionChar(value): static("DELETE FROM ?" & n)
