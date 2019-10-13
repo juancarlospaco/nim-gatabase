@@ -681,7 +681,7 @@ $ nimble test
   [OK] let   INSERT INTO
   [OK] let   UNION ALL ... ORBER BY ... IS NOT NULL
   [OK] let   SELECT DISTINCT ... FROM ... WHERE
-  [OK] const INSERT INTO
+  [OK] let INSERT INTO
   [OK] const SELECT ... FROM ... WHERE
   [OK] const SELECT ... (comment) ... FROM ... COMMENT
   [OK] const SELECT ... FROM ... LIMIT ... OFFSET
@@ -692,6 +692,8 @@ $ nimble test
   [OK] const SELECT DISTINCT ... FROM ... WHERE
   [OK] var   CASE
   [OK] var   SELECT MAX .. WHERE EXISTS ... OFFSET ... LIMIT ... ORDER BY
+  [OK] SELECT TRIM
+  [OK] SELECT ROUND
   [OK] var   DELETE FROM WHERE
 ```
 
