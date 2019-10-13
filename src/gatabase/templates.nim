@@ -124,9 +124,9 @@ template selectDistincts(value: NimNode): string =
 
 
 template selectTops(value: NimNode): string =
-  isCharOrString(value)
+  isQuestionOrPositive(value)
   if isQuestionChar(value): static("SELECT TOP ? *" & n)
-  else: "SELECT TOP " & $value.strVal & " *" & n
+  else: "SELECT TOP " & $value.intVal & " *" & n
 
 
 template selectMins(value: NimNode): string =
