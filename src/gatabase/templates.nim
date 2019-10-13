@@ -336,16 +336,16 @@ template sets(value: NimNode): string =
 
 template cases(value: NimNode): string =
   isTable(value)
-  doAssert value[^1][0].strVal == "default", "CASE must have 1 'default' key, as last key, is required and mandatory"
+  doAssert value[^1][0].strVal == "else", "CASE must have 1 'else' key, as last key, is required and mandatory"
   var defaultFound: byte
   var default, branches: string
   for tableValue in value:
-    if tableValue[0].strVal == "default":
+    if tableValue[0].strVal == "else":
       default = "  ELSE " & tableValue[1].strVal & n
       inc defaultFound
     else:
       branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
-  doAssert defaultFound == 1, "CASE must have 1 'default' key, but found: " & $defaultFound
+  doAssert defaultFound == 1, "CASE must have 1 'else' key, but found: " & $defaultFound
   n & static("(CASE" & n) & branches & default & static("END)" & n)
 
 
