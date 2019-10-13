@@ -219,7 +219,7 @@ ORDER BY ASC
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-orderby Desc
+orderby Asc
 ```
 
 ---
@@ -229,7 +229,7 @@ ORDER BY DESC
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-orderby Asc
+orderby Desc
 ```
 
 
