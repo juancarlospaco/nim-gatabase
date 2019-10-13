@@ -189,6 +189,11 @@ template selectSums(value: NimNode): string =
   else: "SELECT SUM(" & $value.strVal & ")" & n
 
 
+template selectTrims(value: NimNode): string =
+  isCharOrString(value)
+  "SELECT trim(lower(" & $value.strVal & static("))" & n)
+
+
 template deletes(value: NimNode): string =
   isQuestionOrString(value)
   if isQuestionChar(value): static("DELETE FROM ?" & n)
