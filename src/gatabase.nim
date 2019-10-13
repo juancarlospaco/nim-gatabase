@@ -2,11 +2,6 @@
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
-
-type GatabaseOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
-  TryExec, GetRow, GetAllRows, GetValue, TryInsertID, InsertID, ExecAffectedRows, Sql, Prepared, Func, Exec
-
-
 macro query*(output: GatabaseOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
   when not defined(release) and not defined(danger) and not declared(db):
@@ -67,7 +62,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "order", "orderby":
       doAssert not orderUsed, err0
       doAssert selectUsed, err0 & "ORDER BY without SELECT"
-      sqls.add orderbys(node[1])
+      sqls.add orderbys(parseEnum[GatabaseOrderBy]($node[1]))
       orderUsed = true
     of "select":
       doAssert not selectUsed, err0
