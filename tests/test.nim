@@ -165,9 +165,23 @@ suite "Gatabase ORM Tests":
       orderby Desc
 
 
-  test "const SELECT TRIM":
+  test "SELECT TRIM":
     query Exec:
       selecttrim "name"
+      `from` "person"
+
+
+  test "SELECT ROUND":
+    query Exec:
+      selectround2 "rank"
+      `from` "person"
+
+    query Exec:
+      selectround4 "rank"
+      `from` "person"
+
+    query Exec:
+      selectround6 "rank"
       `from` "person"
 
 
