@@ -165,6 +165,12 @@ suite "Gatabase ORM Tests":
       orderby Desc
 
 
+  test "const SELECT TRIM":
+    query Exec:
+      selecttrim "name"
+      `from` "person"
+
+
   test "var   DELETE FROM WHERE":
     query Exec:
       delete "person"
