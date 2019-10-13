@@ -1,6 +1,21 @@
 ## Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
 import strutils
 
+
+type
+  GatabaseOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
+    TryExec, GetRow, GetAllRows, GetValue, TryInsertID, InsertID, ExecAffectedRows, Sql, Prepared, Func, Exec
+
+  GatabaseOrderBy* = enum ## ORDER BY options.
+    Asc = "ASC"
+    Desc = "DESC"
+    AscNullsFirst = "ASC NULLS FIRST"
+    DescNullsFirst = "DESC NULLS FIRST"
+    AscNullsLast = "ASC NULLS LAST"
+    DescNullsLast = "DESC NULLS LAST"
+    Id = "id"
+
+
 const n = when defined(release): " " else: "\n"
 
 
@@ -94,13 +109,8 @@ template whereNotExists(value: NimNode): string =
   else: "WHERE NOT EXISTS " & $value.strVal & n
 
 
-template orderbys(value: NimNode): string =
-  isQuestionOrString(value)
-  if isQuestionChar(value): static("ORDER BY ?" & n)
-  else:
-    if value.strVal == "asc": static("ORDER BY ASC" & n)
-    elif value.strVal == "desc": static("ORDER BY DESC" & n)
-    else: "ORDER BY " & $value.strVal & n
+template orderbys(value: GatabaseOrderBy): string =
+  "ORDER BY " & $value & n
 
 
 template selects(value: NimNode): string =
