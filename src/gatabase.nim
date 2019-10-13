@@ -77,10 +77,6 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not selectUsed, err0
       sqls.add selectDistincts(node[1])
       selectUsed = true
-    of "selecttop":
-      doAssert not selectUsed, err0
-      sqls.add selectTops(node[1])
-      selectUsed = true
     of "delete":
       doAssert not deleteUsed, err0
       sqls.add deletes(node[1])
@@ -141,6 +137,10 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert groupbyUsed, err0 & "HAVING without GROUP BY"
       sqls.add havings(node[1])
       havingUsed = true
+    of "selecttop":
+      doAssert not selectUsed, err0
+      sqls.add selectTops(node[1])
+      selectUsed = true
     of "selectmin":
       doAssert not selectUsed, err0
       sqls.add selectMins(node[1])
