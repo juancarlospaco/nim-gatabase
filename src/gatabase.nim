@@ -10,7 +10,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
   var
     offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
       deleteUsed, likeUsed, valuesUsed, betweenUsed, joinUsed, groupbyUsed,
-      havingUsed, intoUsed, insertUsed, isnullUsed, updateUsed, resetUsed: bool
+      havingUsed, intoUsed, insertUsed, isnullUsed, resetUsed: bool
     sqls: string
     args: NimNode
   const err0 = "Wrong Syntax, nested SubQueries not supported, repeated call found. "
@@ -20,14 +20,14 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "limit":
       doAssert not limitUsed, err0
       doAssert fromUsed, err0 & "LIMIT without FROM"
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       LIMIT without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add limits(node[1])
       limitUsed = true
     of "offset":
       doAssert not offsetUsed, err0
       doAssert limitUsed, err0 & "OFFSET without LIMIT"
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       OFFSET without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add offsets(node[1])
       offsetUsed = true
@@ -38,25 +38,25 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       fromUsed = true
     of "where":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       WHERE without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add wheres(node[1])
       whereUsed = true
     of "wherenot":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       WHERE NOT without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add whereNots(node[1])
       whereUsed = true
     of "whereexists":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       WHERE EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add whereExists(node[1])
       whereUsed = true
     of "wherenotexists":
       doAssert not whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       WHERE NOT EXISTS without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add whereNotExists(node[1])
       whereUsed = true
@@ -79,25 +79,25 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       deleteUsed = true
     of "like":
       doAssert not likeUsed and whereUsed, err0
-      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or whereUsed or insertUsed or deleteUsed, err0 & """
       LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add likes(node[1])
       likeUsed = true
     of "notlike":
       doAssert not likeUsed and whereUsed, err0
-      doAssert selectUsed or whereUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or whereUsed or insertUsed or deleteUsed, err0 & """
       NOT LIKE without WHERE nor SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add notlikes(node[1])
       likeUsed = true
     of "between":
       doAssert not betweenUsed and whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add betweens(node[1])
       betweenUsed = true
     of "notbetween":
       doAssert not betweenUsed and whereUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       NOT BETWEEN without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add notbetweens(node[1])
       betweenUsed = true
@@ -115,20 +115,13 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       doAssert not insertUsed, err0
       sqls.add inserts(node[1])
       insertUsed = true
-    of "update":
-      doAssert not updateUsed, err0
-      sqls.add updates(node[1])
-      updateUsed = true
-    of "values": # This 2 are the only ones that actually take values.
-      doAssert not valuesUsed, err0
+    of "values": # This is the only ones that actually take values.
+      {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
+      doAssert not valuesUsed, err0  # Below put the less frequently used case branches.
       doAssert insertUsed, err0 & "VALUES without INSERT INTO"
       sqls.add values(node[1].len)
       args = node[1]
       valuesUsed = true
-    of "set":
-      {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
-      doAssert updateUsed, err0 & "SET without UPDATE"
-      sqls.add sets(node[1]) # Below put the less frequently used case branches.
     of "--": sqls.add sqlComment($node[1])
     of "having":
       doAssert not havingUsed, err0
@@ -192,7 +185,7 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
       resetUsed = true
     of "isnull":
       doAssert not isnullUsed, err0
-      doAssert selectUsed or insertUsed or updateUsed or deleteUsed, err0 & """
+      doAssert selectUsed or insertUsed or deleteUsed, err0 & """
       IS NULL without SELECT nor INSERT nor UPDATE nor DELETE"""
       sqls.add isnulls(node[1])
       isnullUsed = true
@@ -222,6 +215,8 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "commentonfunction": sqls.add comments(node[1], "FUNCTION")
     of "commentonindex": sqls.add comments(node[1], "INDEX")
     of "commentontable": sqls.add comments(node[1], "TABLE")
+    # of "update": sqls.add updates(node[1])
+    # of "set": sqls.add sets(node[1])
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   when not defined(release) or not defined(danger):
     if unlikely(deleteUsed and not whereUsed): {.warning: "DELETE FROM without WHERE.".}
