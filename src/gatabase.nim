@@ -2,6 +2,7 @@
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
+
 macro query*(output: GatabaseOutput, inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
   when not defined(release) and not defined(danger) and not declared(db):
@@ -155,6 +156,10 @@ macro query*(output: GatabaseOutput, inner: untyped): untyped =
     of "selectsum":
       doAssert not selectUsed, err0
       sqls.add selectSums(node[1])
+      selectUsed = true
+    of "selecttrim":
+      doAssert not selectUsed, err0
+      sqls.add selectTrims(node[1])
       selectUsed = true
     of "union":
       resetAllGuards()
