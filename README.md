@@ -156,7 +156,7 @@ SELECT TOP 5 *
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-selecttop "5"
+selecttop 5
 ```
 
 
