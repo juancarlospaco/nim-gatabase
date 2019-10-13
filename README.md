@@ -29,7 +29,8 @@
 - ✅ `WHERE`, `WHERE NOT`, `WHERE EXISTS`, `WHERE NOT EXISTS`.
 - ✅ `ORDER BY`.
 - ✅ `SELECT`, `SELECT *`, `SELECT DISTINCT`.
-- ✅ `SELECT TOP`, `SELECT MIN`, `SELECT MAX`, `SELECT AVG`, `SELECT SUM`, `SELECT COUNT`, `SELECT trim(lower( ))`.
+- ✅ `SELECT TOP`, `SELECT MIN`, `SELECT MAX`, `SELECT AVG`, `SELECT SUM`, `SELECT COUNT`.
+- ✅ `SELECT trim(lower( ))`, `SELECT round( )`, useful shortcuts.
 - ✅ `DELETE FROM`.
 - ✅ `LIKE`, `NOT LIKE`.
 - ✅ `BETWEEN`, `NOT BETWEEN`.
