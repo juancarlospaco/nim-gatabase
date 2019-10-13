@@ -117,7 +117,7 @@ suite "Gatabase ORM Tests":
       `from`  "person"
       where   "name"
       isnull  false
-      orderby "asc"
+      orderby Asc
 
 
   test "const INTERSECT ALL":
@@ -162,7 +162,7 @@ suite "Gatabase ORM Tests":
       limit   1
       offset  0
       `--`    "This is a comment."
-      orderby "desc"
+      orderby Desc
 
 
   test "var   DELETE FROM WHERE":
