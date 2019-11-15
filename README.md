@@ -713,7 +713,12 @@ $ nimble test
 
 ## Stars
 
-[![Stars over time](https://starchart.cc/juancarlospaco/nim-gatabase.svg)](https://starchart.cc/ThomasTJdev/nim_websitecreator "Star Gatabase on GitHub!")
+![Stars over time](https://starchart.cc/juancarlospaco/nim-gatabase.svg)
+
+
+#### Contributors
+
+- https://github.com/juancarlospaco/nim-gatabase/graphs/contributors
 
 
 # FAQ
