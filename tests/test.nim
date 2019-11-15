@@ -12,6 +12,65 @@ const exampleTable = sql"""
   ); """
 
 
+const expected0 = """INSERT INTO person
+VALUES ( ?, ?, ?, ?, ? )
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(82, 6) */
+"""
+
+const expected1 = """SELECT *
+FROM person
+WHERE id = 42
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(89, 6) */
+"""
+
+const expected2 = """SELECT *
+-- This is a comment, this will be strapped for Release builds
+FROM person
+
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(97, 6) */
+"""
+
+const expected3 = """SELECT *
+FROM person
+LIMIT 2
+OFFSET 0
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(106, 6) */
+"""
+
+const expected4 = """INSERT INTO person
+VALUES ( ?, ?, ?, ?, ? )
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(115, 6) */
+"""
+
+const expected5 = """SELECT *
+FROM person
+WHERE id = 42
+UNION ALL
+SELECT *
+FROM person
+WHERE name
+IS NOT NULL
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(122, 6) */
+"""
+
+const expected6 = """SELECT DISTINCT id
+FROM person
+WHERE rank != 666.0
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(135, 6) */
+"""
+
+const expected7 = """INSERT INTO person
+VALUES ( ?, ?, ?, ?, ? )
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(143, 6) */
+"""
+
+const expected8 = """SELECT *
+FROM person
+WHERE id = 42
+;  /* /home/juan/code/nim-gatabase/tests/test.nim(150, 6) */
+"""
+
+
 suite "Gatabase ORM Tests":
 
   let db = db_sqlite.open(":memory:", "", "", "") # Setup.
@@ -19,42 +78,47 @@ suite "Gatabase ORM Tests":
 
 
   test "let   INSERT INTO":
-    query Exec:
+    let result0 = query Sql:
       insertinto "person"
       values (42, "Graydon Hoare", true, "graydon.hoare@nim-lang.org", 5.5)
+    check result0.string == expected0
 
 
   test "let   SELECT ... FROM ... WHERE":
-    query Exec:
+    let result1 = query Sql:
       select '*'
       `from` "person"
       where  "id = 42"
+    check result1.string == expected1
 
 
   test "let   SELECT ... (comment) ... FROM ... COMMENT":
-    query Exec:
+    let result2 = query Sql:
       select '*'
       `--`   "This is a comment, this will be strapped for Release builds"
       `from` "person"
       commentontable {"person": "This is an SQL COMMENT on a TABLE"}
+    check result2.string == expected2
 
 
   test "let   SELECT ... FROM ... LIMIT ... OFFSET":
-    query Exec:
+    let result3 = query Sql:
       select '*'
       `from` "person"
       limit  2
       offset 0
+    check result3.string == expected3
 
 
   test "let   INSERT INTO":
-    query Exec:
+    let result4 = query Sql:
       insertinto "person"
       values (99, "Ryan Dahl", false, "ryan.dahl@nim-lang.org", 9.6)
+    check result4.string == expected4
 
 
   test "let   UNION ALL ... ORBER BY ... IS NOT NULL":
-    query Exec:
+    let result5 = query Sql:
       select '*'
       `from` "person"
       where  "id = 42"
@@ -63,26 +127,30 @@ suite "Gatabase ORM Tests":
       `from` "person"
       where  "name"
       isnull false
+    check result5.string == expected5
 
 
   test "let   SELECT DISTINCT ... FROM ... WHERE":
-    query Exec:
+    let result6 = query Sql:
       selectdistinct "id"
       `from`"person"
       where "rank != 666.0"
+    check result6.string == expected6
 
 
   test "let INSERT INTO":
-    query Exec:
+    let result7 = query Sql:
       insertinto "person"
       values (9, "Guido van Rossum", true, "guido.v.rossum@nim-lang.org", 5.5)
+    check result7.string == expected7
 
 
   test "const SELECT ... FROM ... WHERE":
-    const example9 {.used.} = query Sql:
+    const result8 = query Sql:
       select '*'
       `from` "person"
       where  "id = 42"
+    check result8.string == expected8
 
 
   test "const SELECT ... (comment) ... FROM ... COMMENT":
