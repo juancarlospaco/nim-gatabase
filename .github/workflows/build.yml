@@ -11,7 +11,6 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
     - uses: actions/setup-node@v1
-    - uses: hmarr/debug-action@v1.0.0
 
     - name: Set Global Environment Variables
       uses: allenevans/set-env@v1.0.0
@@ -45,17 +44,22 @@ jobs:
         curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
         sh init.sh -y
 
+    - name: Set Global Environment Variables 2
+      uses: allenevans/set-env@v1.0.0
+      with:
+        PATH: $HOME/.nimble/bin:$PATH
+
     - name: Nimble Refresh
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y refresh
+      run: nimble -y refresh
 
     - name: Nimble Install dependencies
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y install --depsOnly
+      run: nimble -y install --depsOnly
 
     - name: Nimble Check package validity
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y check
+      run: nimble -y check
 
     - name: Nimble Documentation build
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y doc
+      run: nimble -y doc
 
     - name: Build project
       run: |
