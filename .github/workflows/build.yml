@@ -59,11 +59,6 @@ jobs:
         export PATH=$HOME/.nimble/bin:$PATH
         nimble -y check
 
-    - name: Nimble Documentation build
-      run: |
-        export PATH=$HOME/.nimble/bin:$PATH
-        nimble doc
-
     - name: Build project
       run: |
         # nimble build -y
