@@ -47,7 +47,8 @@ jobs:
     - name: Install Nim via CSources
       run: |
         git clone --depth 1 git://github.com/nim-lang/csources
-        sh csources/build.sh
+        cd csources
+        sh ./build.sh
         bin/nim c koch
         ./koch boot -d:release
 
