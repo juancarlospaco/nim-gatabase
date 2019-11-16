@@ -55,6 +55,8 @@ jobs:
         bin/nim c koch
         ./koch boot
         ./koch nimble
+        ln -svf nim bin/nim
+        ln -svf nimble bin/nimble
 
     - name: Nimble Refresh
       run: |
