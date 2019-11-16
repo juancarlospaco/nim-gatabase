@@ -59,7 +59,12 @@ jobs:
         export PATH=$HOME/.nimble/bin:$PATH
         nimble -y check
 
-    - name: Build project
+    - name: Compile project
       run: |
-        # nimble build -y
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble build
+
+    - name: Unittest project
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
         nimble test -y
