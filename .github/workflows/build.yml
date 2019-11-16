@@ -46,6 +46,8 @@ jobs:
 
     - name: Install Nim via CSources
       run: |
+        git clone --depth 1 git://github.com/nim-lang/Nim.git
+        cd Nim
         git clone --depth 1 git://github.com/nim-lang/csources
         cd csources
         sh ./build.sh
