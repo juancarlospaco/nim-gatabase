@@ -36,5 +36,5 @@ jobs:
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
         echo $PATH
-        # nimble build -y
-        nimble test -y
+        nimble build -y
+        # nimble test -y
