@@ -38,11 +38,20 @@ jobs:
         path: ~/.nimble
         key: ${{ runner.os }}-nimble-1.0.2
 
-    - name: Install Nim
-      if: steps.cache-choosenim.outputs.cache-hit != 'true' || steps.cache-nimble.outputs.cache-hit != 'true'
+    # - name: Install Nim via Choosenim
+    #   if: steps.cache-choosenim.outputs.cache-hit != 'true' || steps.cache-nimble.outputs.cache-hit != 'true'
+    #   run: |
+    #     curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
+    #     sh init.sh -y
+
+    - name: Install Nim via CSources
       run: |
-        curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
-        sh init.sh -y
+        git clone --depth 1 git://github.com/nim-lang/csources
+        cd csources
+        sh ./build.sh
+        cd ..
+        bin/nim c koch
+        ./koch boot -d:release
 
     - name: Nimble Refresh
       run: |
