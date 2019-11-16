@@ -46,16 +46,16 @@ jobs:
         sh init.sh -y
 
     - name: Nimble Refresh
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble refresh -y
+      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y refresh
 
     - name: Nimble Install dependencies
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble install --depsOnly -y
+      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y install --depsOnly
 
     - name: Nimble Check package validity
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble check -y
+      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y check
 
     - name: Nimble Documentation build
-      run: export PATH=$HOME/.nimble/bin:$PATH nimble doc -y
+      run: export PATH=$HOME/.nimble/bin:$PATH nimble -y doc
 
     - name: Build project
       run: |
