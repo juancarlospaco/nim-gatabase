@@ -11,9 +11,11 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Update Python PIP
+      uses: actions/setup-python@v1
       run: pip install --upgrade --disable-pip-version-check pip
 
     - name: Update NodeJS NPM
+      uses: actions/setup-node@v1
       run: npm install npm
 
     - name: Cache choosenim
@@ -41,6 +43,5 @@ jobs:
     - name: Build project
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        echo $PATH
-        nimble build -y
-        # nimble test -y
+        # nimble build -y
+        nimble test -y
