@@ -44,22 +44,25 @@ jobs:
         curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
         sh init.sh -y
 
-    - name: Set Global Environment Variables 2
-      uses: allenevans/set-env@v1.0.0
-      with:
-        PATH: $HOME/.nimble/bin:$PATH
-
     - name: Nimble Refresh
-      run: nimble -y refresh
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble -y refresh
 
     - name: Nimble Install dependencies
-      run: nimble -y install --depsOnly
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble -y install --depsOnly
 
     - name: Nimble Check package validity
-      run: nimble -y check
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble -y check
 
     - name: Nimble Documentation build
-      run: nimble -y doc
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble -y doc
 
     - name: Build project
       run: |
