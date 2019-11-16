@@ -1,4 +1,4 @@
-name: Build
+name: Build Nim 👑
 
 on: [push]
 
@@ -9,6 +9,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+
+    - name: Update Python PIP
+      run: pip install --upgrade --disable-pip-version-check --no-color pip
+
+    - name: Update NodeJS NPM
+      run: npm install npm -g
 
     - name: Cache choosenim
       id: cache-choosenim
