@@ -704,6 +704,7 @@ $ nimble test
 ```
 
 - Tests use a real database SQLite on RAM `":memory:"` with a `"person"` table. +20 Tests.
+- CI uses GitHub Actions CI.
 
 
 # Requisites
