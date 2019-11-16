@@ -40,6 +40,18 @@ jobs:
         curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh
         sh init.sh -y
 
+    - name: Nimble Refresh
+      run: nimble refresh -y
+
+    - name: Nimble Install dependencies
+      run: nimble install --depsOnly -y
+
+    - name: Nimble Check package validity
+      run: nimble check -y
+
+    - name: Nimble Documentation build
+      run: nimble doc -y
+
     - name: Build project
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
