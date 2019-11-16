@@ -51,7 +51,7 @@ jobs:
         git clone --depth 1 git://github.com/nim-lang/csources
         cd csources
         sh ./build.sh
-        bin/nim c koch
+        ../bin/nim c koch
         ./koch boot -d:release
 
     - name: Nimble Refresh
