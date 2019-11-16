@@ -53,7 +53,8 @@ jobs:
         sh ./build.sh
         cd ..
         bin/nim c koch
-        ./koch boot -d:release
+        ./koch boot
+        ./koch nimble
 
     - name: Nimble Refresh
       run: |
