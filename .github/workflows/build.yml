@@ -11,7 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-python@v1
     - uses: actions/setup-node@v1
-    - uses: hmarr/debug-action
+    - uses: hmarr/debug-action@v1
 
     - name: Set Global Environment Variables
       uses: allenevans/set-env@v1.0.0
