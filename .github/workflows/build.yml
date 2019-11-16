@@ -62,7 +62,7 @@ jobs:
     - name: Nimble Documentation build
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nimble -y doc
+        nimble doc
 
     - name: Build project
       run: |
