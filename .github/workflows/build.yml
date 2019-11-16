@@ -57,7 +57,7 @@ jobs:
     - name: Nimble Check package validity
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nimble -y check
+        nimble check
 
     - name: Compile project
       run: |
@@ -67,4 +67,4 @@ jobs:
     - name: Unittest project
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nimble test -y
+        nimble test
