@@ -4,7 +4,7 @@ include gatabase/templates # Tiny compile-time internal templates that do 1 thin
 
 
 macro query*(output: GatabaseOutput, inner: untyped): untyped =
-  ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL) https://u.nu/x5rz
+  ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL)
   when not defined(release) and not defined(danger) and not declared(db):
     {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
   var
