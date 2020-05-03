@@ -3,7 +3,7 @@ import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
 
-macro query*(output: GatabaseOutput, inner: untyped): untyped =
+macro query*(output: static[GatabaseOutput]; inner: untyped): untyped =
   ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL)
   when not defined(release) and not defined(danger) and not declared(db):
     {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
