@@ -96,8 +96,8 @@ template whereNotExists(value: NimNode): string =
   else: "WHERE NOT EXISTS " & $value.strVal & n
 
 
-template orderbys(value: GatabaseOrderBy): string =
-  "ORDER BY " & $value & n
+template orderbys(value: string): string =
+  "ORDER BY " & value & n
 
 
 template selects(value: NimNode): string =
