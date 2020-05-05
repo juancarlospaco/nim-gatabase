@@ -181,7 +181,10 @@ Mimics <tt class="docutils literal"><span class="pre">tryExec</span></tt> but us
 </ul>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">killUser</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">tryExec</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
   <span class="Identifier">delete</span> <span class="StringLit">&quot;person&quot;</span>
-  <span class="Identifier">where</span> <span class="StringLit">&quot;id = 42&quot;</span></pre>
+  <span class="Identifier">where</span> <span class="StringLit">&quot;id = 42&quot;</span></pre><pre class="listing"><span class="Keyword">let</span> <span class="Identifier">killUser</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">tryExec</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">select</span> <span class="StringLit">&quot;name&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">wherenot</span> <span class="StringLit">&quot;active = true&quot;</span></pre>
 
 </dd>
 <a id="getRow.t,varargs[string,],untyped"></a>
@@ -218,7 +221,11 @@ Mimics <tt class="docutils literal"><span class="pre">getValue</span></tt> but u
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">userName</span><span class="Punctuation">:</span> <span class="Identifier">string</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">getValue</span><span class="Punctuation">:</span>
   <span class="Identifier">select</span> <span class="StringLit">&quot;name&quot;</span>
   <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;person&quot;</span>
-  <span class="Identifier">where</span>  <span class="StringLit">&quot;id = 42&quot;</span></pre>
+  <span class="Identifier">where</span>  <span class="StringLit">&quot;id = 42&quot;</span></pre><pre class="listing"><span class="Keyword">let</span> <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="Identifier">string</span> <span class="Operator">=</span> <span class="Identifier">getValue</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">select</span> <span class="StringLit">&quot;age&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">orderby</span> <span class="Identifier">DescNullsLast</span>
+  <span class="Identifier">limit</span> <span class="DecNumber">1</span></pre>
 
 </dd>
 <a id="tryInsertID.t,varargs[string,],untyped"></a>
@@ -302,7 +309,7 @@ Build a <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> usin
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 10:44:33 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 10:55:55 UTC</small>
       </div>
     </div>
   </div>
