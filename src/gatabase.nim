@@ -1,12 +1,12 @@
 ## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite.
-## Simple SQL DSL mimics SQL standard syntax and it is stdlib compatible.
+## * SQL DSL mimics SQL syntax!, API mimics stdlib!, Simple all Templates!.
 ##
 ## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg
 ##
 ## More Documentation
 ## ------------------
 ##
-## * `Gatabase Sugar <https://juancarlospaco.github.io/nim-gatabase/sugar.html>`_
+## * `Gatabase Sugar <https://juancarlospaco.github.io/nim-gatabase/sugar.html>`_ **Recommended**, but Optional, all Templates.
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
@@ -15,7 +15,7 @@ macro cueri(inner: untyped): auto =
   var
     offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
       deleteUsed, likeUsed, valuesUsed, betweenUsed, joinUsed, groupbyUsed,
-      havingUsed, intoUsed, insertUsed, isnullUsed, resetUsed: bool
+      havingUsed, intoUsed, insertUsed, isnullUsed, resetUsed, updateUsed: bool
     sqls: string
   const err0 = "Wrong Syntax, nested SubQueries not supported, repeated call found. "
   for node in inner:
@@ -67,7 +67,8 @@ macro cueri(inner: untyped): auto =
     of "order", "orderby":
       doAssert not orderUsed, err0
       doAssert selectUsed, err0 & "ORDER BY without SELECT"
-      sqls.add orderbys(parseEnum[GatabaseOrderBy]($node[1]))
+      doAssert node[1] is GatabaseOrderBy
+      sqls.add orderbys($node[1])
       orderUsed = true
     of "select":
       doAssert not selectUsed, err0
@@ -119,11 +120,18 @@ macro cueri(inner: untyped): auto =
       doAssert not insertUsed, err0
       sqls.add inserts(node[1])
       insertUsed = true
+    of "update":
+      doAssert not updateUsed, err0
+      sqls.add updates(node[1])
+      updateUsed = true
+    of "set":
+      doAssert updateUsed, "SET without UPDATE"
+      sqls.add sets(node[1])
     of "values": # This is the only ones that actually take values.
       {.linearScanEnd.} # https://nim-lang.github.io/Nim/manual.html#pragmas-linearscanend-pragma
       doAssert not valuesUsed, err0  # Below put the less frequently used case branches.
       doAssert insertUsed, err0 & "VALUES without INSERT INTO"
-      sqls.add values(node[1].len)
+      sqls.add values(node[1].intVal.Positive)
       valuesUsed = true
     of "--": sqls.add sqlComment($node[1])
     of "having":
@@ -218,8 +226,6 @@ macro cueri(inner: untyped): auto =
     of "commentonfunction": sqls.add comments(node[1], "FUNCTION")
     of "commentonindex": sqls.add comments(node[1], "INDEX")
     of "commentontable": sqls.add comments(node[1], "TABLE")
-    # of "update": sqls.add updates(node[1])
-    # of "set": sqls.add sets(node[1])
     else: doAssert false, "Unknown syntax error on ORMs DSL: " & inner.lineInfo
   when not defined(release) or not defined(danger):
     if unlikely(deleteUsed and not whereUsed): {.warning: "DELETE FROM without WHERE.".}
@@ -231,41 +237,109 @@ macro cueri(inner: untyped): auto =
 template exec*(args: varargs[string, `$`]; inner: untyped) =
   ## Mimics `exec` but using Gatabase DSL.
   ## * `args` are passed as-is to `exec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   exec []:
+  ##     delete "person"
+  ##     where "active = false"
   exec(db, cueri(inner), args)
 
 template tryExec*(args: varargs[string, `$`]; inner: untyped): bool =
   ## Mimics `tryExec` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryExec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let killUser: bool = tryExec []:
+  ##     delete "person"
+  ##     where "id = 42"
+  ##
+  ## .. code-block::nim
+  ##   let killUser: bool = tryExec []:
+  ##     select "name"
+  ##     `from` "person"
+  ##     wherenot "active = true"
   tryExec(db, cueri(inner), args)
 
 template getRow*(args: varargs[string, `$`]; inner: untyped): auto =
   ## Mimics `getRow` but using Gatabase DSL.
   ## * `args` are passed as-is to `getRow()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let topUser: Row = getAllRows []:
+  ##     selecttop "username"
+  ##     `from` "person"
+  ##     limit 1
   getRow(db, cueri(inner), args)
 
 template getAllRows*(args: varargs[string, `$`]; inner: untyped): auto =
   ## Mimics `getAllRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `getAllRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let allUsers: seq[Row] = [].getAllRows:
+  ##     select '*'
+  ##     `from` "person"
+  ##
+  ## .. code-block::nim
+  ##   var allUsers: seq[Row] = getAllRows []:
+  ##     selectdistinct "names"
+  ##     `from` "person"
   getAllRows(db, cueri(inner), args)
 
 template getValue*(args: varargs[string, `$`]; inner: untyped): string =
   ## Mimics `getValue` but using Gatabase DSL.
   ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let userName: string = [].getValue:
+  ##     select "name"
+  ##     `from` "person"
+  ##     where  "id = 42"
+  ##
+  ## .. code-block::nim
+  ##   let age: string = getValue []:
+  ##     select "age"
+  ##     `from` "person"
+  ##     orderby DescNullsLast
+  ##     limit 1
   getValue(db, cueri(inner), args)
 
 template tryInsertID*(args: varargs[string, `$`]; inner: untyped): int64 =
   ## Mimics `tryInsertID` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryInsertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let newUser: int64 = tryInsertID ["Graydon Hoare", "graydon.hoare@nim-lang.org"]:
+  ##     insertinto "person"
+  ##     values 2
   tryInsertID(db, cueri(inner), args)
 
 template insertID*(args: varargs[string, `$`]; inner: untyped): int64 =
   ## Mimics `insertID` but using Gatabase DSL.
   ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let newUser: int64 = ["Ryan Dahl", "ryan.dahl@nim-lang.org"].insertID:
+  ##     insertinto "person"
+  ##     values 2
   insertID(db, cueri(inner), args)
 
 template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): int64 =
   ## Mimics `execAffectedRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `execAffectedRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let activeUsers: int64 = execAffectedRows []:
+  ##     select "status"
+  ##     `from` "users"
+  ##     `--`  "This is a SQL comment"
+  ##     where "status = true"
+  ##     isnull false
+  ##
+  ## .. code-block::nim
+  ##   let distinctNames: int64 = execAffectedRows []:
+  ##     selectdistinct "name"
+  ##     `from` "users"
   execAffectedRows(db, cueri(inner), args)
 
 template getValue*(args: varargs[string, `$`]; parseProc: proc; inner: untyped): auto =
@@ -276,6 +350,18 @@ template getValue*(args: varargs[string, `$`]; parseProc: proc; inner: untyped):
   ## .. code-block::nim
   ##   let age: int = getValue([], parseInt):
   ##     select "age"
+  ##     `from` "users"
+  ##     limit 1
+  ##
+  ## .. code-block::nim
+  ##   let ranking: float = getValue([], parseFloat):
+  ##     select "ranking"
+  ##     `from` "users"
+  ##     where "id = 42"
+  ##
+  ## .. code-block::nim
+  ##   let preferredColor: string = [].getValue(parseHexStr):
+  ##     select "color"
   ##     `from` "users"
   ##     limit 1
   parseProc(getValue(args, inner))
