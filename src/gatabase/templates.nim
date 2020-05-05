@@ -1,5 +1,4 @@
 # Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
-import strutils
 
 type
   GatabaseOrderBy* = enum ## ORDER BY options.
@@ -11,14 +10,7 @@ type
     DescNullsLast = "DESC NULLS LAST"
     Id = "id"
 
-const
-  dbInt* = "INTEGER NOT NULL DEFAULT 0"      ## Alias for Integer for SQLite and Postgres.
-  dbString* = """TEXT NOT NULL DEFAULT ''""" ## Alias for String for SQLite and Postgres.
-  dbFloat* = "REAL NOT NULL DEFAULT 0.0"     ## Alias for Float for SQLite and Postgres.
-  dbBool* = "BOOLEAN NOT NULL DEFAULT false" ## Alias for Boolean for SQLite and Postgres.
-  dbTimestamp* = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" ## Alias for Timestamp for SQLite and Postgres.
-  n = when defined(release): " " else: "\n"
-
+const n = when defined(release): " " else: "\n"
 
 template isQuestionChar(value: NimNode): bool =
   unlikely(value.kind == nnkCharLit and value.intVal == 63)
