@@ -42,21 +42,21 @@ template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(
 template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[parseInt(indx)])) ## `9.0'f32.row` alias for `float32(parseFloat(row[9]))`.
 
 template withSqlite*(path: static[string]; initTableSql: static[string]; statements: untyped): untyped =
-  ## Auto-Open, run `initTableSql` and Auto-Close a SQLite database.
+  ## Open, run `initTableSql` and Auto-Close a SQLite database.
   ##
   ## .. code-block::nim
   ##   import db_sqlite
   ##   include gatabase/sugar
   ##   const exampleTable = """
   ##     create table if not exists person(
-  ##       id      integer  primary key,
-  ##       name    text     not null unique,
-  ##       active  bool     not null default true,
-  ##       rank    float    not null default 0.0
+  ##       id      integer primary key,
+  ##       name    text,
+  ##       active  bool,
+  ##       rank    float
   ##   ); """
   ##
   ##   withSqlite(":memory:", exampleTable):
-  ##     assert db.tryExec(sql"insert into person(name, active, rank) values('pepe', true, 42.0)")
+  ##     db.exec(sql"insert into person(name, active, rank) values('pepe', true, 42.0)")
   assert path.len > 0, "path must not be empty string"
   let db {.inject, global.} = db_sqlite.open(path, "", "", "")
   if initTableSql.len == 0 or db.tryExec(sql(initTableSql)):
@@ -68,7 +68,7 @@ template withSqlite*(path: static[string]; initTableSql: static[string]; stateme
     when not defined(release): echo "Error executing initTableSql:\n" & initTableSql
 
 template withPostgres*(host, user, password, dbname: string; initTableSql: static[string]; statements: untyped): untyped =
-  ## Auto-Open, run `initTableSql` and Auto-Close a Postgres database. See `withSqlite` for an example.
+  ## Open, run `initTableSql` and Auto-Close a Postgres database. See `withSqlite` for an example.
   assert host.len > 0, "host must not be empty string"
   assert user.len > 0, "user must not be empty string"
   assert password.len > 0, "password must not be empty string"
