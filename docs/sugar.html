@@ -365,7 +365,18 @@ Alias for Timestamp for SQLite and Postgres.
                    <span class="Identifier">statements</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
-Auto-Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a SQLite database.
+Auto-Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a SQLite database.<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
+<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
+<span class="Keyword">const</span> <span class="Identifier">exampleTable</span> <span class="Operator">=</span> <span class="LongStringLit">&quot;&quot;&quot;
+  create table if not exists person(
+    id      integer  primary key,
+    name    text     not null unique,
+    active  bool     not null default true,
+    rank    float    not null default 0.0
+); &quot;&quot;&quot;</span>
+
+<span class="Identifier">withSqlite</span><span class="Punctuation">(</span><span class="StringLit">&quot;:memory:&quot;</span><span class="Punctuation">,</span> <span class="Identifier">exampleTable</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Identifier">assert</span> <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">tryExec</span><span class="Punctuation">(</span><span class="RawData">sql&quot;insert into person(name, active, rank) values('pepe', true, 42.0)&quot;</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <a id="withPostgres.t,string,string,string,string,static[string],untyped"></a>
@@ -386,7 +397,7 @@ Auto-Open, run <tt class="docutils literal"><span class="pre">initTableSql</span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 11:43:53 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 11:50:59 UTC</small>
       </div>
     </div>
   </div>
