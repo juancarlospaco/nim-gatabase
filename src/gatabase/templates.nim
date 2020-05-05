@@ -13,7 +13,7 @@ type
 
 const
   dbInt* = "INTEGER NOT NULL DEFAULT 0"      ## Alias for Integer for SQLite and Postgres.
-  dbString* = "TEXT NOT NULL DEFAULT ''"     ## Alias for String for SQLite and Postgres.
+  dbString* = """TEXT NOT NULL DEFAULT ''""" ## Alias for String for SQLite and Postgres.
   dbFloat* = "REAL NOT NULL DEFAULT 0.0"     ## Alias for Float for SQLite and Postgres.
   dbBool* = "BOOLEAN NOT NULL DEFAULT false" ## Alias for Boolean for SQLite and Postgres.
   dbTimestamp* = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" ## Alias for Timestamp for SQLite and Postgres.
