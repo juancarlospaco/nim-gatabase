@@ -9,7 +9,6 @@
 ![](https://img.shields.io/github/languages/code-size/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/issues-raw/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/nim-gatabase?style=for-the-badge)
-![](https://img.shields.io/github/commit-activity/y/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/last-commit/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/liberapay/patrons/juancarlospaco?style=for-the-badge)
 ![](https://img.shields.io/twitch/status/juancarlospaco?style=for-the-badge)
