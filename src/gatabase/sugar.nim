@@ -13,6 +13,13 @@
 ##   include gatabase/sugar
 {.experimental: "dotOperators".}
 
+const
+  dbInt* = "INTEGER NOT NULL DEFAULT 0"      ## Alias for Integer for SQLite and Postgres.
+  dbString* = """TEXT NOT NULL DEFAULT ''""" ## Alias for String for SQLite and Postgres.
+  dbFloat* = "REAL NOT NULL DEFAULT 0.0"     ## Alias for Float for SQLite and Postgres.
+  dbBool* = "BOOLEAN NOT NULL DEFAULT false" ## Alias for Boolean for SQLite and Postgres.
+  dbTimestamp* = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" ## Alias for Timestamp for SQLite and Postgres.
+
 template `.`*(indx: int; data: Row): int = parseInt(data[indx])               ## `9.row` alias for `parseint(row[9])`.
 template `.`*(indx: char; data: Row): char = char(data[parseInt(indx)])       ## `'9'.row` alias for `char(row[9])`.
 template `.`*(indx: uint; data: Row): uint = uint(parseInt(data[indx]))       ## `9'u.row` alias for `uint(parseint(row[9]))`.
