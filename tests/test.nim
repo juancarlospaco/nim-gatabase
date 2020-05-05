@@ -145,12 +145,12 @@ suite "Gatabase ORM Tests":
     check result7.string == expected7
 
 
-  test "const SELECT ... FROM ... WHERE":
-    const result8 = query Sql:
-      select '*'
-      `from` "person"
-      where  "id = 42"
-    check result8.string == expected8
+  # test "const SELECT ... FROM ... WHERE":
+  #   const result8 = query Sql:
+  #     select '*'
+  #     `from` "person"
+  #     where  "id = 42"
+  #   check result8.string == expected8
 
 
   test "const SELECT ... (comment) ... FROM ... COMMENT":
