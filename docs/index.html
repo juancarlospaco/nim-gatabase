@@ -114,7 +114,7 @@ function main() {
       <li><a class="reference" href="#dbInt"
     title="dbInt = &quot;INTEGER NOT NULL DEFAULT 0&quot;"><wbr />db<wbr />Int<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#dbString"
-    title="dbString = &quot;TEXT NOT NULL DEFAULT \&apos;\&apos;&quot;"><wbr />db<wbr />String<span class="attachedType"></span></a></li>
+    title="dbString = &quot;&quot;&quot;TEXT NOT NULL DEFAULT &apos;&apos;&quot;&quot;&quot;"><wbr />db<wbr />String<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#dbFloat"
     title="dbFloat = &quot;REAL NOT NULL DEFAULT 0.0&quot;"><wbr />db<wbr />Float<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#dbBool"
@@ -186,7 +186,7 @@ Alias for Integer for SQLite and Postgres.
 
 </dd>
 <a id="dbString"></a>
-<dt><pre><a href="gatabase.html#dbString"><span class="Identifier">dbString</span></a> <span class="Other">=</span> <span class="StringLit">&quot;TEXT NOT NULL DEFAULT \'\'&quot;</span></pre></dt>
+<dt><pre><a href="gatabase.html#dbString"><span class="Identifier">dbString</span></a> <span class="Other">=</span> <span class="StringLit">&quot;&quot;&quot;TEXT NOT NULL DEFAULT ''&quot;&quot;&quot;</span></pre></dt>
 <dd>
 
 Alias for String for SQLite and Postgres.
@@ -312,7 +312,9 @@ Build a <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> usin
   <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span></pre><pre class="listing"><span class="Keyword">let</span> <span class="Identifier">data</span><span class="Punctuation">:</span> <span class="Identifier">SqlQuery</span> <span class="Operator">=</span> <span class="Identifier">sqls</span><span class="Punctuation">:</span>
   <span class="Identifier">select</span> <span class="StringLit">&quot;name&quot;</span>
   <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span>
-  <span class="Identifier">limit</span> <span class="DecNumber">9</span></pre>
+  <span class="Identifier">limit</span> <span class="DecNumber">9</span></pre><pre class="listing"><span class="Keyword">var</span> <span class="Identifier">data</span><span class="Punctuation">:</span> <span class="Identifier">SqlQuery</span> <span class="Operator">=</span> <span class="Identifier">sqls</span><span class="Punctuation">:</span>
+  <span class="Identifier">delete</span> <span class="CharLit">'*'</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span></pre>
 
 </dd>
 
@@ -325,7 +327,7 @@ Build a <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> usin
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 02:55:19 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 03:20:27 UTC</small>
       </div>
     </div>
   </div>
