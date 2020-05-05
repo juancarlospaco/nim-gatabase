@@ -47,6 +47,12 @@ template isTable(value: NimNode) =
   for t in value: doAssert t[0].strVal.len > 0, "Table keys must not be empty string"
 
 
+template isArrayStr(value: NimNode) =
+  doAssert value.kind == nnkBracket, "value must be Array"
+  doAssert value.len > 0, "value must be 1 Non Empty Array"
+  for t in value: doAssert t.strVal.len > 0, "Array items must not be empty string"
+
+
 template sqlComment(comment: string): string =
   doAssert comment.len > 0, "SQL Comment must not be empty string"
   when defined(release): n
@@ -324,9 +330,25 @@ template cases(value: NimNode): string =
 
 
 template values(value: Positive): string =
-  var temp: seq[string]
-  for i in 0 ..< value: temp.add "?"
+  # Produces "VALUES (?, ?, ?)", values passed via varargs.
+  var temp = newSeqOfCap[char](value - 1)
+  for i in 0 ..< value: temp.add '?'
   "VALUES ( " & temp.join", " & static(" )" & n)
+
+
+template updates(value: NimNode): string =
+  isQuestionOrString(value)
+  if isQuestionChar(value): static("UPDATE ?" & n)
+  else: "UPDATE " & $value.strVal & n
+
+
+template sets(value: NimNode): string =
+  # Produces "SET key = ?, key = ?, key = ?", values passed via varargs.
+  isArrayStr(value)
+  var temp = newSeqOfCap[string](value.len)
+  for item in value:
+    temp.add item.strVal & " = ?"
+  "SET " & temp.join", " & n
 
 
 template resetAllGuards() =
@@ -347,17 +369,4 @@ template resetAllGuards() =
   intoUsed = false
   insertUsed = false
   isnullUsed = false
-  # updateUsed = false
-
-
-# template sets(value: NimNode): string =
-#   isTable(node[1])
-#   var temp: seq[string]
-#   for tableValue in node[1]:
-#     temp.add tableValue[0].strVal & " = " & tableValue[1].strVal
-#   "SET " & temp.join", "
-#
-# template updates(value: NimNode): string =
-#   isQuestionOrString(value)
-#   if isQuestionChar(value): static("UPDATE ?" & n)
-#   else: "UPDATE " & $value.strVal & n
+  updateUsed = false
