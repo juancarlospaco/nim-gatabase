@@ -50,8 +50,10 @@
 - ✅ `HAVING`.
 - ✅ `INSERT INTO`.
 - ✅ `IS NULL`, `IS NOT NULL`.
-- ✅ `UPDATE` & `SET`, `set ["key", "other", "another"]` generates `SET key = ?, other = ?, another = ?`, the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
-- ✅ `VALUES` is different `values 3` generates `VALUES (?, ?, ?)`, the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
+- ✅ `UPDATE` & `SET`, `set ["key", "other", "another"]` generates `SET key = ?, other = ?, another = ?`,
+  the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
+- ✅ `VALUES` is different `values 3` generates `VALUES (?, ?, ?)`,
+  the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
 
 Not supported:
 - Deep nested SubQueries are not supported, because KISS.
@@ -254,6 +256,43 @@ VALUES (42, 'Nikola Tesla', true, 'nikola.tesla@nim-lang.org', 9.6)
 ```nim
 insertinto "person"
 values 5
+```
+
+**Example:**
+```nim
+insertinto "person"
+values 5
+```
+ ⬆️ Nim ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Generated SQL ⬇️
+```sql
+INSERT INTO person
+VALUES ( ?, ?, ?, ?, ? )
+```
+
+* The actual values are passed via `varargs` directly using stdlib, Gatabase does not format values ever.
+
+
+### UPDATE
+
+```sql
+UPDATE person
+SET name = 'Nikola Tesla', mail = 'nikola.tesla@nim-lang.org'
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+update "person"
+set ["name", "mail"]
+```
+
+**Example:**
+```nim
+update "person"
+set ["name", "mail"]
+```
+ ⬆️ Nim ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Generated SQL ⬇️
+```sql
+UPDATE person
+SET name = ?, mail = ?
 ```
 
 * The actual values are passed via `varargs` directly using stdlib, Gatabase does not format values ever.
