@@ -5,7 +5,7 @@
 ![](https://img.shields.io/github/languages/count/juancarlospaco/nim-gatabase?logoColor=green&style=for-the-badge)
 ![](https://img.shields.io/github/languages/top/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/stars/juancarlospaco/nim-gatabase?style=for-the-badge)
-![](https://img.shields.io/maintenance/yes/2019?style=for-the-badge)
+![](https://img.shields.io/maintenance/yes/2020?style=for-the-badge)
 ![](https://img.shields.io/github/languages/code-size/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/issues-raw/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/nim-gatabase?style=for-the-badge)
