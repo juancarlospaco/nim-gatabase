@@ -179,7 +179,9 @@ Mimics <tt class="docutils literal"><span class="pre">exec</span></tt> but using
 
 Mimics <tt class="docutils literal"><span class="pre">tryExec</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">tryExec()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">killUser</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span> <span class="Identifier">tryExec</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">delete</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">where</span> <span class="StringLit">&quot;id = 42&quot;</span></pre>
 
 </dd>
 <a id="getRow.t,varargs[string,],untyped"></a>
@@ -188,7 +190,10 @@ Mimics <tt class="docutils literal"><span class="pre">tryExec</span></tt> but us
 
 Mimics <tt class="docutils literal"><span class="pre">getRow</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">getRow()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">topUser</span><span class="Punctuation">:</span> <span class="Identifier">Row</span> <span class="Operator">=</span> <span class="Identifier">getAllRows</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">selecttop</span> <span class="StringLit">&quot;username&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">limit</span> <span class="DecNumber">1</span></pre>
 
 </dd>
 <a id="getAllRows.t,varargs[string,],untyped"></a>
@@ -197,7 +202,11 @@ Mimics <tt class="docutils literal"><span class="pre">getRow</span></tt> but usi
 
 Mimics <tt class="docutils literal"><span class="pre">getAllRows</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">getAllRows()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">allUsers</span><span class="Punctuation">:</span> <span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">Row</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">getAllRows</span><span class="Punctuation">:</span>
+  <span class="Identifier">select</span> <span class="CharLit">'*'</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;person&quot;</span></pre><pre class="listing"><span class="Keyword">var</span> <span class="Identifier">allUsers</span><span class="Punctuation">:</span> <span class="Identifier">seq</span><span class="Punctuation">[</span><span class="Identifier">Row</span><span class="Punctuation">]</span> <span class="Operator">=</span> <span class="Identifier">getAllRows</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">selectdistinct</span> <span class="StringLit">&quot;names&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;person&quot;</span></pre>
 
 </dd>
 <a id="getValue.t,varargs[string,],untyped"></a>
@@ -206,7 +215,10 @@ Mimics <tt class="docutils literal"><span class="pre">getAllRows</span></tt> but
 
 Mimics <tt class="docutils literal"><span class="pre">getValue</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">getValue()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">userName</span><span class="Punctuation">:</span> <span class="Identifier">string</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">getValue</span><span class="Punctuation">:</span>
+  <span class="Identifier">select</span> <span class="StringLit">&quot;name&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">where</span>  <span class="StringLit">&quot;id = 42&quot;</span></pre>
 
 </dd>
 <a id="tryInsertID.t,varargs[string,],untyped"></a>
@@ -215,7 +227,9 @@ Mimics <tt class="docutils literal"><span class="pre">getValue</span></tt> but u
 
 Mimics <tt class="docutils literal"><span class="pre">tryInsertID</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">tryInsertID()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">newUser</span><span class="Punctuation">:</span> <span class="Identifier">int64</span> <span class="Operator">=</span> <span class="Identifier">tryInsertID</span> <span class="Punctuation">[</span><span class="StringLit">&quot;Graydon Hoare&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;graydon.hoare@nim-lang.org&quot;</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">insertinto</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">values</span> <span class="DecNumber">2</span></pre>
 
 </dd>
 <a id="insertID.t,varargs[string,],untyped"></a>
@@ -224,7 +238,9 @@ Mimics <tt class="docutils literal"><span class="pre">tryInsertID</span></tt> bu
 
 Mimics <tt class="docutils literal"><span class="pre">insertID</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">insertID()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">newUser</span><span class="Punctuation">:</span> <span class="Identifier">int64</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="StringLit">&quot;Ryan Dahl&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;ryan.dahl@nim-lang.org&quot;</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">insertID</span><span class="Punctuation">:</span>
+  <span class="Identifier">insertinto</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">values</span> <span class="DecNumber">2</span></pre>
 
 </dd>
 <a id="execAffectedRows.t,varargs[string,],untyped"></a>
@@ -233,7 +249,14 @@ Mimics <tt class="docutils literal"><span class="pre">insertID</span></tt> but u
 
 Mimics <tt class="docutils literal"><span class="pre">execAffectedRows</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">execAffectedRows()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Keyword">let</span> <span class="Identifier">activeUsers</span><span class="Punctuation">:</span> <span class="Identifier">int64</span> <span class="Operator">=</span> <span class="Identifier">execAffectedRows</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">select</span> <span class="StringLit">&quot;status&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span>
+  <span class="Punctuation">`</span><span class="Operator">--</span><span class="Punctuation">`</span>  <span class="StringLit">&quot;This is a SQL comment&quot;</span>
+  <span class="Identifier">where</span> <span class="StringLit">&quot;status = true&quot;</span>
+  <span class="Identifier">isnull</span> <span class="Identifier">false</span></pre><pre class="listing"><span class="Keyword">let</span> <span class="Identifier">distinctNames</span><span class="Punctuation">:</span> <span class="Identifier">int64</span> <span class="Operator">=</span> <span class="Identifier">execAffectedRows</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">selectdistinct</span> <span class="StringLit">&quot;name&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span></pre>
 
 </dd>
 <a id="getValue.t,varargs[string,],proc,untyped"></a>
@@ -245,6 +268,12 @@ Alias for <tt class="docutils literal"><span class="pre">parseProc(getValue(db, 
 </ul>
 <pre class="listing"><span class="Keyword">let</span> <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="Identifier">int</span> <span class="Operator">=</span> <span class="Identifier">getValue</span><span class="Punctuation">(</span><span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">,</span> <span class="Identifier">parseInt</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Identifier">select</span> <span class="StringLit">&quot;age&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span>
+  <span class="Identifier">limit</span> <span class="DecNumber">1</span></pre><pre class="listing"><span class="Keyword">let</span> <span class="Identifier">ranking</span><span class="Punctuation">:</span> <span class="Identifier">float</span> <span class="Operator">=</span> <span class="Identifier">getValue</span><span class="Punctuation">(</span><span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">,</span> <span class="Identifier">parseFloat</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Identifier">select</span> <span class="StringLit">&quot;ranking&quot;</span>
+  <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span>
+  <span class="Identifier">where</span> <span class="StringLit">&quot;id = 42&quot;</span></pre><pre class="listing"><span class="Keyword">let</span> <span class="Identifier">preferredColor</span><span class="Punctuation">:</span> <span class="Identifier">string</span> <span class="Operator">=</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Operator">.</span><span class="Identifier">getValue</span><span class="Punctuation">(</span><span class="Identifier">parseHexStr</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Identifier">select</span> <span class="StringLit">&quot;color&quot;</span>
   <span class="Punctuation">`</span><span class="Keyword">from</span><span class="Punctuation">`</span> <span class="StringLit">&quot;users&quot;</span>
   <span class="Identifier">limit</span> <span class="DecNumber">1</span></pre>
 
@@ -273,7 +302,7 @@ Build a <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> usin
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 04:55:45 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 10:44:33 UTC</small>
       </div>
     </div>
   </div>
