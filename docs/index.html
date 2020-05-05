@@ -170,7 +170,9 @@ ORDER BY options.
 
 Mimics <tt class="docutils literal"><span class="pre">exec</span></tt> but using Gatabase DSL.<ul class="simple"><li><tt class="docutils literal"><span class="pre">args</span></tt> are passed as-is to <tt class="docutils literal"><span class="pre">exec()</span></tt>, if no <tt class="docutils literal"><span class="pre">args</span></tt> use <tt class="docutils literal"><span class="pre">[]</span></tt>, example <tt class="docutils literal"><span class="pre">[42, &quot;OwO&quot;, true]</span></tt>.</li>
 </ul>
-
+<pre class="listing"><span class="Identifier">exec</span> <span class="Punctuation">[</span><span class="Punctuation">]</span><span class="Punctuation">:</span>
+  <span class="Identifier">delete</span> <span class="StringLit">&quot;person&quot;</span>
+  <span class="Identifier">where</span> <span class="StringLit">&quot;active = false&quot;</span></pre>
 
 </dd>
 <a id="tryExec.t,varargs[string,],untyped"></a>
@@ -309,7 +311,7 @@ Build a <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> usin
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 10:55:55 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 11:00:31 UTC</small>
       </div>
     </div>
   </div>
