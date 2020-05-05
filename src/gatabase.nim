@@ -1,18 +1,22 @@
-## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite (SQL DSL).
+## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite.
+## Simple SQL DSL mimics SQL standard syntax and it is stdlib compatible.
+##
+## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg
+##
+## More Documentation
+## ------------------
+##
+## * `Gatabase Sugar <https://juancarlospaco.github.io/nim-gatabase/sugar.html>`_
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
 
-macro query*(output: static[GatabaseOutput]; inner: untyped): untyped =
-  ## Compile-time lightweight ORM for Postgres/SQLite (SQL DSL)
-  when not defined(release) and not defined(danger) and not declared(db):
-    {.hint: "'db' of type 'DbConn' must be declared for the ORM to work properly!".}
+macro cueri(inner: untyped): auto =
   var
     offsetUsed, limitUsed, fromUsed, whereUsed, orderUsed, selectUsed,
       deleteUsed, likeUsed, valuesUsed, betweenUsed, joinUsed, groupbyUsed,
       havingUsed, intoUsed, insertUsed, isnullUsed, resetUsed: bool
     sqls: string
-    args: NimNode
   const err0 = "Wrong Syntax, nested SubQueries not supported, repeated call found. "
   for node in inner:
     doAssert node.kind == nnkCommand, "Wrong DSL Syntax, must be nnkCommand, but is " & $node.kind
@@ -120,7 +124,6 @@ macro query*(output: static[GatabaseOutput]; inner: untyped): untyped =
       doAssert not valuesUsed, err0  # Below put the less frequently used case branches.
       doAssert insertUsed, err0 & "VALUES without INSERT INTO"
       sqls.add values(node[1].len)
-      args = node[1]
       valuesUsed = true
     of "--": sqls.add sqlComment($node[1])
     of "having":
@@ -223,22 +226,76 @@ macro query*(output: static[GatabaseOutput]; inner: untyped): untyped =
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
   sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
   when defined(dev): echo sqls
-  let # This prepares the arguments from a Tuple into varargs "unpacked".
-    y = if args.len > 0: $toStrLit(args) else: ""
-    x = if y.len > 0: y[1..^2] else: y
-  sqls = case parseEnum[GatabaseOutput]($output)  # Multi-Output.
-    of Exec: "exec(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of TryExec: "tryExec(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of GetRow: "getRow(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of GetAllRows: "getAllRows(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of GetValue: "getValue(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of TryInsertID: "tryInsertID(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of InsertID: "insertID(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of ExecAffectedRows: "execAffectedRows(db,sql(\"\"\"" & sqls & "\"\"\"), " & x & ")"
-    of Func: "( func (): SqlQuery = sql( \"\"\"" & sqls & "\"\"\" ) )"
-    of Prepared: # SqlPrepared for Postgres, sql""" query """ for SQLite.
-      when defined(postgres): # db_postgres.prepare() returns 1 SqlPrepared.
-        "prepare(db,\"" & inner.lineInfo.normalize & "\",sql(\"\"\"" & sqls & "\"\"\")," & $args.len & ")"
-      else: "sql(\"\"\"" & sqls & "\"\"\")" # SQLite wont support prepared.
-    else: "sql(\"\"\"" & sqls & "\"\"\")" # Sql is sql""" query """ for SQLite
-  result = parseStmt sqls
+  result = quote do: sql(`sqls`)
+
+template exec*(args: varargs[string, `$`]; inner: untyped) =
+  ## Mimics `exec` but using Gatabase DSL.
+  ## * `args` are passed as-is to `exec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  exec(db, cueri(inner), args)
+
+template tryExec*(args: varargs[string, `$`]; inner: untyped): bool =
+  ## Mimics `tryExec` but using Gatabase DSL.
+  ## * `args` are passed as-is to `tryExec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  tryExec(db, cueri(inner), args)
+
+template getRow*(args: varargs[string, `$`]; inner: untyped): auto =
+  ## Mimics `getRow` but using Gatabase DSL.
+  ## * `args` are passed as-is to `getRow()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  getRow(db, cueri(inner), args)
+
+template getAllRows*(args: varargs[string, `$`]; inner: untyped): auto =
+  ## Mimics `getAllRows` but using Gatabase DSL.
+  ## * `args` are passed as-is to `getAllRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  getAllRows(db, cueri(inner), args)
+
+template getValue*(args: varargs[string, `$`]; inner: untyped): string =
+  ## Mimics `getValue` but using Gatabase DSL.
+  ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  getValue(db, cueri(inner), args)
+
+template tryInsertID*(args: varargs[string, `$`]; inner: untyped): int64 =
+  ## Mimics `tryInsertID` but using Gatabase DSL.
+  ## * `args` are passed as-is to `tryInsertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  tryInsertID(db, cueri(inner), args)
+
+template insertID*(args: varargs[string, `$`]; inner: untyped): int64 =
+  ## Mimics `insertID` but using Gatabase DSL.
+  ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  insertID(db, cueri(inner), args)
+
+template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): int64 =
+  ## Mimics `execAffectedRows` but using Gatabase DSL.
+  ## * `args` are passed as-is to `execAffectedRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  execAffectedRows(db, cueri(inner), args)
+
+template getValue*(args: varargs[string, `$`]; parseProc: proc; inner: untyped): auto =
+  ## Alias for `parseProc(getValue(db, sql("..."), args))`. **Returns actual value instead of string**.
+  ## * `parseProc` is whatever proc parses the value of `getValue()`, any proc should work.
+  ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  ##
+  ## .. code-block::nim
+  ##   let age: int = getValue([], parseInt):
+  ##     select "age"
+  ##     `from` "users"
+  ##     limit 1
+  parseProc(getValue(args, inner))
+
+template sqls*(inner: untyped): auto =
+  ## Build a `SqlQuery` using Gatabase ORM DSL, returns a vanilla `SqlQuery`.
+  ##
+  ## .. code-block::nim
+  ##   const data: SqlQuery = sqls:
+  ##     select '*'
+  ##     `from` "users"
+  ##
+  ## .. code-block::nim
+  ##   let data: SqlQuery = sqls:
+  ##     select "name"
+  ##     `from` "users"
+  ##     limit 9
+  ##
+  ## .. code-block::nim
+  ##   var data: SqlQuery = sqls:
+  ##     delete '*'
+  ##     `from` "users"
+  cueri(inner)
