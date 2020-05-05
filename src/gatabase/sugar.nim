@@ -3,6 +3,14 @@
 ##
 ## Syntax Sugar for Gatabase using `{.experimental: "dotOperators".}` and `template`,
 ## include or import *after* importing `db_sqlite` or `db_postgres` to use it on your code.
+##
+## .. code-block::nim
+##   import db_sqlite
+##   include gatabase/sugar
+##
+## .. code-block::nim
+##   import db_postgres
+##   include gatabase/sugar
 {.experimental: "dotOperators".}
 
 template `.`*(indx: int; data: Row): int = parseInt(data[indx])               ## `9.row` alias for `parseint(row[9])`.
