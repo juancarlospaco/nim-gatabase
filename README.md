@@ -50,14 +50,14 @@
 - ✅ `HAVING`.
 - ✅ `INSERT INTO`.
 - ✅ `IS NULL`, `IS NOT NULL`.
-
+- ✅ `UPDATE` & `SET`, `set ["key", "other", "another"]` generates `SET key = ?, other = ?, another = ?`, the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
+- ✅ `VALUES` is different `values 3` generates `VALUES (?, ?, ?)`, the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
 
 Not supported:
 - Deep nested SubQueries are not supported, because KISS.
 - `TRUNCATE`, because is the same as `DELETE FROM` without a `WHERE`.
 - `WHERE IN`, `WHERE NOT IN`, because is the same as `JOIN`, but `JOIN` is a lot faster.
 - `CREATE TABLE` and `DROP TABLE`, is left to the user.
-- [`UPDATE`](https://github.com/juancarlospaco/nim-gatabase/issues/2#issue-506354934).
 
 
 # Install
@@ -253,8 +253,10 @@ VALUES (42, 'Nikola Tesla', true, 'nikola.tesla@nim-lang.org', 9.6)
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
 insertinto "person"
-values (42, "Nikola Tesla", true, "nikola.tesla@nim-lang.org", 9.6)
+values 5
 ```
+
+* The actual values are passed via `varargs` directly using stdlib, Gatabase does not format values ever.
 
 
 ### DELETE
