@@ -50,9 +50,8 @@
 - ✅ `HAVING`.
 - ✅ `INSERT INTO`.
 - ✅ `IS NULL`, `IS NOT NULL`.
-- ✅ `UPDATE` & `SET`.
-- ✅ `VALUES` is different `values 3` generates `VALUES (?, ?, ?)`,
-  the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
+- ✅ `UPDATE`, `SET`.
+- ✅ `VALUES`.
 
 Not supported:
 - Deep nested SubQueries are not supported, because KISS.
