@@ -50,8 +50,7 @@
 - ✅ `HAVING`.
 - ✅ `INSERT INTO`.
 - ✅ `IS NULL`, `IS NOT NULL`.
-- ✅ `UPDATE` & `SET`, `set ["key", "other", "another"]` generates `SET key = ?, other = ?, another = ?`,
-  the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
+- ✅ `UPDATE` & `SET`.
 - ✅ `VALUES` is different `values 3` generates `VALUES (?, ?, ?)`,
   the actual values are passed via `varargs` using stdlib, Gatabase never formats values.
 
@@ -270,6 +269,8 @@ VALUES ( ?, ?, ?, ?, ? )
 ```
 
 * The actual values are passed via `varargs` directly using stdlib, Gatabase does not format values ever.
+* Nim code `values 5` generates `VALUES ( ?, ?, ?, ?, ? )`.
+* Gatabase never formats values, the actual values are passed via `varargs` using stdlib.
 
 
 ### UPDATE
@@ -296,6 +297,8 @@ SET name = ?, mail = ?
 ```
 
 * The actual values are passed via `varargs` directly using stdlib, Gatabase does not format values ever.
+* Nim code `set ["key", "other", "another"]` generates `SET key = ?, other = ?, another = ?`.
+* Gatabase never formats values, the actual values are passed via `varargs` using stdlib.
 
 
 ### DELETE
