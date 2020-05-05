@@ -1,11 +1,7 @@
-## Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
+# Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
 import strutils
 
-
 type
-  GatabaseOutput* = enum ## All outputs of ORM, some compile-time, some run-time.
-    TryExec, GetRow, GetAllRows, GetValue, TryInsertID, InsertID, ExecAffectedRows, Sql, Prepared, Func, Exec
-
   GatabaseOrderBy* = enum ## ORDER BY options.
     Asc = "ASC"
     Desc = "DESC"
@@ -15,8 +11,13 @@ type
     DescNullsLast = "DESC NULLS LAST"
     Id = "id"
 
-
-const n = when defined(release): " " else: "\n"
+const
+  dbInt* = "INTEGER NOT NULL DEFAULT 0"      ## Alias for Integer for SQLite and Postgres.
+  dbString* = "TEXT NOT NULL DEFAULT ''"     ## Alias for String for SQLite and Postgres.
+  dbFloat* = "REAL NOT NULL DEFAULT 0.0"     ## Alias for Float for SQLite and Postgres.
+  dbBool* = "BOOLEAN NOT NULL DEFAULT false" ## Alias for Boolean for SQLite and Postgres.
+  dbTimestamp* = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" ## Alias for Timestamp for SQLite and Postgres.
+  n = when defined(release): " " else: "\n"
 
 
 template isQuestionChar(value: NimNode): bool =
@@ -71,12 +72,6 @@ template limits(value: NimNode): string =
   isQuestionOrPositive(value)
   if isQuestionChar(value): static("LIMIT ?" & n)
   else: "LIMIT " & $value.intVal.Positive & n
-
-
-template values(value: Positive): string =
-  var temp: seq[string]
-  for i in 0 ..< value: temp.add "?"
-  "VALUES ( " & temp.join", " & static(" )" & n)
 
 
 template froms(value: NimNode): string =
@@ -333,6 +328,12 @@ template cases(value: NimNode): string =
       branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
   doAssert defaultFound == 1, "CASE must have 1 'else' key, but found: " & $defaultFound
   n & static("(CASE" & n) & branches & default & static("END)" & n)
+
+
+template values(value: Positive): string =
+  var temp: seq[string]
+  for i in 0 ..< value: temp.add "?"
+  "VALUES ( " & temp.join", " & static(" )" & n)
 
 
 template resetAllGuards() =
