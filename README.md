@@ -269,7 +269,6 @@ VALUES ( ?, ?, ?, ?, ? )
 
 * The actual values are passed via `varargs` directly using stdlib, Gatabase does not format values ever.
 * Nim code `values 5` generates `VALUES ( ?, ?, ?, ?, ? )`.
-* Gatabase never formats values, the actual values are passed via `varargs` using stdlib.
 
 
 ### UPDATE
@@ -297,7 +296,6 @@ SET name = ?, mail = ?
 
 * The actual values are passed via `varargs` directly using stdlib, Gatabase does not format values ever.
 * Nim code `set ["key", "other", "another"]` generates `SET key = ?, other = ?, another = ?`.
-* Gatabase never formats values, the actual values are passed via `varargs` using stdlib.
 
 
 ### DELETE
