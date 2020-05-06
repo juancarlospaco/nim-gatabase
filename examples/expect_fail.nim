@@ -3,29 +3,29 @@
 import ../src/gatabase
 
 
-# discard query Sql:
+# discard sqls:
 #   `from` "failure"
 
 
-# discard query Sql:
+# discard sqls:
 #   where "failure"
 
 
-# discard query Sql:
+# discard sqls:
 #   wherenot "failure"
 
 
-# discard query Sql:
+# discard sqls:
 #   whereexists "failure"
 
 
-# discard query Sql:
+# discard sqls:
 #   orderby "failure"
 
 
-# discard query Sql:
+# discard sqls:
 #   like "failure"
 
 
-# discard query Sql:
+# discard sqls:
 #   between "failure"
