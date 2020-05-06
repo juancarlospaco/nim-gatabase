@@ -53,7 +53,7 @@
 - ✅ `VALUES`.
 
 Not supported:
-- Deep nested SubQueries are not supported, because KISS.
+- Deep complex nested SubQueries are not supported, because KISS.
 - `TRUNCATE`, because is the same as `DELETE FROM` without a `WHERE`.
 - `WHERE IN`, `WHERE NOT IN`, because is the same as `JOIN`, but `JOIN` is a lot faster.
 - `DROP TABLE` is left to the user.
