@@ -55,7 +55,7 @@ template withSqlite*(path: static[string]; initTableSql: static[string]; stateme
   ##       rank    float
   ##   ); """
   ##
-  ##   withSqlite(":memory:", exampleTable):
+  ##   withSqlite(":memory:", exampleTable):  ## This is just an example.
   ##     db.exec(sql"insert into person(name, active, rank) values('pepe', true, 42.0)")
   assert path.len > 0, "path must not be empty string"
   let db {.inject, global.} = db_sqlite.open(path, "", "", "")
