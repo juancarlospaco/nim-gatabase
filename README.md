@@ -73,6 +73,24 @@ Not supported:
 `execAffectedRows` | [`execAffectedRows`](https://juancarlospaco.github.io/nim-gatabase/#execAffectedRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
 
 
+# Output
+
+ Output    | Gatabase ORM API
+-----------|------------------
+`bool`     | [`tryExec`](https://juancarlospaco.github.io/nim-gatabase/#tryExec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`Row`      | [`getRow`](https://juancarlospaco.github.io/nim-gatabase/#getRow.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`seq[Row]` | [`getAllRows`](https://juancarlospaco.github.io/nim-gatabase/#getAllRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`int64`    | [`tryInsertID`](https://juancarlospaco.github.io/nim-gatabase/#tryInsertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`int64`    | [`insertID`](https://juancarlospaco.github.io/nim-gatabase/#insertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`int64`    | [`execAffectedRows`](https://juancarlospaco.github.io/nim-gatabase/#execAffectedRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`SqlQuery` | [`sqls`](https://juancarlospaco.github.io/nim-gatabase/#sqls.t%2Cuntyped)
+`any`      | [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+|          | [`exec`](https://juancarlospaco.github.io/nim-gatabase/#exec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+
+- [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped) can return any specific arbitrary concrete type, depending on the arguments used.
+- [Gatabase Sugar can return very specific concrete types.](https://juancarlospaco.github.io/nim-gatabase/sugar.html#18)
+
+
 # Install
 
 - [`nimble install gatabase`](https://nimble.directory/pkg/gatabase "nimble install gatabase 👑 https://nimble.directory/pkg/gatabase")
@@ -713,24 +731,6 @@ sqls:
 sqls:
   echo "This is not SQL, wont compile"
 ```
-
-
-# Output
-
- Output    | Gatabase ORM API
------------|------------------
-`bool`     | [`tryExec`](https://juancarlospaco.github.io/nim-gatabase/#tryExec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-`Row`      | [`getRow`](https://juancarlospaco.github.io/nim-gatabase/#getRow.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-`seq[Row]` | [`getAllRows`](https://juancarlospaco.github.io/nim-gatabase/#getAllRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-`int64`    | [`tryInsertID`](https://juancarlospaco.github.io/nim-gatabase/#tryInsertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-`int64`    | [`insertID`](https://juancarlospaco.github.io/nim-gatabase/#insertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-`int64`    | [`execAffectedRows`](https://juancarlospaco.github.io/nim-gatabase/#execAffectedRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-`SqlQuery` | [`sqls`](https://juancarlospaco.github.io/nim-gatabase/#sqls.t%2Cuntyped)
-`any`      | [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-|          | [`exec`](https://juancarlospaco.github.io/nim-gatabase/#exec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
-
-- [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped) can return any specific arbitrary concrete type, depending on the arguments used.
-- [Gatabase Sugar can return very specific concrete types.](https://juancarlospaco.github.io/nim-gatabase/sugar.html#18)
 
 
 ### Tests
