@@ -157,11 +157,12 @@ function main() {
     title="`.`(indx: BiggestUInt; data: Row): BiggestUInt"><wbr />`.`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#..t%2Cfloat32%2CRow"
     title="`.`(indx: float32; data: Row): float32"><wbr />`.`<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cuntyped"
-    title="withSqlite(path: static[string]; initTableSql: static[string]; statements: untyped): untyped"><wbr />with<wbr />Sqlite<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cuntyped"
+  <li><a class="reference" href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"
+    title="withSqlite(path: static[string]; initTableSql: static[string];
+           closeOnQuit: static[bool]; code: untyped): untyped"><wbr />with<wbr />Sqlite<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"
     title="withPostgres(host, user, password, dbname: string; initTableSql: static[string];
-             statements: untyped): untyped"><wbr />with<wbr />Postgres<span class="attachedType"></span></a></li>
+             closeOnQuit: static[bool]; code: untyped): untyped"><wbr />with<wbr />Postgres<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -360,12 +361,16 @@ Alias for Timestamp for SQLite and Postgres.
 <tt class="docutils literal"><span class="pre">9.0'f32.row</span></tt> alias for <tt class="docutils literal"><span class="pre">float32(parseFloat(row[9]))</span></tt>.
 
 </dd>
-<a id="withSqlite.t,static[string],static[string],untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cuntyped"><span class="Identifier">withSqlite</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span>
-                   <span class="Identifier">statements</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<a id="withSqlite.t,static[string],static[string],static[bool],untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withSqlite</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span>
+                   <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
-Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a SQLite database.<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
+Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a SQLite database.<ul class="simple"><li><tt class="docutils literal"><span class="pre">path</span></tt> path to SQLite database file.</li>
+<li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close()); code</span></tt> is used, if <tt class="docutils literal"><span class="pre">false</span></tt> then <tt class="docutils literal"><span class="pre">try: code finally: db.close()</span></tt> is used.</li>
+</ul>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
 <span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
 <span class="Keyword">const</span> <span class="Identifier">exampleTable</span> <span class="Operator">=</span> <span class="LongStringLit">&quot;&quot;&quot;
   create table if not exists person(
@@ -375,16 +380,24 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
     rank    float
 ); &quot;&quot;&quot;</span>
 
-<span class="Identifier">withSqlite</span><span class="Punctuation">(</span><span class="StringLit">&quot;:memory:&quot;</span><span class="Punctuation">,</span> <span class="Identifier">exampleTable</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+<span class="Identifier">withSqlite</span><span class="Punctuation">(</span><span class="StringLit">&quot;:memory:&quot;</span><span class="Punctuation">,</span> <span class="Identifier">exampleTable</span><span class="Punctuation">,</span> <span class="Identifier">false</span><span class="Punctuation">)</span><span class="Punctuation">:</span>  <span class="Comment">## This is just an example.</span>
   <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">exec</span><span class="Punctuation">(</span><span class="RawData">sql&quot;insert into person(name, active, rank) values('pepe', true, 42.0)&quot;</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<a id="withPostgres.t,string,string,string,string,static[string],untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cuntyped"><span class="Identifier">withPostgres</span></a><span class="Other">(</span><span class="Identifier">host</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">dbname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                     <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">statements</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<a id="withPostgres.t,string,string,string,string,static[string],static[bool],untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withPostgres</span></a><span class="Other">(</span><span class="Identifier">host</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">dbname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                     <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
+                     <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
-Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a Postgres database. See <tt class="docutils literal"><span class="pre">withSqlite</span></tt> for an example.
+Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a Postgres database. See <tt class="docutils literal"><span class="pre">withSqlite</span></tt> for an example.<ul class="simple"><li><tt class="docutils literal"><span class="pre">host</span></tt> host of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">user</span></tt> user of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">password</span></tt> password of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">dbname</span></tt> dbname of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close()); code</span></tt> is used, if <tt class="docutils literal"><span class="pre">false</span></tt> then <tt class="docutils literal"><span class="pre">try: code finally: db.close()</span></tt> is used.</li>
+</ul>
+
 
 </dd>
 
@@ -397,7 +410,7 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-05 12:47:26 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-06 07:20:49 UTC</small>
       </div>
     </div>
   </div>
