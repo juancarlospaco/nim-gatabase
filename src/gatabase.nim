@@ -1,5 +1,5 @@
 ## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite.
-## * SQL DSL mimics SQL syntax!, API mimics stdlib!, Simple all Templates!.
+## * SQL DSL mimics SQL syntax!, API mimics stdlib!, Simple just 9 Templates!.
 ##
 ## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg
 ##
@@ -7,6 +7,7 @@
 ## ------------------
 ##
 ## * `Gatabase Sugar <https://juancarlospaco.github.io/nim-gatabase/sugar.html>`_ **Recommended**, but Optional, all Templates.
+## * DSL use https://github.com/juancarlospaco/nim-gatabase#gatabase
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
