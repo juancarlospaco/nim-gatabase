@@ -674,7 +674,7 @@ echo row
 It will perform a SQL Syntax checking at compile-time. Examples here Fail **intentionally** as expected:
 
 ```nim
-query Exec:
+exec []:
   where "failure"
 ```
 
@@ -685,7 +685,7 @@ gatabase.nim(48, 16) Warning: WHERE without SELECT nor INSERT nor UPDATE nor DEL
 
 Typical error of making a `DELETE FROM` without `WHERE` that deletes all your data:
 ```nim
-query Exec:
+exec []:
   delete "users"
 ```
 
@@ -696,7 +696,7 @@ gatabase.nim(207, 57) Warning: DELETE FROM without WHERE.
 
 Typical [bad practice of using `SELECT *` everywhere](https://stackoverflow.com/a/3639964):
 ```nim
-query Exec:
+exec []:
   select '*'
 ```
 
@@ -707,10 +707,10 @@ gatabase.nim(20, 50) Warning: SELECT * is bad practice.
 
 Non-SQL wont compile, even if its valid Nim:
 ```nim
-query Sql:
+sqls:
   discard
 
-query Sql:
+sqls:
   echo "This is not SQL, wont compile"
 ```
 
