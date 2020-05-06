@@ -10,13 +10,13 @@ db.exec(sql"""
   ); """)
 
 
-query Exec:
+exec ["42", "Pepe", "true", "9.6"]:
   insertinto "person"
-  values (42, "Pepe", true, 9.6)
+  values 4
 
 
-let row = query GetRow:
+let row = [].getRow:
   select '*'
   `from` "person"
 
-echo row
+doAssert row == @["42", "Pepe", "true", "9.6"]
