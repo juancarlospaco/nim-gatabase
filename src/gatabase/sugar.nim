@@ -79,7 +79,7 @@ template withPostgres*(host, user, password, dbname: string; initTableSql: stati
   ## * `host` host of Postgres Server, string type, must not be empty string.
   ## * `user` user of Postgres Server, string type, must not be empty string.
   ## * `password` password of Postgres Server, string type, must not be empty string.
-  ## * `dbname` dbname of Postgres Server, string type, must not be empty string.
+  ## * `dbname` database name of Postgres Server, string type, must not be empty string.
   ## * `initTableSql` SQL query string to initialize the database, `create table if not exists` alike.
   ## * `closeOnQuit` if `true` then `addQuitProc(db.close()); code` is used, if `false` then `try: code finally: db.close()` is used.
   assert host.len > 0, "host must not be empty string"

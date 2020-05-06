@@ -393,7 +393,7 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
 Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a Postgres database. See <tt class="docutils literal"><span class="pre">withSqlite</span></tt> for an example.<ul class="simple"><li><tt class="docutils literal"><span class="pre">host</span></tt> host of Postgres Server, string type, must not be empty string.</li>
 <li><tt class="docutils literal"><span class="pre">user</span></tt> user of Postgres Server, string type, must not be empty string.</li>
 <li><tt class="docutils literal"><span class="pre">password</span></tt> password of Postgres Server, string type, must not be empty string.</li>
-<li><tt class="docutils literal"><span class="pre">dbname</span></tt> dbname of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">dbname</span></tt> database name of Postgres Server, string type, must not be empty string.</li>
 <li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
 <li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close()); code</span></tt> is used, if <tt class="docutils literal"><span class="pre">false</span></tt> then <tt class="docutils literal"><span class="pre">try: code finally: db.close()</span></tt> is used.</li>
 </ul>
@@ -410,7 +410,7 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-06 07:20:49 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-06 07:23:03 UTC</small>
       </div>
     </div>
   </div>
