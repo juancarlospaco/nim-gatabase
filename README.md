@@ -23,6 +23,7 @@
 - Gatabase syntax is almost the same as SQL syntax, [no new ORM to learn ever again](https://pgexercises.com/questions/basic/selectall.html), any [SQL WYSIWYG is your GUI](https://pgmodeler.io/screenshots).
 - You can literally [Copy&Paste a SQL query from StackOverflow](https://stackoverflow.com/questions/tagged/postgresql?tab=Frequent) to Gatabase and with few tiny syntax tweaks is running.
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
+- https://juancarlospaco.github.io/nim-gatabase
 
 
 ### Support
