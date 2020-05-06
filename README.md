@@ -87,8 +87,8 @@ Not supported:
 `any`      | [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
 |          | [`exec`](https://juancarlospaco.github.io/nim-gatabase/#exec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
 
-- [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped) can return any specific arbitrary concrete type, depending on the arguments used.
-- [Gatabase Sugar can return very specific concrete types.](https://juancarlospaco.github.io/nim-gatabase/sugar.html#18)
+- [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped) can return any specific arbitrary concrete type, depending on the arguments used (Optional).
+- [Gatabase Sugar can return very specific concrete types (Optional).](https://juancarlospaco.github.io/nim-gatabase/sugar.html#18)
 
 
 # Install
