@@ -717,14 +717,18 @@ query Sql:
 
 # Output
 
-ORM Output is choosed from `GatabaseOutput` [`enum` type](https://nim-lang.github.io/Nim/manual.html#types-enumeration-types), MetaProgramming generates different output code. Examples:
+ Output    | Gatabase ORM API
+-----------|------------------
+`bool`     | [`tryExec`](https://juancarlospaco.github.io/nim-gatabase/#tryExec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`Row`      | [`getRow`](https://juancarlospaco.github.io/nim-gatabase/#getRow.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`seq[Row]` | [`getAllRows`](https://juancarlospaco.github.io/nim-gatabase/#getAllRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`int64`    | [`tryInsertID`](https://juancarlospaco.github.io/nim-gatabase/#tryInsertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`int64`    | [`insertID`](https://juancarlospaco.github.io/nim-gatabase/#insertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`int64`    | [`execAffectedRows`](https://juancarlospaco.github.io/nim-gatabase/#execAffectedRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`any`      | [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+           | [`exec`](https://juancarlospaco.github.io/nim-gatabase/#exec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
 
-- `query Func:` generates 1 [anonymous inlined function](https://nim-lang.github.io/Nim/manual.html#procedures-anonymous-procs) `( func (): SqlQuery = ... )`.
-- `query Prepared:` generates 1 Postgres Stored Procedure of [`SqlPrepared` type](https://nim-lang.github.io/Nim/db_postgres.html#parameter-substitution).
-- `query TryExec:` generates code for 1 [`tryExec()` function](https://nim-lang.github.io/Nim/db_postgres.html#tryExec%2CDbConn%2CSqlQuery%2Cvarargs%5Bstring%2C%5D), etc etc etc.
-- Compile using `-d:dev` for Debugging of the generated SQL.
-
-See `nim doc gatabase.nim`, `runnableExamples`, [examples folder](https://github.com/juancarlospaco/nim-gatabase/tree/master/examples), [tests folder](https://github.com/juancarlospaco/nim-gatabase/tree/master/tests), [Std Lib db_postgres](https://nim-lang.github.io/Nim/db_postgres.html) for more documentation.
+- [Gatabase Sugar can return very specific concrete types.](https://juancarlospaco.github.io/nim-gatabase/sugar.html#18)
 
 
 ### Tests
