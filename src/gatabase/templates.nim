@@ -2,7 +2,7 @@
 import strutils
 
 type
-  GatabaseOrderBy* = enum ## ORDER BY options.
+  GatabaseOrderBy* = enum ## `ORDER BY <https://www.postgresql.org/docs/current/queries-order.html>`_ options.
     Asc = "ASC"
     Desc = "DESC"
     AscNullsFirst = "ASC NULLS FIRST"
