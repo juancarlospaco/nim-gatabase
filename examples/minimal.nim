@@ -1,6 +1,6 @@
-import db_common, gatabase
+import db_common, ../src/gatabase
 
-let variable = query Sql:
+let variable = sqls:
   delete "debts"
 
 echo variable.string
