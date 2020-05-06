@@ -59,6 +59,20 @@ Not supported:
 - `CREATE TABLE` and `DROP TABLE`, is left to the user.
 
 
+## API Equivalents
+
+ Nim StdLib API    | Gatabase ORM API
+-------------------|------------------
+`tryExec`          | [`tryExec`](https://juancarlospaco.github.io/nim-gatabase/#tryExec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`exec`             | [`exec`](https://juancarlospaco.github.io/nim-gatabase/#exec.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`getRow`           | [`getRow`](https://juancarlospaco.github.io/nim-gatabase/#getRow.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`getAllRows`       | [`getAllRows`](https://juancarlospaco.github.io/nim-gatabase/#getAllRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`getValue`         | [`getValue`](https://juancarlospaco.github.io/nim-gatabase/#getValue.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`tryInsertID`      | [`tryInsertID`](https://juancarlospaco.github.io/nim-gatabase/#tryInsertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`insertID`         | [`insertID`](https://juancarlospaco.github.io/nim-gatabase/#insertID.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+`execAffectedRows` | [`execAffectedRows`](https://juancarlospaco.github.io/nim-gatabase/#execAffectedRows.t%2Cvarargs%5Bstring%2C%5D%2Cuntyped)
+
+
 # Install
 
 - [`nimble install gatabase`](https://nimble.directory/pkg/gatabase "nimble install gatabase 👑 https://nimble.directory/pkg/gatabase")
