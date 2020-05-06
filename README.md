@@ -552,7 +552,7 @@ Gatabase wont like Obfuscation, its code is easy to read and similar to Pretty-P
 
 **Compiles Ok:**
 ```nim
-let variable = query Sql:
+let variable = sqls:
   select  '*'
   `from`  "clients"
   groupby "country"
@@ -561,10 +561,10 @@ let variable = query Sql:
 
 **Fails to Compile:**
 
-- `let variable = query Sql: select('*') from("clients") groupby("country") orderby(AscNullsLast)`
-- `let variable = query Sql: '*'.select() "clients".from() "country".groupby() AscNullsLast.orderby()`
-- `let variable = query Sql: select '*' from "clients" groupby "country" orderby AscNullsLast`
-- `let variable = query Sql:select'*' from"clients" groupby"country" orderby AscNullsLast`
+- `let variable = sqls: select('*') from("clients") groupby("country") orderby(AscNullsLast)`
+- `let variable = sqls: '*'.select() "clients".from() "country".groupby() AscNullsLast.orderby()`
+- `let variable = sqls: select '*' from "clients" groupby "country" orderby AscNullsLast`
+- `let variable = sqls:select'*' from"clients" groupby"country" orderby AscNullsLast`
 
 *This helps on big projects where each developer tries to use a different code style.*
 
@@ -577,7 +577,7 @@ like the ones used on scripting languages.
 
 ```nim
 template getMemes(): string =
-  result = query getValue:
+  result = [].getValue:
     select "url"
     `from` "memes"
     limit 1
@@ -654,12 +654,12 @@ db.exec(sql"""
   ); """)
 
 
-query Exec:
+exec [42, "Pepe", true, 9.6]:
   insertinto "person"
-  values (42, "Pepe", true, 9.6)
+  values 4
 
 
-let row = query GetRow:
+let row = [].getRow:
   select '*'
   `from` "person"
 
