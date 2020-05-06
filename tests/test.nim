@@ -78,14 +78,14 @@ suite "Gatabase ORM Tests":
 
 
   test "let   INSERT INTO":
-    let result0 = query Sql:
+    let result0 = [].sqls:
       insertinto "person"
       values (42, "Graydon Hoare", true, "graydon.hoare@nim-lang.org", 5.5)
     check result0.string == expected0
 
 
   test "let   SELECT ... FROM ... WHERE":
-    let result1 = query Sql:
+    let result1 = [].sqls:
       select '*'
       `from` "person"
       where  "id = 42"
@@ -93,7 +93,7 @@ suite "Gatabase ORM Tests":
 
 
   test "let   SELECT ... (comment) ... FROM ... COMMENT":
-    let result2 = query Sql:
+    let result2 = [].sqls:
       select '*'
       `--`   "This is a comment, this will be strapped for Release builds"
       `from` "person"
@@ -102,7 +102,7 @@ suite "Gatabase ORM Tests":
 
 
   test "let   SELECT ... FROM ... LIMIT ... OFFSET":
-    let result3 = query Sql:
+    let result3 = [].sqls:
       select '*'
       `from` "person"
       limit  2
@@ -111,14 +111,14 @@ suite "Gatabase ORM Tests":
 
 
   test "let   INSERT INTO":
-    let result4 = query Sql:
+    let result4 = [].sqls:
       insertinto "person"
       values (99, "Ryan Dahl", false, "ryan.dahl@nim-lang.org", 9.6)
     check result4.string == expected4
 
 
   test "let   UNION ALL ... ORBER BY ... IS NOT NULL":
-    let result5 = query Sql:
+    let result5 = [].sqls:
       select '*'
       `from` "person"
       where  "id = 42"
@@ -131,7 +131,7 @@ suite "Gatabase ORM Tests":
 
 
   test "let   SELECT DISTINCT ... FROM ... WHERE":
-    let result6 = query Sql:
+    let result6 = [].sqls:
       selectdistinct "id"
       `from`"person"
       where "rank != 666.0"
@@ -139,14 +139,14 @@ suite "Gatabase ORM Tests":
 
 
   test "let INSERT INTO":
-    let result7 = query Sql:
+    let result7 = [].sqls:
       insertinto "person"
       values (9, "Guido van Rossum", true, "guido.v.rossum@nim-lang.org", 5.5)
     check result7.string == expected7
 
 
   # test "const SELECT ... FROM ... WHERE":
-  #   const result8 = query Sql:
+  #   const result8 = [].sqls:
   #     select '*'
   #     `from` "person"
   #     where  "id = 42"
@@ -154,7 +154,7 @@ suite "Gatabase ORM Tests":
 
 
   test "const SELECT ... (comment) ... FROM ... COMMENT":
-    const example10 {.used.} = query Prepared:
+    const example10 {.used.} = [].sqls:
       select '*'
       `--`   "This is a comment, this will be strapped for Release builds"
       `from` "person"
@@ -162,7 +162,7 @@ suite "Gatabase ORM Tests":
 
 
   test "const SELECT ... FROM ... LIMIT ... OFFSET":
-    const example11 {.used.} = query Func:
+    const example11 {.used.} = [].sqls:
       select '*'
       `from` "person"
       limit  2
@@ -170,13 +170,13 @@ suite "Gatabase ORM Tests":
 
 
   test "const INSERT INTO":
-    const example12 {.used.} = query Sql:
+    const example12 {.used.} = [].sqls:
       insertinto "person"
       values (99, "Rob Pike", false, "rob.pike@nim-lang.org", 9.6)
 
 
   test "const UNION ALL ... ORBER BY ... IS NOT NULL":
-    const example13 {.used.} = query Prepared:
+    const example13 {.used.} = [].sqls:
       select  '*'
       `from`  "person"
       where   "id = 42"
@@ -189,7 +189,7 @@ suite "Gatabase ORM Tests":
 
 
   test "const INTERSECT ALL":
-    const example13a {.used.} = query Sql:
+    const example13a {.used.} = [].sqls:
       select '*'
       `from` "person"
       intersect true
@@ -198,7 +198,7 @@ suite "Gatabase ORM Tests":
 
 
   test "const EXCEPT ALL":
-    const example13b {.used.} = query Sql:
+    const example13b {.used.} = [].sqls:
       select '*'
       `from` "person"
       `except` true
@@ -207,14 +207,14 @@ suite "Gatabase ORM Tests":
 
 
   test "const SELECT DISTINCT ... FROM ... WHERE":
-    const example14 {.used.} = query Sql:
+    const example14 {.used.} = [].sqls:
       selectdistinct "id"
       `from` "person"
       where  "rank != 666.0"
 
 
   test "var   CASE":
-    var example15 {.used.} = query Sql:
+    var example15 {.used.} = [].sqls:
       `case` {"foo > 10": "9", "bar < 42": "5", "else":  "0"}
       `case` {
         "foo > 10": "9",
@@ -224,7 +224,7 @@ suite "Gatabase ORM Tests":
 
 
   test "var   SELECT MAX .. WHERE EXISTS ... OFFSET ... LIMIT ... ORDER BY":
-    var foo {.used.} = query TryExec:
+    var foo {.used.} = [].tryExec:
       selectmax '*'
       `--`    "This is a comment."
       `from`  "person"
@@ -239,27 +239,27 @@ suite "Gatabase ORM Tests":
 
 
   test "SELECT TRIM":
-    query Exec:
+    exec []:
       selecttrim "name"
       `from` "person"
 
 
   test "SELECT ROUND":
-    query Exec:
+    exec []:
       selectround2 "rank"
       `from` "person"
 
-    query Exec:
+    exec []:
       selectround4 "rank"
       `from` "person"
 
-    query Exec:
+    exec []:
       selectround6 "rank"
       `from` "person"
 
 
   test "var   DELETE FROM WHERE":
-    query Exec:
+    exec []:
       delete "person"
 
   close db # TearDown.
