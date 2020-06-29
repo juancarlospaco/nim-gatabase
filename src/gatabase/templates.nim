@@ -1,7 +1,8 @@
 # Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
-import strutils
+from strutils import join, parseBool
 
 const n = when defined(release): " " else: "\n"
+
 
 template isQuestionChar(value: NimNode): bool =
   unlikely(value.kind == nnkCharLit and value.intVal == 63)
@@ -46,9 +47,7 @@ template isArrayStr(value: NimNode) =
 template sqlComment(comment: string): string =
   doAssert comment.len > 0, "SQL Comment must not be empty string"
   when defined(release): n
-  else:
-    if comment.countLines == 1: "-- " & $comment.strip & n
-    else: "/* " & $comment.strip & static(" */" & n)
+  else: "/* " & $comment & static(" */" & n)
 
 
 template offsets(value: NimNode): string =
@@ -341,8 +340,8 @@ template comments(value: NimNode, what: string): string =
     doAssert value.len == 1, "COMMENT wrong SQL syntax, must have exactly 1 key"
     var name, coment: string
     for tableValue in value:
-      name = tableValue[0].strVal.strip
-      coment = tableValue[1].strVal.strip
+      name = tableValue[0].strVal
+      coment = tableValue[1].strVal
       doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
       doAssert coment.len > 0, "COMMENT value must not be empty string"
     "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
