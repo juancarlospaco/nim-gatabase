@@ -54,3 +54,8 @@ jobs:
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
         nim js -r tests/test_js.nim
+
+    - name: Project X
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim c -d:postgres tests/test_multigata.nim
