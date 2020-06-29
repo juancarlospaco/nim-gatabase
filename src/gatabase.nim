@@ -1,5 +1,6 @@
 ## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite.
 ## * SQL DSL mimics SQL syntax!, API mimics stdlib!, Simple just 9 Templates!.
+## * **Uses only system.nim, 0 Dependencies, everything is done via template and macro.**
 ##
 ## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg
 ##
