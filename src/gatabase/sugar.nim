@@ -41,11 +41,13 @@ template `.`*(indx: BiggestInt; data: Row): BiggestInt = BiggestInt(parseInt(dat
 template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(data[indx])) ## `BiggestUInt(9).row` alias for `BiggestUInt(parseInt(row[9]))`.
 template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[parseInt(indx)])) ## `9.0'f32.row` alias for `float32(parseFloat(row[9]))`.
 
-template withSqlite*(path: static[string]; initTableSql: static[string]; closeOnQuit: static[bool]; code: untyped): untyped =
+
+template withSqlite*(path: static[string]; initTableSql: static[string]; closeOnQuit: static[bool]; closeOnCtrlC: static[bool]; code: untyped): untyped =
   ## Open, run `initTableSql` and Auto-Close a SQLite database.
   ## * `path` path to SQLite database file.
   ## * `initTableSql` SQL query string to initialize the database, `create table if not exists` alike.
-  ## * `closeOnQuit` if `true` then `addQuitProc(db.close()); code` is used, if `false` then `try: code finally: db.close()` is used.
+  ## * `closeOnQuit` if `true` then `addQuitProc(db.close())` is set.
+  ## * `closeOnCtrlC` if `true` then `setControlCHook(db.close())` is set.
   ##
   ## .. code-block::nim
   ##   import db_sqlite
@@ -63,38 +65,36 @@ template withSqlite*(path: static[string]; initTableSql: static[string]; closeOn
   assert path.len > 0, "path must not be empty string"
   let db {.inject, global.} = db_sqlite.open(path, "", "", "")
   if initTableSql.len == 0 or db.tryExec(sql(initTableSql)):
-    when closeOnQuit:
-      system.addQuitProc((proc () {.noconv.} = db.close()))
+    try:
+      when closeOnQuit:  system.addQuitProc((proc () {.noconv.} = db_sqlite.close(db)))
+      when closeOnCtrlC: system.setControlCHook((proc () {.noconv.} = db_sqlite.close(db)))
       code
-    else:
-      try:
-        code
-      finally:
-        db.close()
+    finally:
+      db_sqlite.close(db)
   else:
     when not defined(release): echo "Error executing initTableSql:\n" & initTableSql
 
-template withPostgres*(host, user, password, dbname: string; initTableSql: static[string]; closeOnQuit: static[bool]; code: untyped): untyped =
+
+template withPostgres*(host, user, password, dbname: string; initTableSql: static[string]; closeOnQuit: static[bool]; closeOnCtrlC: static[bool]; code: untyped): untyped =
   ## Open, run `initTableSql` and Auto-Close a Postgres database. See `withSqlite` for an example.
   ## * `host` host of Postgres Server, string type, must not be empty string.
   ## * `user` user of Postgres Server, string type, must not be empty string.
   ## * `password` password of Postgres Server, string type, must not be empty string.
   ## * `dbname` database name of Postgres Server, string type, must not be empty string.
   ## * `initTableSql` SQL query string to initialize the database, `create table if not exists` alike.
-  ## * `closeOnQuit` if `true` then `addQuitProc(db.close()); code` is used, if `false` then `try: code finally: db.close()` is used.
+  ## * `closeOnQuit` if `true` then `addQuitProc(db.close())` is set.
+  ## * `closeOnCtrlC` if `true` then `setControlCHook(db.close())` is set.
   assert host.len > 0, "host must not be empty string"
   assert user.len > 0, "user must not be empty string"
   assert password.len > 0, "password must not be empty string"
   assert dbname.len > 0, "dbname must not be empty string"
   let db {.inject, global.} = db_postgres.open(host, user, password, dbname)
   if initTableSql.len == 0 or db.tryExec(sql(initTableSql)):
-    when closeOnQuit:
-      system.addQuitProc((proc () {.noconv.} = db.close()))
+    try:
+      when closeOnQuit:  system.addQuitProc((proc () {.noconv.} = db_postgres.close(db)))
+      when closeOnCtrlC: system.setControlCHook((proc () {.noconv.} = db_postgres.close(db)))
       code
-    else:
-      try:
-        code
-      finally:
-        db.close()
+    finally:
+      db_postgres.close(db)
   else:
     when not defined(release): echo "Error executing initTableSql:\n" & initTableSql
