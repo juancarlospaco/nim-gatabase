@@ -69,21 +69,21 @@ when defined(postgres):
       dealloc sent
     rows
 
-  proc getAllRows*(self: var Gatabase, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async, inline.} =
+  proc getAllRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
     result = internalRows(self[i[]][0], query, args)
     self[i[]][1] = false
     dealloc i
 
-  proc execAffectedRows*(self: var Gatabase, query: SqlQuery, args: seq[string]): Future[int64] {.async, inline.} =
+  proc execAffectedRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[int64] {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
     result = int64(len(internalRows(self[i[]][0], query, args)))
     self[i[]][1] = false
     dealloc i
 
-  proc exec*(self: var Gatabase, query: SqlQuery, args: seq[string]) {.async, inline.} =
+  proc exec*(self: Gatabase, query: SqlQuery, args: seq[string]) {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
     discard internalRows(self[i[]][0], query, args)
