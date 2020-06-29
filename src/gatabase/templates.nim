@@ -1,8 +1,13 @@
 # Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
-from strutils import join, parseBool
+from strutils import join
 
 const n = when defined(release): " " else: "\n"
 
+func parseBool(s: string): bool {.inline.} =
+  case s # Optimized stricter version, no lowercase,
+  of "true": result = true # only "true" or "false",
+  of "false": result = false # not "y" nor "n", etc.
+  else: doAssert false, "cannot interpret as a bool"
 
 template isQuestionChar(value: NimNode): bool =
   unlikely(value.kind == nnkCharLit and value.intVal == 63)
