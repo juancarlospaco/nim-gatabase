@@ -15,29 +15,30 @@ when defined(postgres):
   import asyncdispatch
   include db_postgres
   const gataPool {.intdefine.}: Positive = 100
-  type Gatabase* = ref array[gataPool, tuple[db: DbConn, ok: bool]] ## Gatabase Pool
+  type Gatabase* = ref object
+    pool*: array[gataPool, tuple[db: DbConn, ok: bool]] ## Gatabase Pool
 
   func newGatabase*(connection, user, password, database: sink string): Gatabase {.inline.} =
     assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
     result = Gatabase()
     for i in 0 .. static(gataPool - 1):
-      result[i][0] = open(connection, user, password, database)
-      result[i][1] = false
+      result.pool[i][0] = open(connection, user, password, database)
+      result.pool[i][1] = false
     when not defined(release): debugEcho "Gatabase Pool: " & $gataPool
 
   template len*(self: Gatabase): int = gataPool
 
   template close*(self: Gatabase) =
     for i in 0 .. static(gataPool - 1):
-      self[i][1] = false
-      close(self[i][0])
+      self.pool[i][1] = false
+      close(self.pool[i][0])
 
   template getIdle(self: Gatabase): int =
     var jobless = -1
     while on:
       for i in 0.. static(gataPool - 1):
-        if not self[i][1]:
-          self[i][1] = true
+        if not self.pool[i][1]:
+          self.pool[i][1] = true
           jobless = i
           break
         cpuRelax()
@@ -73,22 +74,22 @@ when defined(postgres):
   proc getAllRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    result = internalRows(self[i[]][0], query, args)
-    self[i[]][1] = false
+    result = internalRows(self.pool[i[]][0], query, args)
+    self.pool[i[]][1] = false
     dealloc i
 
   proc execAffectedRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[int64] {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    result = int64(len(internalRows(self[i[]][0], query, args)))
-    self[i[]][1] = false
+    result = int64(len(internalRows(self.pool[i[]][0], query, args)))
+    self.pool[i[]][1] = false
     dealloc i
 
   proc exec*(self: Gatabase, query: SqlQuery, args: seq[string]) {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    discard internalRows(self[i[]][0], query, args)
-    self[i[]][1] = false
+    discard internalRows(self.pool[i[]][0], query, args)
+    self.pool[i[]][1] = false
     dealloc i
 
 
