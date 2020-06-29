@@ -12,4 +12,4 @@ const exampleTable = sql"""
   ); """
 
 var multigata = newGatabase("localhost", "postgres", "postgres", "postgres")
-waitFor getAllRows(multigata, query = sql"SELECT version();")
+waitFor getAllRows(multigata, query = sql"SELECT version();", @[])
