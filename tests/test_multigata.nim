@@ -14,7 +14,7 @@ const exampleTable = sql"""
 let multigata = newGatabase("localhost", "postgres", "postgres", "postgres")
 doAssert multigata is Gatabase
 doAssert len(multigata) == 100
-let data = await getAllRows(multigata, query = sql"SELECT version();", @[])
+let data = wait_for getAllRows(multigata, query = sql"SELECT version();", @[])
 doAssert data is seq[Row]
 doAssert len(data) > 0 and len(data[0]) > 0
 doAssert execAffectedRows(multigata, query = sql"SELECT version();", @[]) is Future[int64]
