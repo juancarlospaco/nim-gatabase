@@ -5,4 +5,4 @@ license       = "MIT"
 srcDir        = "src"
 skipDirs      = @["tests", "examples", "docs"]
 
-requires "nim >= 1.2.0"
+requires "nim >= 1.2.4"
