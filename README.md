@@ -832,10 +832,6 @@ Yes.
 
 We try to keep as similar as possible, but SQLite is very limited.
 
-- Why not use JSON Type instead of Tuple and Table for arguments ?.
-
-JSON wont work at compile time.
-
 </details>
 
 
