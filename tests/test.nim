@@ -185,7 +185,7 @@ suite "Gatabase ORM Tests":
       `from`  "person"
       where   "name"
       isnull  false
-      orderby Asc
+      #orderby AscNullsLast
 
 
   test "const INTERSECT ALL":
@@ -235,7 +235,7 @@ suite "Gatabase ORM Tests":
       limit   1
       offset  0
       `--`    "This is a comment."
-      orderby Desc
+      #orderby Desc
 
 
   test "SELECT TRIM":
