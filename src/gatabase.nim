@@ -24,7 +24,6 @@ when defined(postgres):
     for i in 0 .. static(gataPool - 1): # Cant use db_postgres.* here
       result.pool[i][0] = open(connection, user, password, database)
       result.pool[i][1] = false
-    when not defined(release): debugEcho "Gatabase Pool: " & $gataPool
 
   template len*(self: Gatabase): int = gataPool
 
@@ -53,10 +52,10 @@ when defined(postgres):
     if likely(db.status == CONNECTION_OK):
       let sent = create(int32, sizeOf int32)
       sent[] = pqsendQuery(db, dbFormat(query, args))
-      if unlikely(sent[] != 1): dbError(db)
+      if unlikely(sent[] != 1): dbError(db) # doAssert
       while on:
         sent[] = pqconsumeInput(db)
-        if unlikely(sent[] != 1): dbError(db)
+        if unlikely(sent[] != 1): dbError(db) # doAssert
         if pqisBusy(db) == 1:
           cpuRelax()
           continue
@@ -64,13 +63,15 @@ when defined(postgres):
         if unlikely(pqresutl == nil): break
         let col = create(int32, sizeOf int32)
         col[] = pqnfields(pqresutl)
-        var row = newRow(int(col[]))
+        let row = create(Row, sizeOf Row)
+        row[] = newRow(int(col[]))
         for i in 0 ..< pqNtuples(pqresutl):
-          setRow(pqresutl, row, i, col[])
-          rows.add row
+          setRow(pqresutl, row[], i, col[])
+          rows.add row[]
         pqclear(pqresutl)
         cpuRelax()
         dealloc col
+        dealloc row
       dealloc sent
     rows
 
