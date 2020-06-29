@@ -1,4 +1,4 @@
-version       = "0.9.0"
+version       = "0.9.9"
 author        = "Juan Carlos"
 description   = "Compile-Time ORM for Nim"
 license       = "MIT"
