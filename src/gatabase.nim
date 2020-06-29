@@ -233,7 +233,8 @@ macro cueri(inner: untyped): auto =
   when not defined(release) or not defined(danger):
     if unlikely(deleteUsed and not whereUsed): {.warning: "DELETE FROM without WHERE.".}
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
-  sqls.add when defined(release): ";" else: ";\n"
+  sqls.add ";\n"
+  # sqls.add "/* " & $inner.lineInfo & "*/\n"
   when defined(dev): echo sqls
   result = quote do: sql(`sqls`)
 
