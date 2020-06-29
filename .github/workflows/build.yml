@@ -42,3 +42,8 @@ jobs:
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
         nim cpp -d:release --panics:on --gc:arc tests/test.nim
+
+    - name: Unittest JavaScript
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim js -r tests/test_js.nim
