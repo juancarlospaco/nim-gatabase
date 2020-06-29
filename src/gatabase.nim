@@ -68,11 +68,8 @@ macro cueri(inner: untyped): auto =
     of "order", "orderby":
       doAssert not orderUsed, err0
       doAssert selectUsed, err0 & "ORDER BY without SELECT"
-      #doAssert node[1] is GatabaseOrderBy
-      #assert symKind(bindSym(node[1])) == nnkEnumFieldDef #  # nnkEnumTy
-      #quit($type(node[1]))
-      #sqls.add orderbys($node[1])
-      #orderUsed = true
+      sqls.add orderbys(node[1])
+      orderUsed = true
     of "select":
       doAssert not selectUsed, err0
       sqls.add selects(node[1])
