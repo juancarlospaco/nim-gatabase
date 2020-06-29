@@ -13,6 +13,4 @@ const exampleTable = sql"""
 
 var multigata = newGatabase("localhost", "postgres", "postgres", "postgres")
 doAssert len(multigata) == 100
-
-var test0 = getAllRows(multigata, query = sql"SELECT version();", @[])
-echo type(test0)
+doAssert getAllRows(multigata, query = sql"SELECT version();", @[]) is Future[seq[Row]]
