@@ -9,6 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
     - uses: jiro4989/setup-nim-action@v1.0.2
       with:
         nim-version: '1.2.4'
