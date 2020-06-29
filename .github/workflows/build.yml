@@ -10,6 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
+    - uses: harmon758/postgresql-action@v1
+      with:
+        postgresql version:  '12'
+        postgresql db:       'postgres'
+        postgresql user:     'postgres'
+        postgresql password: 'postgres'
     - uses: jiro4989/setup-nim-action@v1.0.2
       with:
         nim-version: '1.2.4'
