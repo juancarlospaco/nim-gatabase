@@ -11,3 +11,4 @@ const exampleTable = sql"""
     rank    float        not null default 0.0
   ); """
 
+let multigata = newGatabase("localhost", "postgres", "postgres", "postgres")
