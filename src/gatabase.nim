@@ -11,6 +11,84 @@
 ## * DSL use https://github.com/juancarlospaco/nim-gatabase#gatabase
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
+when defined(postgres):
+  import asyncdispatch
+  include db_postgres
+  const gataPool {.intdefine.}: Positive = 100
+  type Gatabase* = array[gataPool, tuple[db: DbConn, ok: bool]] ## Gatabase Pool
+
+  func newGatabase*(connection, user, password, database: sink string): Gatabase {.inline.} =
+    assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
+    for i in 0 .. static(gataPool - 1):
+      result[i][0] = open(connection, user, password, database)
+      result[i][1] = false
+    when not defined(release): debugEcho "Gatabase Pool: " & $gataPool
+
+  template len*(self: Gatabase): int = gataPool
+
+  template close*(self: Gatabase) =
+    for i in 0 .. static(gataPool - 1):
+      self[i][1] = false
+      close(self[i][0])
+
+  template getIdle(self: Gatabase): int =
+    var jobless = -1
+    while on:
+      for i in 0.. static(gataPool - 1):
+        if not self[i][1]:
+          self[i][1] = true
+          jobless = i
+          break
+        cpuRelax()
+      if jobless != -1: break
+      cpuRelax()
+    jobless
+
+  template internalRows(db: DbConn, query: SqlQuery, args: seq[string]): seq[Row] =
+    var rows: seq[Row]
+    if likely(db.status == CONNECTION_OK):
+      let sent = create(int32, sizeOf int32)
+      sent[] = pqsendQuery(db, dbFormat(query, args))
+      if unlikely(sent[] != 1): dbError(db)
+      while on:
+        sent[] = pqconsumeInput(db)
+        if unlikely(sent[] != 1): dbError(db)
+        if pqisBusy(db) == 1:
+          cpuRelax()
+          continue
+        var pqresutl = pqgetResult(db)
+        if unlikely(pqresutl == nil): break
+        let col = create(int32, sizeOf int32)
+        col[] = pqnfields(pqresutl)
+        var row = newRow(int(col[]))
+        for i in 0 ..< pqNtuples(pqresutl):
+          setRow(pqresutl, row, i, col[])
+          rows.add row
+        pqclear(pqresutl)
+        dealloc col
+      dealloc sent
+    rows
+
+  proc getAllRows*(self: var Gatabase, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async, inline.} =
+    let i = create(int, sizeOf int)
+    i[] = getIdle(self)
+    result = internalRows(self[i[]][0], query, args)
+    self[i[]][1] = false
+    dealloc i
+
+  proc execAffectedRows*(self: var Gatabase, query: SqlQuery, args: seq[string]): Future[int64] {.async, inline.} =
+    let i = create(int, sizeOf int)
+    i[] = getIdle(self)
+    result = int64(len(internalRows(self[i[]][0], query, args)))
+    self[i[]][1] = false
+    dealloc i
+
+  proc exec*(self: var Gatabase, query: SqlQuery, args: seq[string]) {.async, inline.} =
+    let i = create(int, sizeOf int)
+    i[] = getIdle(self)
+    discard internalRows(self[i[]][0], query, args)
+    self[i[]][1] = false
+    dealloc i
 
 
 macro cueri(inner: untyped): auto =
