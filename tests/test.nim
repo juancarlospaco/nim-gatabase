@@ -24,7 +24,7 @@ WHERE id = 42
 """
 
 const expected2 = """SELECT *
--- This is a comment, this will be strapped for Release builds
+/* This is a comment, this will be strapped for Release builds */
 FROM person
 
 ;
