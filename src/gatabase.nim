@@ -28,7 +28,7 @@ when defined(postgres):
 
   template len*(self: Gatabase): int = gataPool
 
-  func `$`*(self: Gatabase): string {.inline.} = $(@(self.pool))
+  template `$`*(self: Gatabase): string = $(@(self.pool))
 
   template close*(self: Gatabase) =
     for i in 0 .. static(gataPool - 1):
