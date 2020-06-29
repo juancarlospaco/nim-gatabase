@@ -21,7 +21,7 @@ when defined(postgres):
   func newGatabase*(connection, user, password, database: sink string): Gatabase {.inline.} =
     assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
     result = Gatabase()
-    for i in 0 .. static(gataPool - 1):
+    for i in 0 .. static(gataPool - 1): # Cant use db_postgres.* here
       result.pool[i][0] = open(connection, user, password, database)
       result.pool[i][1] = false
     when not defined(release): debugEcho "Gatabase Pool: " & $gataPool
@@ -33,7 +33,7 @@ when defined(postgres):
   template close*(self: Gatabase) =
     for i in 0 .. static(gataPool - 1):
       self.pool[i][1] = false
-      close(self.pool[i][0])
+      close(self.pool[i][0]) # is this required with ARC?.
 
   template getIdle(self: Gatabase): int =
     var jobless = -1
@@ -69,6 +69,7 @@ when defined(postgres):
           setRow(pqresutl, row, i, col[])
           rows.add row
         pqclear(pqresutl)
+        cpuRelax()
         dealloc col
       dealloc sent
     rows
