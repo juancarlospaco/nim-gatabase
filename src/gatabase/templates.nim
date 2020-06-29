@@ -1,16 +1,6 @@
 # Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
 import strutils
 
-type
-  GatabaseOrderBy* = enum ## `ORDER BY <https://www.postgresql.org/docs/current/queries-order.html>`_ options.
-    Asc = "ASC"
-    Desc = "DESC"
-    AscNullsFirst = "ASC NULLS FIRST"
-    DescNullsFirst = "DESC NULLS FIRST"
-    AscNullsLast = "ASC NULLS LAST"
-    DescNullsLast = "DESC NULLS LAST"
-    Id = "id"
-
 const n = when defined(release): " " else: "\n"
 
 template isQuestionChar(value: NimNode): bool =
@@ -103,8 +93,9 @@ template whereNotExists(value: NimNode): string =
   else: "WHERE NOT EXISTS " & $value.strVal & n
 
 
-template orderbys(value: string): string =
-  "ORDER BY " & value & n
+template orderbys(value: NimNode): string =
+  doAssert value.strVal.len > 0, "ORDER BY must not be empty string"
+  "ORDER BY " & $value.strVal & n
 
 
 template selects(value: NimNode): string =
@@ -301,54 +292,10 @@ template excepts(value: NimNode): string =
   if parseBool($value): static("EXCEPT ALL" & n) else: static("EXCEPT" & n)
 
 
-template comments(value: NimNode, what: string): string =
-  isTable(value)
-  when defined(postgres):
-    doAssert value.len == 1, "COMMENT wrong SQL syntax, must have exactly 1 key"
-    var name, coment: string
-    for tableValue in value:
-      name = tableValue[0].strVal.strip
-      coment = tableValue[1].strVal.strip
-      doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
-    "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
-  else: n # SQLite wont support COMMENT, is not part of SQL Standard neither.
-
-
-template cases(value: NimNode): string =
-  isTable(value)
-  doAssert value[^1][0].strVal == "else", "CASE must have 1 'else' key, as last key, is required and mandatory"
-  var defaultFound: byte
-  var default, branches: string
-  for tableValue in value:
-    if tableValue[0].strVal == "else":
-      default = "  ELSE " & tableValue[1].strVal & n
-      inc defaultFound
-    else:
-      branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
-  doAssert defaultFound == 1, "CASE must have 1 'else' key, but found: " & $defaultFound
-  n & static("(CASE" & n) & branches & default & static("END)" & n)
-
-
-template values(value: Positive): string =
-  # Produces "VALUES (?, ?, ?)", values passed via varargs.
-  var temp = newSeqOfCap[char](value - 1)
-  for i in 0 ..< value: temp.add '?'
-  "VALUES ( " & temp.join", " & static(" )" & n)
-
-
 template updates(value: NimNode): string =
   isQuestionOrString(value)
   if isQuestionChar(value): static("UPDATE ?" & n)
   else: "UPDATE " & $value.strVal & n
-
-
-template sets(value: NimNode): string =
-  # Produces "SET key = ?, key = ?, key = ?", values passed via varargs.
-  isArrayStr(value)
-  var temp = newSeqOfCap[string](value.len)
-  for item in value:
-    temp.add item.strVal & " = ?"
-  "SET " & temp.join", " & n
 
 
 template resetAllGuards() =
@@ -370,3 +317,48 @@ template resetAllGuards() =
   insertUsed = false
   isnullUsed = false
   updateUsed = false
+
+
+template values(value: Positive): string =
+  # Produces "VALUES (?, ?, ?)", values passed via varargs.
+  var temp = newSeqOfCap[char](value - 1)
+  for i in 0 ..< value: temp.add '?'
+  "VALUES ( " & temp.join", " & static(" )" & n)
+
+
+template sets(value: NimNode): string =
+  # Produces "SET key = ?, key = ?, key = ?", values passed via varargs.
+  isArrayStr(value)
+  var temp = newSeqOfCap[string](value.len)
+  for item in value:
+    temp.add item.strVal & " = ?"
+  "SET " & temp.join", " & n
+
+
+template comments(value: NimNode, what: string): string =
+  isTable(value)
+  when defined(postgres):
+    doAssert value.len == 1, "COMMENT wrong SQL syntax, must have exactly 1 key"
+    var name, coment: string
+    for tableValue in value:
+      name = tableValue[0].strVal.strip
+      coment = tableValue[1].strVal.strip
+      doAssert name.len > 0, "COMMENT 'name' value must not be empty string"
+      doAssert coment.len > 0, "COMMENT value must not be empty string"
+    "COMMENT ON " & what & " " & name & " IS '" & coment & "'" & n
+  else: n # SQLite wont support COMMENT, is not part of SQL Standard neither.
+
+
+template cases(value: NimNode): string =
+  isTable(value)
+  doAssert value[^1][0].strVal == "else", "CASE must have 1 'else' key, as last key, is required and mandatory"
+  var defaultFound: byte
+  var default, branches: string
+  for tableValue in value:
+    if tableValue[0].strVal == "else":
+      default = "  ELSE " & tableValue[1].strVal & n
+      inc defaultFound
+    else:
+      branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
+  doAssert defaultFound == 1, "CASE must have 1 'else' key, but found: " & $defaultFound
+  n & static("(CASE" & n) & branches & default & static("END)" & n)
