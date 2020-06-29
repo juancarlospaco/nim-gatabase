@@ -83,6 +83,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -98,17 +101,6 @@ function main() {
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li><a class="reference" id="more-documentation_toc" href="#more-documentation">More Documentation</a></li>
-<li>
-  <a class="reference reference-toplevel" href="#7" id="57">Types</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#GatabaseOrderBy"
-    title="GatabaseOrderBy = enum
-  Asc = &quot;ASC&quot;, Desc = &quot;DESC&quot;, AscNullsFirst = &quot;ASC NULLS FIRST&quot;,
-  DescNullsFirst = &quot;DESC NULLS FIRST&quot;, AscNullsLast = &quot;ASC NULLS LAST&quot;,
-  DescNullsLast = &quot;DESC NULLS LAST&quot;, Id = &quot;id&quot;"><wbr />Gatabase<wbr />Order<wbr />By<span class="attachedType"></span></a></li>
-
-  </ul>
-</li>
 <li>
   <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
   <ul class="simple simple-toc-section">
@@ -143,28 +135,14 @@ function main() {
   <div id="tocRoot"></div>
   
   <p class="module-desc"><strong>Gatabase:</strong> Compile-time lightweight ORM for Postgres or SQLite.<ul class="simple"><li>SQL DSL mimics SQL syntax!, API mimics stdlib!, Simple just 9 Templates!.</li>
+<li><strong>Uses only system.nim, 0 Dependencies, everything is done via template and macro.</strong></li>
 </ul>
 <img src="https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg"/>
 <h1><a class="toc-backref" id="more-documentation" href="#more-documentation">More Documentation</a></h1><ul class="simple"><li><a class="reference external" href="https://juancarlospaco.github.io/nim-gatabase/sugar.html">Gatabase Sugar</a> <strong>Recommended</strong>, but Optional, all Templates.</li>
 <li>DSL use <a class="reference external" href="https://github.com/juancarlospaco/nim-gatabase#gatabase">https://github.com/juancarlospaco/nim-gatabase#gatabase</a></li>
 </ul>
 </p>
-  <div class="section" id="7">
-<h1><a class="toc-backref" href="#7">Types</a></h1>
-<dl class="item">
-<a id="GatabaseOrderBy"></a>
-<dt><pre><a href="gatabase.html#GatabaseOrderBy"><span class="Identifier">GatabaseOrderBy</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">Asc</span> <span class="Other">=</span> <span class="StringLit">&quot;ASC&quot;</span><span class="Other">,</span> <span class="Identifier">Desc</span> <span class="Other">=</span> <span class="StringLit">&quot;DESC&quot;</span><span class="Other">,</span> <span class="Identifier">AscNullsFirst</span> <span class="Other">=</span> <span class="StringLit">&quot;ASC NULLS FIRST&quot;</span><span class="Other">,</span>
-  <span class="Identifier">DescNullsFirst</span> <span class="Other">=</span> <span class="StringLit">&quot;DESC NULLS FIRST&quot;</span><span class="Other">,</span> <span class="Identifier">AscNullsLast</span> <span class="Other">=</span> <span class="StringLit">&quot;ASC NULLS LAST&quot;</span><span class="Other">,</span>
-  <span class="Identifier">DescNullsLast</span> <span class="Other">=</span> <span class="StringLit">&quot;DESC NULLS LAST&quot;</span><span class="Other">,</span> <span class="Identifier">Id</span> <span class="Other">=</span> <span class="StringLit">&quot;id&quot;</span></pre></dt>
-<dd>
-
-<a class="reference external" href="https://www.postgresql.org/docs/current/queries-order.html">ORDER BY</a> options.
-
-</dd>
-
-</dl></div>
-<div class="section" id="18">
+  <div class="section" id="18">
 <h1><a class="toc-backref" href="#18">Templates</a></h1>
 <dl class="item">
 <a id="exec.t,varargs[string,],untyped"></a>
@@ -314,7 +292,7 @@ Build a <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> usin
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-06 07:02:18 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-06-29 06:34:23 UTC</small>
       </div>
     </div>
   </div>
