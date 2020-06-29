@@ -14,32 +14,32 @@ const exampleTable = sql"""
 
 const expected0 = """INSERT INTO person
 VALUES ( ?, ?, ?, ?, ? )
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(82, 6) */
+;
 """
 
 const expected1 = """SELECT *
 FROM person
 WHERE id = 42
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(89, 6) */
+;
 """
 
 const expected2 = """SELECT *
 -- This is a comment, this will be strapped for Release builds
 FROM person
 
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(97, 6) */
+;
 """
 
 const expected3 = """SELECT *
 FROM person
 LIMIT 2
 OFFSET 0
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(106, 6) */
+;
 """
 
 const expected4 = """INSERT INTO person
 VALUES ( ?, ?, ?, ?, ? )
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(115, 6) */
+;
 """
 
 const expected5 = """SELECT *
@@ -50,24 +50,24 @@ SELECT *
 FROM person
 WHERE name
 IS NOT NULL
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(122, 6) */
+;
 """
 
 const expected6 = """SELECT DISTINCT id
 FROM person
 WHERE rank != 666.0
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(135, 6) */
+;
 """
 
 const expected7 = """INSERT INTO person
 VALUES ( ?, ?, ?, ?, ? )
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(143, 6) */
+;
 """
 
 const expected8 = """SELECT *
 FROM person
 WHERE id = 42
-;  /* /home/juan/code/nim-gatabase/tests/test.nim(150, 6) */
+;
 """
 
 
