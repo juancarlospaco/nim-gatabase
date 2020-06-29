@@ -19,6 +19,7 @@ when defined(postgres):
 
   func newGatabase*(connection, user, password, database: sink string): Gatabase {.inline.} =
     assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
+    result = Gatabase()
     for i in 0 .. static(gataPool - 1):
       result[i][0] = open(connection, user, password, database)
       result[i][1] = false
