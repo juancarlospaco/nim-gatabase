@@ -68,9 +68,11 @@ macro cueri(inner: untyped): auto =
     of "order", "orderby":
       doAssert not orderUsed, err0
       doAssert selectUsed, err0 & "ORDER BY without SELECT"
-      doAssert node[1] is GatabaseOrderBy
-      sqls.add orderbys($node[1])
-      orderUsed = true
+      #doAssert node[1] is GatabaseOrderBy
+      #assert symKind(bindSym(node[1])) == nnkEnumFieldDef #  # nnkEnumTy
+      #quit($type(node[1]))
+      #sqls.add orderbys($node[1])
+      #orderUsed = true
     of "select":
       doAssert not selectUsed, err0
       sqls.add selects(node[1])
@@ -231,7 +233,7 @@ macro cueri(inner: untyped): auto =
   when not defined(release) or not defined(danger):
     if unlikely(deleteUsed and not whereUsed): {.warning: "DELETE FROM without WHERE.".}
   assert sqls.len > 0, "Unknown error on SQL DSL, SQL Query must not be empty."
-  sqls.add when defined(release): ";" else: ";  /* " & inner.lineInfo & " */\n"
+  sqls.add when defined(release): ";" else: ";\n"
   when defined(dev): echo sqls
   result = quote do: sql(`sqls`)
 
