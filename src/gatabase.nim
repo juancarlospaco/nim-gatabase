@@ -11,12 +11,15 @@
 ## * DSL use https://github.com/juancarlospaco/nim-gatabase#gatabase
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
+
+
 when defined(postgres):
-  import asyncdispatch
+  import asyncdispatch # ,db_postgres
   include db_postgres
+
   const gataPool {.intdefine.}: Positive = 100
-  type Gatabase* = ref object
-    pool*: array[gataPool, tuple[db: DbConn, ok: bool]] ## Gatabase Pool
+  type Gatabase* = ref object  ## Gatabase
+    pool*: array[gataPool, tuple[db: DbConn, ok: bool]]
 
   func newGatabase*(connection, user, password, database: sink string): Gatabase {.inline.} =
     assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
@@ -422,7 +425,7 @@ template insert*(pkName: string; args: varargs[string, `$`]; inner: untyped): in
   ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   insert(db, cueri(inner), pkName, args)
 
-template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): int64 =
+template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): auto =
   ## Mimics `execAffectedRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `execAffectedRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
