@@ -15,4 +15,4 @@ var multigata = newGatabase("localhost", "postgres", "postgres", "postgres")
 doAssert multigata is Gatabase
 doAssert len(multigata) == 100
 doAssert getAllRows(multigata, query = sql"SELECT version();", @[]) is Future[seq[Row]]
-echo multigata
+echo $multigata
