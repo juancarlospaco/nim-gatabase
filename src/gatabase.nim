@@ -326,6 +326,16 @@ template insertID*(args: varargs[string, `$`]; inner: untyped): int64 =
   ##     values 2
   insertID(db, cueri(inner), args)
 
+template tryInsert*(pkName: string; args: varargs[string, `$`]; inner: untyped): int64 =
+  ## Mimics `tryInsert` but using Gatabase DSL.
+  ## * `args` are passed as-is to `tryInsert()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  tryInsert(db, cueri(inner), pkName, args)
+
+template insert*(pkName: string; args: varargs[string, `$`]; inner: untyped): int64 =
+  ## Mimics `insert` but using Gatabase DSL.
+  ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
+  insert(db, cueri(inner), pkName, args)
+
 template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): int64 =
   ## Mimics `execAffectedRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `execAffectedRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
