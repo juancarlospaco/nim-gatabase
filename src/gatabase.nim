@@ -15,7 +15,7 @@ when defined(postgres):
   import asyncdispatch
   include db_postgres
   const gataPool {.intdefine.}: Positive = 100
-  type Gatabase* = array[gataPool, tuple[db: DbConn, ok: bool]] ## Gatabase Pool
+  type Gatabase* = ref array[gataPool, tuple[db: DbConn, ok: bool]] ## Gatabase Pool
 
   func newGatabase*(connection, user, password, database: sink string): Gatabase {.inline.} =
     assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
