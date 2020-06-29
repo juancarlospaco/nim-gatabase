@@ -17,7 +17,7 @@ doAssert len(multigata) == 100
 let data = wait_for getAllRows(multigata, query = sql"SELECT version();", @[])
 doAssert data is seq[Row]
 doAssert len(data) > 0 and len(data[0]) > 0
-echo data[0]
+for it in data: echo it
 doAssert execAffectedRows(multigata, query = sql"SELECT version();", @[]) is Future[int64]
 doAssert exec(multigata, query = sql"SELECT version();", @[]) is Future[void]
 for _ in 0 .. len(multigata) - 1: doAssert multigata.getAllRows(sql"SELECT version();", @[]) is Future[seq[Row]]
