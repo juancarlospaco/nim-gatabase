@@ -23,7 +23,22 @@ jobs:
         export PATH=$HOME/.nimble/bin:$PATH
         nimble install
 
-    - name: Unittest project
+    - name: Unittest C
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nimble test
+        nim c --panics:on --gc:arc tests/test.nim
+
+    - name: Unittest CPP
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim cpp --panics:on --gc:arc tests/test.nim
+
+    - name: Unittest C Release
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim c -d:release --panics:on --gc:arc tests/test.nim
+
+    - name: Unittest CPP Release
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim cpp -d:release --panics:on --gc:arc tests/test.nim
