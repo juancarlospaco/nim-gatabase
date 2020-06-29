@@ -1,5 +1,5 @@
 ## Gatabase Unittests.
-import unittest, db_common, ../src/gatabase  # Import LOCAL Gatabase
+import unittest, asyncdispatch, db_common, ../src/gatabase  # Import LOCAL Gatabase
 
 
 const exampleTable = sql"""
@@ -12,4 +12,4 @@ const exampleTable = sql"""
   ); """
 
 var multigata = newGatabase("localhost", "postgres", "postgres", "postgres")
-waitFor multigata.getAllRows(query = sql"SELECT version();")
+waitFor getAllRows(multigata, query = sql"SELECT version();")
