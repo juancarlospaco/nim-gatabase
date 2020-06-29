@@ -59,17 +59,19 @@ when defined(postgres):
         if pqisBusy(db) == 1:
           cpuRelax()
           continue
-        var pqresutl = pqgetResult(db)
-        if unlikely(pqresutl == nil): break
+        let pepe = create(PPGresult, sizeOf PPGresult)
+        pepe[] = pqgetResult(db) # lib/wrappers/postgres.nim#L251
+        if unlikely(pepe[] == nil): break
         let col = create(int32, sizeOf int32)
-        col[] = pqnfields(pqresutl)
+        col[] = pqnfields(pepe[])
         let row = create(Row, sizeOf Row)
         row[] = newRow(int(col[]))
-        for i in 0 ..< pqNtuples(pqresutl):
-          setRow(pqresutl, row[], i, col[])
+        for i in 0 ..< pqNtuples(pepe[]):
+          setRow(pepe[], row[], i, col[])
           rows.add row[]
-        pqclear(pqresutl)
+        pqclear(pepe[])
         cpuRelax()
+        dealloc pepe
         dealloc col
         dealloc row
       dealloc sent
