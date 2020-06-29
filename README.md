@@ -24,6 +24,7 @@
 - You can literally [Copy&Paste a SQL query from StackOverflow](https://stackoverflow.com/questions/tagged/postgresql?tab=Frequent) to Gatabase and with few tiny syntax tweaks is running.
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
 - https://juancarlospaco.github.io/nim-gatabase
+- **Uses only `system.nim`, everything is done via `template` and `macro`, `strutils` is not imported, future-proof your code.**
 
 
 ### Support
@@ -734,7 +735,7 @@ sqls:
 ```
 
 
-### Gatabase Diagrams 
+### Gatabase Diagrams
 
 - https://twitter.com/drawio/status/1271774136126275584
 
