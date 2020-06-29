@@ -363,5 +363,5 @@ template cases(value: NimNode): string =
       inc defaultFound
     else:
       branches.add "  WHEN " & tableValue[0].strVal & " THEN " & tableValue[1].strVal & n
-  doAssert defaultFound == 1, "CASE must have 1 'else' key, but found: " & $defaultFound
+  doAssert defaultFound == 1, "CASE must have 1 'else' key"
   n & static("(CASE" & n) & branches & default & static("END)" & n)
