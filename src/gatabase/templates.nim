@@ -1,13 +1,13 @@
 # Tiny compile-time internal templates that do 1 thing, do NOT put other logic here.
-from strutils import join
-
 const n = when defined(release): " " else: "\n"
+
 
 func parseBool(s: string): bool {.inline.} =
   case s # Optimized stricter version, no lowercase,
   of "true": result = true # only "true" or "false",
   of "false": result = false # not "y" nor "n", etc.
   else: doAssert false, "cannot interpret as a bool"
+
 
 template isQuestionChar(value: NimNode): bool =
   unlikely(value.kind == nnkCharLit and value.intVal == 63)
@@ -325,18 +325,17 @@ template resetAllGuards() =
 
 template values(value: Positive): string =
   # Produces "VALUES (?, ?, ?)", values passed via varargs.
-  var temp = newSeqOfCap[char](value - 1)
-  for i in 0 ..< value: temp.add '?'
-  "VALUES ( " & temp.join", " & static(" )" & n)
+  var temp = "VALUES ( "
+  for i in 0 ..< value: temp.add "?, "
+  temp[0..^3] & static(" )" & n)
 
 
 template sets(value: NimNode): string =
   # Produces "SET key = ?, key = ?, key = ?", values passed via varargs.
   isArrayStr(value)
-  var temp = newSeqOfCap[string](value.len)
-  for item in value:
-    temp.add item.strVal & " = ?"
-  "SET " & temp.join", " & n
+  var temp = "SET "
+  for item in value: temp.add item.strVal & " = ?, "
+  temp[0..^3] & n
 
 
 template comments(value: NimNode, what: string): string =
