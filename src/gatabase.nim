@@ -325,7 +325,7 @@ macro cueri(inner: untyped): auto =
   when defined(dev): echo sqls
   result = quote do: sql(`sqls`)
 
-template exec*(args: varargs[string, `$`]; inner: untyped) =
+template exec*(args: varargs[string, `$`] or seq[string]; inner: untyped) =
   ## Mimics `exec` but using Gatabase DSL.
   ## * `args` are passed as-is to `exec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -335,7 +335,7 @@ template exec*(args: varargs[string, `$`]; inner: untyped) =
   ##     where "active = false"
   exec(db, cueri(inner), args)
 
-template tryExec*(args: varargs[string, `$`]; inner: untyped): bool =
+template tryExec*(args: varargs[string, `$`] or seq[string]; inner: untyped): bool =
   ## Mimics `tryExec` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryExec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -351,7 +351,7 @@ template tryExec*(args: varargs[string, `$`]; inner: untyped): bool =
   ##     wherenot "active = true"
   tryExec(db, cueri(inner), args)
 
-template getRow*(args: varargs[string, `$`]; inner: untyped): auto =
+template getRow*(args: varargs[string, `$`] or seq[string]; inner: untyped): auto =
   ## Mimics `getRow` but using Gatabase DSL.
   ## * `args` are passed as-is to `getRow()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -377,7 +377,7 @@ template getAllRows*(args: varargs[string, `$`] or seq[string]; inner: untyped):
   ##     `from` "person"
   getAllRows(db, cueri(inner), args)
 
-template getValue*(args: varargs[string, `$`]; inner: untyped): string =
+template getValue*(args: varargs[string, `$`] or seq[string]; inner: untyped): string =
   ## Mimics `getValue` but using Gatabase DSL.
   ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -395,7 +395,7 @@ template getValue*(args: varargs[string, `$`]; inner: untyped): string =
   ##     limit 1
   getValue(db, cueri(inner), args)
 
-template tryInsertID*(args: varargs[string, `$`]; inner: untyped): int64 =
+template tryInsertID*(args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `tryInsertID` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryInsertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -405,7 +405,7 @@ template tryInsertID*(args: varargs[string, `$`]; inner: untyped): int64 =
   ##     values 2
   tryInsertID(db, cueri(inner), args)
 
-template insertID*(args: varargs[string, `$`]; inner: untyped): int64 =
+template insertID*(args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `insertID` but using Gatabase DSL.
   ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -415,17 +415,17 @@ template insertID*(args: varargs[string, `$`]; inner: untyped): int64 =
   ##     values 2
   insertID(db, cueri(inner), args)
 
-template tryInsert*(pkName: string; args: varargs[string, `$`]; inner: untyped): int64 =
+template tryInsert*(pkName: string; args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `tryInsert` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryInsert()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   tryInsert(db, cueri(inner), pkName, args)
 
-template insert*(pkName: string; args: varargs[string, `$`]; inner: untyped): int64 =
+template insert*(pkName: string; args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `insert` but using Gatabase DSL.
   ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   insert(db, cueri(inner), pkName, args)
 
-template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): auto =
+template execAffectedRows*(args: varargs[string, `$`] or seq[string]; inner: untyped): auto =
   ## Mimics `execAffectedRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `execAffectedRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -443,7 +443,7 @@ template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): auto =
   ##     `from` "users"
   execAffectedRows(db, cueri(inner), args)
 
-template getValue*(args: varargs[string, `$`]; parseProc: proc; inner: untyped): auto =
+template getValue*(args: varargs[string, `$`] or seq[string]; parseProc: proc; inner: untyped): auto =
   ## Alias for `parseProc(getValue(db, sql("..."), args))`. **Returns actual value instead of string**.
   ## * `parseProc` is whatever proc parses the value of `getValue()`, any proc should work.
   ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.
