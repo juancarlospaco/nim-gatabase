@@ -14,7 +14,6 @@ const exampleTable = sql"""
 
 let db = newGatabase("localhost", "postgres", "postgres", "postgres")
 doAssert db is Gatabase
-doAssert len(db) == 100
 let data = wait_for getAllRows(db, query = sql"SELECT version();", @[])
 doAssert data is seq[Row]
 doAssert len(data) > 0 and len(data[0]) > 0
@@ -36,6 +35,6 @@ exec args:
   select "version()"
   `--`   "You can await() them too, this is just an example."
 
-
-echo $db # Pool of 100 connections
+echo "Gatabase Connection Pool: " $len(db)
+echo $db
 db.close()
