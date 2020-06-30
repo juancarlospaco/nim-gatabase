@@ -362,7 +362,7 @@ template getRow*(args: varargs[string, `$`]; inner: untyped): auto =
   ##     limit 1
   getRow(db, cueri(inner), args)
 
-template getAllRows*(args: varargs[string, `$`] or seq[string] or openArray[string]; inner: untyped): auto =
+template getAllRows*(args: varargs[string, `$`] or seq[string]; inner: untyped): auto =
   ## Mimics `getAllRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `getAllRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
