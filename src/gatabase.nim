@@ -10,6 +10,7 @@
 ##
 ## * `Gatabase Sugar <https://juancarlospaco.github.io/nim-gatabase/sugar.html>`_ **Recommended**, but Optional, all Templates.
 ## * DSL use https://github.com/juancarlospaco/nim-gatabase#gatabase
+## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/multigata.png
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
 
