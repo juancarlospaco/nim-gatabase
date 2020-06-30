@@ -26,7 +26,7 @@
 - **Static Connection Pooling Array with 100+ ORM Queries.**
 - **Uses only `system.nim`, everything done via `template`/`macro`, `strutils` is not imported, future-proof your code.**
 
-![](multigata.png)
+![](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/multigata.png)
 
 
 ### Support
