@@ -1,6 +1,7 @@
-## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite.
+## **Gatabase:** Connection-Pooling Compile-time lightweight ORM for Postgres or SQLite.
 ## * SQL DSL mimics SQL syntax!, API mimics stdlib!, Simple just 9 Templates!.
 ## * **Uses only system.nim, everything is done via template and macro, 0 Dependencies.**
+## * **Static Connection Pooling Array with 100+ ORM Queries.**
 ##
 ## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg
 ##
@@ -11,6 +12,95 @@
 ## * DSL use https://github.com/juancarlospaco/nim-gatabase#gatabase
 import macros
 include gatabase/templates # Tiny compile-time internal templates that do 1 thing.
+
+
+when defined(postgres):
+  import asyncdispatch # ,db_postgres
+  include db_postgres
+
+  const gataPool {.intdefine.}: Positive = 100
+  type Gatabase* = ref object  ## Gatabase
+    pool*: array[gataPool, tuple[db: DbConn, ok: bool]]
+
+  func newGatabase*(connection, user, password, database: sink string): Gatabase {.inline.} =
+    assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
+    result = Gatabase()
+    for i in 0 .. static(gataPool - 1): # Cant use db_postgres.* here
+      result.pool[i][0] = open(connection, user, password, database)
+      result.pool[i][1] = false
+
+  template len*(self: Gatabase): int = gataPool
+
+  template `$`*(self: Gatabase): string = $(@(self.pool))
+
+  template close*(self: Gatabase) =
+    for i in 0 .. static(gataPool - 1):
+      self.pool[i][1] = false
+      close(self.pool[i][0]) # is this required with ARC?.
+
+  template getIdle(self: Gatabase): int =
+    var jobless = -1
+    while on:
+      for i in 0.. static(gataPool - 1):
+        if not self.pool[i][1]:
+          self.pool[i][1] = true
+          jobless = i
+          break
+        cpuRelax()
+      if jobless != -1: break
+      cpuRelax()
+    jobless
+
+  template internalRows(db: DbConn, query: SqlQuery, args: seq[string]): seq[Row] =
+    var rows: seq[Row]
+    if likely(db.status == CONNECTION_OK):
+      let sent = create(int32, sizeOf int32)
+      sent[] = pqsendQuery(db, dbFormat(query, args))
+      if unlikely(sent[] != 1): dbError(db) # doAssert
+      while on:
+        sent[] = pqconsumeInput(db)
+        if unlikely(sent[] != 1): dbError(db) # doAssert
+        if pqisBusy(db) == 1:
+          cpuRelax()
+          continue
+        let pepe = create(PPGresult, sizeOf PPGresult)
+        pepe[] = pqgetResult(db) # lib/wrappers/postgres.nim#L251
+        if unlikely(pepe[] == nil): break
+        let col = create(int32, sizeOf int32)
+        col[] = pqnfields(pepe[])
+        let row = create(Row, sizeOf Row)
+        row[] = newRow(int(col[]))
+        for i in 0 ..< pqNtuples(pepe[]):
+          setRow(pepe[], row[], i, col[])
+          rows.add row[]
+        pqclear(pepe[])
+        cpuRelax()
+        dealloc pepe
+        dealloc col
+        dealloc row
+      dealloc sent
+    rows
+
+  proc getAllRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async, inline.} =
+    let i = create(int, sizeOf int) # Error: 'args' is of type <varargs[string]> which cannot be captured as it would violate memory safety.
+    i[] = getIdle(self)
+    result = internalRows(self.pool[i[]][0], query, args)
+    self.pool[i[]][1] = false
+    dealloc i
+
+  proc execAffectedRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[int64] {.async, inline.} =
+    let i = create(int, sizeOf int)
+    i[] = getIdle(self)
+    result = int64(len(internalRows(self.pool[i[]][0], query, args)))
+    self.pool[i[]][1] = false
+    dealloc i
+
+  proc exec*(self: Gatabase, query: SqlQuery, args: seq[string]) {.async, inline, discardable.} =
+    let i = create(int, sizeOf int)
+    i[] = getIdle(self)
+    discard internalRows(self.pool[i[]][0], query, args)
+    self.pool[i[]][1] = false
+    dealloc i
 
 
 macro cueri(inner: untyped): auto =
@@ -236,7 +326,7 @@ macro cueri(inner: untyped): auto =
   when defined(dev): echo sqls
   result = quote do: sql(`sqls`)
 
-template exec*(args: varargs[string, `$`]; inner: untyped) =
+template exec*(args: varargs[string, `$`] or seq[string]; inner: untyped) =
   ## Mimics `exec` but using Gatabase DSL.
   ## * `args` are passed as-is to `exec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -246,7 +336,7 @@ template exec*(args: varargs[string, `$`]; inner: untyped) =
   ##     where "active = false"
   exec(db, cueri(inner), args)
 
-template tryExec*(args: varargs[string, `$`]; inner: untyped): bool =
+template tryExec*(args: varargs[string, `$`] or seq[string]; inner: untyped): bool =
   ## Mimics `tryExec` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryExec()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -262,7 +352,7 @@ template tryExec*(args: varargs[string, `$`]; inner: untyped): bool =
   ##     wherenot "active = true"
   tryExec(db, cueri(inner), args)
 
-template getRow*(args: varargs[string, `$`]; inner: untyped): auto =
+template getRow*(args: varargs[string, `$`] or seq[string]; inner: untyped): auto =
   ## Mimics `getRow` but using Gatabase DSL.
   ## * `args` are passed as-is to `getRow()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -273,7 +363,7 @@ template getRow*(args: varargs[string, `$`]; inner: untyped): auto =
   ##     limit 1
   getRow(db, cueri(inner), args)
 
-template getAllRows*(args: varargs[string, `$`]; inner: untyped): auto =
+template getAllRows*(args: varargs[string, `$`] or seq[string]; inner: untyped): auto =
   ## Mimics `getAllRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `getAllRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -288,7 +378,7 @@ template getAllRows*(args: varargs[string, `$`]; inner: untyped): auto =
   ##     `from` "person"
   getAllRows(db, cueri(inner), args)
 
-template getValue*(args: varargs[string, `$`]; inner: untyped): string =
+template getValue*(args: varargs[string, `$`] or seq[string]; inner: untyped): string =
   ## Mimics `getValue` but using Gatabase DSL.
   ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -306,7 +396,7 @@ template getValue*(args: varargs[string, `$`]; inner: untyped): string =
   ##     limit 1
   getValue(db, cueri(inner), args)
 
-template tryInsertID*(args: varargs[string, `$`]; inner: untyped): int64 =
+template tryInsertID*(args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `tryInsertID` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryInsertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -316,7 +406,7 @@ template tryInsertID*(args: varargs[string, `$`]; inner: untyped): int64 =
   ##     values 2
   tryInsertID(db, cueri(inner), args)
 
-template insertID*(args: varargs[string, `$`]; inner: untyped): int64 =
+template insertID*(args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `insertID` but using Gatabase DSL.
   ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -326,17 +416,17 @@ template insertID*(args: varargs[string, `$`]; inner: untyped): int64 =
   ##     values 2
   insertID(db, cueri(inner), args)
 
-template tryInsert*(pkName: string; args: varargs[string, `$`]; inner: untyped): int64 =
+template tryInsert*(pkName: string; args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `tryInsert` but using Gatabase DSL.
   ## * `args` are passed as-is to `tryInsert()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   tryInsert(db, cueri(inner), pkName, args)
 
-template insert*(pkName: string; args: varargs[string, `$`]; inner: untyped): int64 =
+template insert*(pkName: string; args: varargs[string, `$`] or seq[string]; inner: untyped): int64 =
   ## Mimics `insert` but using Gatabase DSL.
   ## * `args` are passed as-is to `insertID()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   insert(db, cueri(inner), pkName, args)
 
-template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): int64 =
+template execAffectedRows*(args: varargs[string, `$`] or seq[string]; inner: untyped): auto =
   ## Mimics `execAffectedRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `execAffectedRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
@@ -354,7 +444,7 @@ template execAffectedRows*(args: varargs[string, `$`]; inner: untyped): int64 =
   ##     `from` "users"
   execAffectedRows(db, cueri(inner), args)
 
-template getValue*(args: varargs[string, `$`]; parseProc: proc; inner: untyped): auto =
+template getValue*(args: varargs[string, `$`] or seq[string]; parseProc: proc; inner: untyped): auto =
   ## Alias for `parseProc(getValue(db, sql("..."), args))`. **Returns actual value instead of string**.
   ## * `parseProc` is whatever proc parses the value of `getValue()`, any proc should work.
   ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.

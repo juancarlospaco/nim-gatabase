@@ -1,6 +1,6 @@
 # Gatabase
 
-![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/gatabase.png "Compile-Time ORM for Nim")
+![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/gatabase.png "Connection-Pooling Compile-Time ORM for Nim")
 
 ![](https://img.shields.io/github/languages/count/juancarlospaco/nim-gatabase?logoColor=green&style=for-the-badge)
 ![](https://img.shields.io/github/languages/top/juancarlospaco/nim-gatabase?style=for-the-badge)
@@ -14,17 +14,19 @@
 ![](https://img.shields.io/twitch/status/juancarlospaco?style=for-the-badge)
 ![](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fjuancarlospaco%2Fnim-gatabase)
 
-![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Compile-Time ORM for Nim")
+![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Connection-Pooling Compile-Time ORM for Nim")
 
 
 # Use
 
-- Gatabase is designed as 1 simplified [Strong Static Typed](https://en.wikipedia.org/wiki/Type_system#Static_type_checking) [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language) [Sugar](https://en.wikipedia.org/wiki/Syntactic_sugar). Nim mimics SQL. ~1000 LoC.
+- Gatabase is designed as 1 simplified [Strong Static Typed](https://en.wikipedia.org/wiki/Type_system#Static_type_checking) Connection-Pooling [Compile-Time](https://wikipedia.org/wiki/Compile_time) [SQL](https://wikipedia.org/wiki/SQL) [DSL](https://wikipedia.org/wiki/Domain-specific_language) [Sugar](https://en.wikipedia.org/wiki/Syntactic_sugar). Nim mimics SQL. ~1000 LoC.
 - Gatabase syntax is almost the same as SQL syntax, [no new ORM to learn ever again](https://pgexercises.com/questions/basic/selectall.html), any [SQL WYSIWYG is your GUI](https://pgmodeler.io/screenshots).
 - You can literally [Copy&Paste a SQL query from StackOverflow](https://stackoverflow.com/questions/tagged/postgresql?tab=Frequent) to Gatabase and with few tiny syntax tweaks is running.
 - SQL is Minified when build for Release, Pretty-Printed when build for Debug. It can be assigned to `let` and `const`.
-- https://juancarlospaco.github.io/nim-gatabase
+- **Static Connection Pooling Array with 100+ ORM Queries.**
 - **Uses only `system.nim`, everything done via `template`/`macro`, `strutils` is not imported, future-proof your code.**
+
+![](multigata.png)
 
 
 ### Support
