@@ -26,13 +26,15 @@ for _ in 0 .. len(db) - 1: doAssert db.getAllRows(sql"SELECT version();", @[]) i
 
 
 # DSL
-let dataset0: Future[seq[Row]] = @[].getAllRows:
+var args: seq[string] # Just for testing, can also be @[]
+
+let dataset0: Future[seq[Row]] = args.getAllRows:
   select "version()"
 
-let dataset1: Future[int64] = @[].execAffectedRows:
+let dataset1: Future[int64] = args.execAffectedRows:
   select "version()"
 
-wait_for exec @[]:
+wait_for args.exec:
   select "version()"
 
 
