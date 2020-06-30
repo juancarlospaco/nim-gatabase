@@ -1,6 +1,7 @@
-## **Gatabase:** Compile-time lightweight ORM for Postgres or SQLite.
+## **Gatabase:** Connection-Pooling Compile-time lightweight ORM for Postgres or SQLite.
 ## * SQL DSL mimics SQL syntax!, API mimics stdlib!, Simple just 9 Templates!.
 ## * **Uses only system.nim, everything is done via template and macro, 0 Dependencies.**
+## * **Static Connection Pooling Array with 100+ ORM Queries.**
 ##
 ## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg
 ##
