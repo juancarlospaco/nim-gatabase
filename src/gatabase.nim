@@ -80,24 +80,24 @@ when defined(postgres):
       dealloc sent
     rows
 
-  proc getAllRows*(self: Gatabase, query: SqlQuery, args: varargs[string, `$`]): Future[seq[Row]] {.async, inline.} =
-    let i = create(int, sizeOf int)
+  proc getAllRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[seq[Row]] {.async, inline.} =
+    let i = create(int, sizeOf int) # Error: 'args' is of type <varargs[string]> which cannot be captured as it would violate memory safety.
     i[] = getIdle(self)
-    result = internalRows(self.pool[i[]][0], query, @args)
+    result = internalRows(self.pool[i[]][0], query, args)
     self.pool[i[]][1] = false
     dealloc i
 
-  proc execAffectedRows*(self: Gatabase, query: SqlQuery, args: varargs[string, `$`]): Future[int64] {.async, inline.} =
+  proc execAffectedRows*(self: Gatabase, query: SqlQuery, args: seq[string]): Future[int64] {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    result = int64(len(internalRows(self.pool[i[]][0], query, @args)))
+    result = int64(len(internalRows(self.pool[i[]][0], query, args)))
     self.pool[i[]][1] = false
     dealloc i
 
-  proc exec*(self: Gatabase, query: SqlQuery, args: varargs[string, `$`]) {.async, inline.} =
+  proc exec*(self: Gatabase, query: SqlQuery, args: seq[string]) {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    discard internalRows(self.pool[i[]][0], query, @args)
+    discard internalRows(self.pool[i[]][0], query, args)
     self.pool[i[]][1] = false
     dealloc i
 
@@ -362,7 +362,7 @@ template getRow*(args: varargs[string, `$`]; inner: untyped): auto =
   ##     limit 1
   getRow(db, cueri(inner), args)
 
-template getAllRows*(args: varargs[string, `$`]; inner: untyped): auto =
+template getAllRows*(args: varargs[string, `$`] or seq[string]; inner: untyped): auto =
   ## Mimics `getAllRows` but using Gatabase DSL.
   ## * `args` are passed as-is to `getAllRows()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
