@@ -2,16 +2,6 @@
 import unittest, asyncdispatch, db_common, ../src/gatabase  # Import LOCAL Gatabase
 
 
-const exampleTable = sql"""
-  create table if not exists person(
-    id      integer      primary key,
-    name    varchar(99)  not null unique,
-    active  bool         not null default true,
-    email   text         not null,
-    rank    float        not null default 0.0
-  ); """
-
-
 let db = newGatabase("localhost", "postgres", "postgres", "postgres")
 doAssert db is Gatabase
 let data = wait_for getAllRows(db, query = sql"SELECT version();", @[])
@@ -35,6 +25,6 @@ exec args:
   select "version()"
   `--`   "You can await() them too, this is just an example."
 
-echo "Gatabase Connection Pool: " $len(db)
+
 echo $db
 db.close()
