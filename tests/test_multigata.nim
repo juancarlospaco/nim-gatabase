@@ -32,7 +32,7 @@ let dataset0: Future[seq[Row]] = @[].getAllRows:
 let dataset1: Future[int64] = @[].execAffectedRows:
   select "version()"
 
-let dataset2: Future[void] = exec @[]:
+exec @[]:
   select "version()"
 
 
