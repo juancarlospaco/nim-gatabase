@@ -20,40 +20,40 @@ jobs:
       with:
         nim-version: '1.2.4'
 
-    # - name: Nimble Check package validity
-    #   run: |
-    #     export PATH=$HOME/.nimble/bin:$PATH
-    #     nimble check
+    - name: Nimble Check package validity
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble check
 
-    # - name: Install project
-    #   run: |
-    #     export PATH=$HOME/.nimble/bin:$PATH
-    #     nimble install
+    - name: Install project
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble install
 
-    # - name: Unittest C
-    #   run: |
-    #     export PATH=$HOME/.nimble/bin:$PATH
-    #     nim c --panics:on --gc:arc tests/test.nim
+    - name: Unittest C
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim c --panics:on --gc:arc tests/test.nim
 
-    # - name: Unittest CPP
-    #   run: |
-    #     export PATH=$HOME/.nimble/bin:$PATH
-    #     nim cpp --panics:on --gc:arc tests/test.nim
+    - name: Unittest CPP
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim cpp --panics:on --gc:arc tests/test.nim
 
-    # - name: Unittest C Release
-    #   run: |
-    #     export PATH=$HOME/.nimble/bin:$PATH
-    #     nim c -d:release --panics:on --gc:arc tests/test.nim
+    - name: Unittest C Release
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim c -d:release --panics:on --gc:arc tests/test.nim
 
-    # - name: Unittest CPP Release
-    #   run: |
-    #     export PATH=$HOME/.nimble/bin:$PATH
-    #     nim cpp -d:release --panics:on --gc:arc tests/test.nim
+    - name: Unittest CPP Release
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim cpp -d:release --panics:on --gc:arc tests/test.nim
 
-    # - name: Unittest JavaScript
-    #   run: |
-    #     export PATH=$HOME/.nimble/bin:$PATH
-    #     nim js -r tests/test_js.nim
+    - name: Unittest JavaScript
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim js -r tests/test_js.nim
 
     - name: Project X
       run: |
