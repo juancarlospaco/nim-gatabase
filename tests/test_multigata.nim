@@ -23,7 +23,7 @@ doAssert exec(db, query = sql"SELECT version();", @[]) is Future[void]
 for _ in 0 .. len(db) - 1: doAssert db.getAllRows(sql"SELECT version();", @[]) is Future[seq[Row]]
 echo $db
 
-let dataset: Future[seq[Row]] = [].getAllRows:
+let dataset: Future[seq[Row]] = getAllRows @[]:
   select "version()"
 
 
