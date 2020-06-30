@@ -83,21 +83,21 @@ when defined(postgres):
   proc getAllRows*(self: Gatabase, query: SqlQuery, args: varargs[string, `$`]): Future[seq[Row]] {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    result = internalRows(self.pool[i[]][0], query, args)
+    result = internalRows(self.pool[i[]][0], query, @args)
     self.pool[i[]][1] = false
     dealloc i
 
   proc execAffectedRows*(self: Gatabase, query: SqlQuery, args: varargs[string, `$`]): Future[int64] {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    result = int64(len(internalRows(self.pool[i[]][0], query, args)))
+    result = int64(len(internalRows(self.pool[i[]][0], query, @args)))
     self.pool[i[]][1] = false
     dealloc i
 
   proc exec*(self: Gatabase, query: SqlQuery, args: varargs[string, `$`]) {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
-    discard internalRows(self.pool[i[]][0], query, args)
+    discard internalRows(self.pool[i[]][0], query, @args)
     self.pool[i[]][1] = false
     dealloc i
 
