@@ -11,15 +11,15 @@ const exampleTable = sql"""
     rank    float        not null default 0.0
   ); """
 
-let multigata = newGatabase("localhost", "postgres", "postgres", "postgres")
-doAssert multigata is Gatabase
-doAssert len(multigata) == 100
-let data = wait_for getAllRows(multigata, query = sql"SELECT version();", @[])
+let db = newGatabase("localhost", "postgres", "postgres", "postgres")
+doAssert db is Gatabase
+doAssert len(db) == 100
+let data = wait_for getAllRows(db, query = sql"SELECT version();", @[])
 doAssert data is seq[Row]
 doAssert len(data) > 0 and len(data[0]) > 0
 echo data[0]
-doAssert execAffectedRows(multigata, query = sql"SELECT version();", @[]) is Future[int64]
-doAssert exec(multigata, query = sql"SELECT version();", @[]) is Future[void]
-for _ in 0 .. len(multigata) - 1: doAssert multigata.getAllRows(sql"SELECT version();", @[]) is Future[seq[Row]]
-echo $multigata
-multigata.close()
+doAssert execAffectedRows(db, query = sql"SELECT version();", @[]) is Future[int64]
+doAssert exec(db, query = sql"SELECT version();", @[]) is Future[void]
+for _ in 0 .. len(db) - 1: doAssert db.getAllRows(sql"SELECT version();", @[]) is Future[seq[Row]]
+echo $db
+db.close()
