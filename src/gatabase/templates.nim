@@ -3,9 +3,17 @@ const n = when defined(release): " " else: "\n"
 
 
 func parseBool(s: string): bool {.inline.} =
-  case s # Optimized stricter version, no lowercase,
-  of "true": result = true # only "true" or "false",
-  of "false": result = false # not "y" nor "n", etc.
+  case s
+  of "y", "Y", "1",  "ON", "On", "oN", "on",
+     "yes", "YES", "YEs", "YeS", "Yes", "yES", "yEs", "yeS",
+     "TRUE", "TRUe", "TRuE", "TRue", "TrUE", "TrUe", "TruE", "True", "tRUE",
+     "tRUe", "tRuE", "tRue", "trUE", "trUe", "truE", "true": result = true
+  of "n", "N", "0", "NO", "No", "nO", "no",
+     "OFF", "OFf", "OfF", "Off", "oFF", "oFf", "ofF", "off",
+     "FALSE", "FALSe", "FALsE", "FALse", "FAlSE", "FAlSe", "FAlsE", "FAlse",
+     "FaLSE", "FaLSe", "FaLsE", "FaLse", "FalSE", "FalSe", "FalsE", "False",
+     "fALSE", "fALSe", "fALsE", "fALse", "fAlSE", "fAlSe", "fAlsE", "fAlse",
+     "faLSE", "faLSe", "faLsE", "faLse", "falSE", "falSe", "falsE", "false": result = false
   else: doAssert false, "cannot interpret as a bool"
 
 
