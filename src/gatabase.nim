@@ -23,7 +23,7 @@ when defined(postgres):
   type Gatabase* = ref object  ## Gatabase
     pool*: array[gataPool, tuple[db: DbConn, ok: bool]]
 
-  func newGatabase*(connection, user, password, database: sink string, unroll: static[Positive] = 1): Gatabase {.inline.} =
+  proc newGatabase*(connection, user, password, database: sink string, unroll: static[Positive] = 1): Gatabase {.inline.} =
     assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
     result = Gatabase()
     for i in forU(0, static(gataPool - 1), unroll): # Cant use db_postgres.* here
