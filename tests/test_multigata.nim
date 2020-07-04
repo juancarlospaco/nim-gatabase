@@ -2,7 +2,7 @@
 import unittest, asyncdispatch, db_common, ../src/gatabase  # Import LOCAL Gatabase
 
 
-let db = newGatabase("localhost", "postgres", "postgres", "postgres")
+let db = newGatabase("localhost", "postgres", "postgres", "postgres", unroll = 9)
 doAssert db is Gatabase
 let data = wait_for getAllRows(db, query = sql"SELECT version();", @[])
 doAssert data is seq[Row]
@@ -27,4 +27,4 @@ exec args:
 
 
 echo $db
-db.close()
+db.close(unroll = 9)
