@@ -17,7 +17,7 @@ func parseBool(s: string): bool {.inline.} =
   else: doAssert false, "cannot interpret as a bool"
 
 template forU(a: SomeInteger; b: SomeInteger; u: Positive): untyped =
-  when defined(gcc): system.`||`(a, b, "\n\n#pragma GCC unroll " & $u) elif defined(clang): system.`||`(a, b, "\n\n#pragma unroll " & $u) else: system.`..`(a, b)
+  when defined(gcc) and not defined(js): system.`||`(a, b, "\n\n#pragma GCC unroll " & $u) elif defined(clang) and not defined(js): system.`||`(a, b, "\n\n#pragma unroll " & $u) else: system.`..`(a, b)
 
 template isQuestionChar(value: NimNode): bool =
   unlikely(value.kind == nnkCharLit and value.intVal == 63)
