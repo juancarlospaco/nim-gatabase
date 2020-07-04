@@ -24,7 +24,7 @@ when defined(postgres):
     pool*: array[gataPool, tuple[db: DbConn, ok: bool]]
 
   proc newGatabase*(connection, user, password, database: sink string, unroll: static[Positive] = 1): Gatabase {.inline.} =
-    assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0
+    assert connection.len > 0 and user.len > 0 and password.len > 0 and database.len > 0 and gataPool > unroll
     result = Gatabase()
     for i in forU(0, static(gataPool - 1), unroll): # Cant use db_postgres.* here
       result.pool[i][0] = open(connection, user, password, database)
@@ -35,6 +35,7 @@ when defined(postgres):
   template `$`*(self: Gatabase): string = $(@(self.pool))
 
   template close*(self: Gatabase, unroll: static[Positive] = 1) =
+    assert gataPool > unroll
     for i in forU(0, static(gataPool - 1), unroll):
       self.pool[i][1] = false
       close(self.pool[i][0]) # is this required with ARC?.
