@@ -446,29 +446,29 @@ template execAffectedRows*(args: varargs[string, `$`] or seq[string]; inner: unt
   ##     `from` "users"
   execAffectedRows(db, cueri(inner), args)
 
-template getValue*(args: varargs[string, `$`] or seq[string]; parseProc: proc; inner: untyped): auto =
+template getValueParsed*(args: varargs[string, `$`] or seq[string]; parseProc: proc; inner: untyped): auto =
   ## Alias for `parseProc(getValue(db, sql("..."), args))`. **Returns actual value instead of string**.
   ## * `parseProc` is whatever proc parses the value of `getValue()`, any proc should work.
   ## * `args` are passed as-is to `getValue()`, if no `args` use `[]`, example `[42, "OwO", true]`.
   ##
   ## .. code-block::nim
-  ##   let age: int = getValue([], parseInt):
+  ##   let age: int = getValueParsed([], parseInt):
   ##     select "age"
   ##     `from` "users"
   ##     limit 1
   ##
   ## .. code-block::nim
-  ##   let ranking: float = getValue([], parseFloat):
+  ##   let ranking: float = getValueParsed([], parseFloat):
   ##     select "ranking"
   ##     `from` "users"
   ##     where "id = 42"
   ##
   ## .. code-block::nim
-  ##   let preferredColor: string = [].getValue(parseHexStr):
+  ##   let preferredColor: string = [].getValueParsed(parseHexStr):
   ##     select "color"
   ##     `from` "users"
   ##     limit 1
-  parseProc(getValue(args, inner))
+  parseProc(getValue(db, cueri(inner), args))
 
 template sqls*(inner: untyped): auto =
   ## Build a `SqlQuery` using Gatabase ORM DSL, returns a vanilla `SqlQuery`.
