@@ -33,22 +33,22 @@ jobs:
     - name: Unittest C
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim c --panics:on --gc:arc --experimental:strictFuncs tests/test.nim
+        nim c --panics:on --gc:orc --experimental:strictFuncs tests/test.nim
 
     - name: Unittest CPP
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim cpp --panics:on --gc:arc --experimental:strictFuncs tests/test.nim
+        nim cpp --panics:on --gc:orc --experimental:strictFuncs tests/test.nim
 
     - name: Unittest C Release
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim c -d:release --panics:on --gc:arc --experimental:strictFuncs tests/test.nim
+        nim c -d:release --panics:on --gc:orc --experimental:strictFuncs tests/test.nim
 
     - name: Unittest CPP Release
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim cpp -d:release --panics:on --gc:arc --experimental:strictFuncs tests/test.nim
+        nim cpp -d:release --panics:on --gc:orc --experimental:strictFuncs tests/test.nim
 
     - name: Unittest JavaScript
       run: |
@@ -58,4 +58,4 @@ jobs:
     - name: Project X
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim c -r -d:postgres --gc:arc --panics:on tests/test_multigata.nim
+        nim c -r -d:postgres --gc:orc --panics:on tests/test_multigata.nim
