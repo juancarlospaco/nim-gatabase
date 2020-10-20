@@ -53,9 +53,9 @@ jobs:
     - name: Unittest JavaScript
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim js -r tests/test_js.nim
+        nim js -r --panics:on --experimental:strictFuncs tests/test_js.nim
 
     - name: Project X
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim c -r -d:postgres tests/test_multigata.nim
+        nim c -r -d:postgres --gc:arc --panics:on --experimental:strictFuncs tests/test_multigata.nim
