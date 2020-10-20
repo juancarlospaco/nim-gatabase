@@ -97,7 +97,7 @@ when defined(postgres):
     self.pool[i[]][1] = false
     dealloc i
 
-  proc exec*(self: Gatabase, query: SqlQuery, args: seq[string]) {.async, inline, discardable.} =
+  proc exec*(self: Gatabase, query: SqlQuery, args: seq[string]) {.async, inline.} =
     let i = create(int, sizeOf int)
     i[] = getIdle(self)
     discard internalRows(self.pool[i[]][0], query, args)
