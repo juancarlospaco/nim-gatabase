@@ -18,7 +18,7 @@ jobs:
         postgresql password: 'postgres'
     - uses: jiro4989/setup-nim-action@v1.0.2
       with:
-        nim-version: '1.2.4'
+        nim-version: '1.4.0'
 
     - name: Nimble Check package validity
       run: |
