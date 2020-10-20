@@ -16,6 +16,8 @@
 
 ![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Connection-Pooling Compile-Time ORM for Nim")
 
+- Works with ARC, ORC, `--panics:on`, `--experimental:strictFuncs`.
+
 
 # Use
 
