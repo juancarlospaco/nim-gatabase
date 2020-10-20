@@ -21,9 +21,9 @@ let dataset0: Future[seq[Row]] = args.getAllRows:
 let dataset1: Future[int64] = args.execAffectedRows:
   select "version()"
 
-exec args:
-  select "version()"
-  `--`   "You can await() them too, this is just an example."
+# discard exec args:
+#   select "version()"
+#   `--`   "You can await() them too, this is just an example."
 
 
 echo $db
