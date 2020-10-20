@@ -53,7 +53,7 @@ jobs:
     - name: Unittest JavaScript
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim js -r --panics:on --experimental:strictFuncs tests/test_js.nim
+        nim js -r --experimental:strictFuncs tests/test_js.nim
 
     - name: Project X
       run: |
