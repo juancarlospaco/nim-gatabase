@@ -61,50 +61,42 @@ template isArrayStr(value: NimNode) =
 
 template sqlComment(comment: string): string =
   doAssert comment.len > 0, "SQL Comment must not be empty string"
-  when defined(release): n
-  else: "/* " & $comment & static(" */" & n)
+  when defined(release): n else: "/* " & $comment & static(" */" & n)
 
 
 template offsets(value: NimNode): string =
   isQuestionOrNatural(value)
-  if isQuestionChar(value): static("OFFSET ?" & n)
-  else: "OFFSET " & $value.intVal.Natural & n
+  if isQuestionChar(value): static("OFFSET ?" & n) else: "OFFSET " & $value.intVal.Natural & n
 
 
 template limits(value: NimNode): string =
   isQuestionOrPositive(value)
-  if isQuestionChar(value): static("LIMIT ?" & n)
-  else: "LIMIT " & $value.intVal.Positive & n
+  if isQuestionChar(value): static("LIMIT ?" & n) else: "LIMIT " & $value.intVal.Positive & n
 
 
 template froms(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("FROM ?" & n)
-  else: "FROM " & $value.strVal & n
+  if isQuestionChar(value): static("FROM ?" & n) else: "FROM " & $value.strVal & n
 
 
 template wheres(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("WHERE ?" & n)
-  else: "WHERE " & $value.strVal & n
+  if isQuestionChar(value): static("WHERE ?" & n) else: "WHERE " & $value.strVal & n
 
 
 template whereNots(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("WHERE NOT ?" & n)
-  else: "WHERE NOT " & $value.strVal & n
+  if isQuestionChar(value): static("WHERE NOT ?" & n) else: "WHERE NOT " & $value.strVal & n
 
 
 template whereExists(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("WHERE EXISTS ?" & n)
-  else: "WHERE EXISTS " & $value.strVal & n
+  if isQuestionChar(value): static("WHERE EXISTS ?" & n) else: "WHERE EXISTS " & $value.strVal & n
 
 
 template whereNotExists(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("WHERE NOT EXISTS ?" & n)
-  else: "WHERE NOT EXISTS " & $value.strVal & n
+  if isQuestionChar(value): static("WHERE NOT EXISTS ?" & n) else: "WHERE NOT EXISTS " & $value.strVal & n
 
 
 template orderbys(value: NimNode): string =
@@ -116,8 +108,7 @@ template selects(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT ?" & n)
   elif value.kind == nnkCharLit:
-    when not defined(release) or not defined(danger):
-      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    when not defined(release): {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
     "SELECT *" & n
   else: "SELECT " & $value.strVal & n
 
@@ -126,24 +117,21 @@ template selectDistincts(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT DISTINCT ?" & n)
   elif value.kind == nnkCharLit:
-    when not defined(release) or not defined(danger):
-      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    when not defined(release): {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
     "SELECT DISTINCT *" & n
   else: "SELECT DISTINCT " & $value.strVal & n
 
 
 template selectTops(value: NimNode): string =
   isQuestionOrPositive(value)
-  if isQuestionChar(value): static("SELECT TOP ? *" & n)
-  else: "SELECT TOP " & $value.intVal & " *" & n
+  if isQuestionChar(value): static("SELECT TOP ? *" & n) else: "SELECT TOP " & $value.intVal & " *" & n
 
 
 template selectMins(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT MIN(?)" & n)
   elif value.kind == nnkCharLit:
-    when not defined(release) or not defined(danger):
-      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    when not defined(release): {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
     "SELECT MIN(*)" & n
   else: "SELECT MIN(" & $value.strVal & ")" & n
 
@@ -152,8 +140,7 @@ template selectMaxs(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT MAX(?)" & n)
   elif value.kind == nnkCharLit:
-    when not defined(release) or not defined(danger):
-      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    when not defined(release): {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
     "SELECT MAX(*)" & n
   else: "SELECT MAX(" & $value.strVal & ")" & n
 
@@ -162,8 +149,7 @@ template selectCounts(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT COUNT(?)" & n)
   elif value.kind == nnkCharLit:
-    when not defined(release) or not defined(danger):
-      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    when not defined(release): {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
     "SELECT COUNT(*)" & n
   else: "SELECT COUNT(" & $value.strVal & ")" & n
 
@@ -172,8 +158,7 @@ template selectAvgs(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT AVG(?)" & n)
   elif value.kind == nnkCharLit:
-    when not defined(release) or not defined(danger):
-      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    when not defined(release): {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
     "SELECT AVG(*)" & n
   else: "SELECT AVG(" & $value.strVal & ")" & n
 
@@ -182,8 +167,7 @@ template selectSums(value: NimNode): string =
   isCharOrString(value)
   if isQuestionChar(value): static("SELECT SUM(?)" & n)
   elif value.kind == nnkCharLit:
-    when not defined(release) or not defined(danger):
-      {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
+    when not defined(release): {.warning: "SELECT * is bad practice https://stackoverflow.com/a/3639964".}
     "SELECT SUM(*)" & n
   else: "SELECT SUM(" & $value.strVal & ")" & n
 
@@ -210,80 +194,67 @@ template selectRound6(value: NimNode): string =
 
 template deletes(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("DELETE FROM ?" & n)
-  else: "DELETE FROM " & $value.strVal & n
+  if isQuestionChar(value): static("DELETE FROM ?" & n) else: "DELETE FROM " & $value.strVal & n
 
 
 template likes(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("LIKE ?" & n)
-  else: "LIKE " & $value.strVal & n
+  if isQuestionChar(value): static("LIKE ?" & n) else: "LIKE " & $value.strVal & n
 
 
 template notlikes(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("NOT LIKE ?" & n)
-  else: "NOT LIKE " & $value.strVal & n
+  if isQuestionChar(value): static("NOT LIKE ?" & n) else: "NOT LIKE " & $value.strVal & n
 
 
 template betweens(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("BETWEEN ?" & n)
-  else: "BETWEEN " & $value.strVal & n
+  if isQuestionChar(value): static("BETWEEN ?" & n) else: "BETWEEN " & $value.strVal & n
 
 
 template notbetweens(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("NOT BETWEEN ?" & n)
-  else: "NOT BETWEEN " & $value.strVal & n
+  if isQuestionChar(value): static("NOT BETWEEN ?" & n) else: "NOT BETWEEN " & $value.strVal & n
 
 
 template innerjoins(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("INNER JOIN ?" & n)
-  else: "INNER JOIN " & $value.strVal & n
+  if isQuestionChar(value): static("INNER JOIN ?" & n) else: "INNER JOIN " & $value.strVal & n
 
 
 template leftjoins(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("LEFT JOIN ?" & n)
-  else: "LEFT JOIN " & $value.strVal & n
+  if isQuestionChar(value): static("LEFT JOIN ?" & n) else: "LEFT JOIN " & $value.strVal & n
 
 
 template rightjoins(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("RIGHT JOIN ?" & n)
-  else: "RIGHT JOIN " & $value.strVal & n
+  if isQuestionChar(value): static("RIGHT JOIN ?" & n) else: "RIGHT JOIN " & $value.strVal & n
 
 
 template fulljoins(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("FULL OUTER JOIN ?" & n)
-  else: "FULL OUTER JOIN " & $value.strVal & n
+  if isQuestionChar(value): static("FULL OUTER JOIN ?" & n) else: "FULL OUTER JOIN " & $value.strVal & n
 
 
 template groupbys(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("GROUP BY ?" & n)
-  else: "GROUP BY " & $value.strVal & n
+  if isQuestionChar(value): static("GROUP BY ?" & n) else: "GROUP BY " & $value.strVal & n
 
 
 template havings(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("HAVING ?" & n)
-  else: "HAVING " & $value.strVal & n
+  if isQuestionChar(value): static("HAVING ?" & n) else: "HAVING " & $value.strVal & n
 
 
 template intos(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("INTO ?" & n)
-  else: "INTO " & $value.strVal & n
+  if isQuestionChar(value): static("INTO ?" & n) else: "INTO " & $value.strVal & n
 
 
 template inserts(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("INSERT INTO ?" & n)
-  else: "INSERT INTO " & $value.strVal & n
+  if isQuestionChar(value): static("INSERT INTO ?" & n) else: "INSERT INTO " & $value.strVal & n
 
 
 template isnulls(value: NimNode): string =
@@ -308,8 +279,7 @@ template excepts(value: NimNode): string =
 
 template updates(value: NimNode): string =
   isQuestionOrString(value)
-  if isQuestionChar(value): static("UPDATE ?" & n)
-  else: "UPDATE " & $value.strVal & n
+  if isQuestionChar(value): static("UPDATE ?" & n) else: "UPDATE " & $value.strVal & n
 
 
 template resetAllGuards() =
