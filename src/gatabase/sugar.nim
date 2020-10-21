@@ -11,7 +11,6 @@
 ## .. code-block::nim
 ##   import db_postgres
 ##   include gatabase/sugar
-{.experimental: "dotOperators".}
 
 const
   dbInt* = "INTEGER NOT NULL DEFAULT 0"      ## Alias for Integer for SQLite and Postgres.
@@ -20,6 +19,8 @@ const
   dbBool* = "BOOLEAN NOT NULL DEFAULT false" ## Alias for Boolean for SQLite and Postgres.
   dbTimestamp* = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" ## Alias for Timestamp for SQLite and Postgres.
 
+
+{.push experimental: "dotOperators".}
 template `.`*(indx: int; data: Row): int = parseInt(data[indx])               ## `9.row` alias for `parseInt(row[9])`.
 template `.`*(indx: char; data: Row): char = char(data[parseInt(indx)])       ## `'9'.row` alias for `char(row[9])`.
 template `.`*(indx: uint; data: Row): uint = uint(parseInt(data[indx]))       ## `9'u.row` alias for `uint(parseInt(row[9]))`.
@@ -40,6 +41,7 @@ template `.`*(indx: Positive; data: Row): Positive = Positive(parseInt(data[indx
 template `.`*(indx: BiggestInt; data: Row): BiggestInt = BiggestInt(parseInt(data[indx]))    ## `BiggestInt(9).row` alias for `BiggestInt(parseInt(row[9]))`.
 template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(data[indx])) ## `BiggestUInt(9).row` alias for `BiggestUInt(parseInt(row[9]))`.
 template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[parseInt(indx)])) ## `9.0'f32.row` alias for `float32(parseFloat(row[9]))`.
+{.pop.}
 
 
 template withSqlite*(path: static[string]; initTableSql: static[string]; closeOnQuit: static[bool]; closeOnCtrlC: static[bool]; code: untyped): untyped =
@@ -63,7 +65,7 @@ template withSqlite*(path: static[string]; initTableSql: static[string]; closeOn
   ##   withSqlite(":memory:", exampleTable, false):  ## This is just an example.
   ##     db.exec(sql"insert into person(name, active, rank) values('pepe', true, 42.0)")
   assert path.len > 0, "path must not be empty string"
-  let db {.inject, global.} = db_sqlite.open(path, "", "", "")
+  var db {.inject, global.} = db_sqlite.open(path, "", "", "")
   if initTableSql.len == 0 or db.tryExec(sql(initTableSql)):
     try:
       when closeOnQuit:  system.addQuitProc((proc () {.noconv.} = db_sqlite.close(db)))
@@ -88,7 +90,7 @@ template withPostgres*(host, user, password, dbname: string; initTableSql: stati
   assert user.len > 0, "user must not be empty string"
   assert password.len > 0, "password must not be empty string"
   assert dbname.len > 0, "dbname must not be empty string"
-  let db {.inject, global.} = db_postgres.open(host, user, password, dbname)
+  var db {.inject, global.} = db_postgres.open(host, user, password, dbname)
   if initTableSql.len == 0 or db.tryExec(sql(initTableSql)):
     try:
       when closeOnQuit:  system.addQuitProc((proc () {.noconv.} = db_postgres.close(db)))
