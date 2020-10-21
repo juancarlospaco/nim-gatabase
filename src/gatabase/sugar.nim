@@ -34,13 +34,13 @@ template `.`*(indx: uint8; data: Row): uint8 = uint8(parseInt(data[indx]))    ##
 template `.`*(indx: uint16; data: Row): uint16 = uint16(parseInt(data[indx])) ## `9'i64.row` alias for `uint16(parseInt(row[9]))`.
 template `.`*(indx: uint32; data: Row): uint32 = uint32(parseInt(data[indx])) ## `9'i64.row` alias for `uint32(parseInt(row[9]))`.
 template `.`*(indx: uint64; data: Row): uint64 = uint64(parseInt(data[indx])) ## `9'i64.row` alias for `uint64(parseInt(row[9]))`.
-template `.`*(indx: float; data: Row): float = parseFloat(data[parseInt(indx)])              ## `9.0.row` alias for `parseFloat(row[9])`.
+template `.`*(indx: float; data: Row): float = parseFloat(data[int(indx)])              ## `9.0.row` alias for `parseFloat(row[9])`.
 template `.`*(indx: Natural; data: Row): Natural = Natural(parseInt(data[indx]))             ## `Natural(9).row` alias for `Natural(parseInt(row[9]))`.
 template `.`*(indx: cstring; data: Row): cstring = cstring(data[parseInt($indx)])            ## `cstring("9").row` alias for `cstring(row[9])`.
 template `.`*(indx: Positive; data: Row): Positive = Positive(parseInt(data[indx]))          ## `Positive(9).row` alias for `Positive(parseInt(row[9]))`.
 template `.`*(indx: BiggestInt; data: Row): BiggestInt = BiggestInt(parseInt(data[indx]))    ## `BiggestInt(9).row` alias for `BiggestInt(parseInt(row[9]))`.
 template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(data[indx])) ## `BiggestUInt(9).row` alias for `BiggestUInt(parseInt(row[9]))`.
-template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[parseInt(indx)])) ## `9.0'f32.row` alias for `float32(parseFloat(row[9]))`.
+template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[int(indx)])) ## `9.0'f32.row` alias for `float32(parseFloat(row[9]))`.
 {.pop.}
 
 
