@@ -142,7 +142,6 @@ template createTable*(name: static string; code: untyped): SqlQuery =
   ##   );
   ##
   assert name.len > 0, "Table name must not be empty string"
-  assert code.len > 0, "Table fields must not be empty array"
   const nl = when defined(release): " " else: "\n"
 
   template `:=`(dbfield: static string; value: static any): string =
