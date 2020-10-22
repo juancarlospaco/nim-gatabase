@@ -269,4 +269,14 @@ suite "Gatabase ORM Tests":
     doAssert db.dropTable("person")
 
 
+  test "createTable":
+    let myTable = createTable "kitten": [
+      "age"  := 1,
+      "sex"  := 'f',
+      "name" := "fluffy",
+      "rank" := 3.14,
+    ]
+    echo myTable.string
+
+
   close db # TearDown.
