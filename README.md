@@ -57,12 +57,12 @@
 - ✅ `IS NULL`, `IS NOT NULL`.
 - ✅ `UPDATE`, `SET`.
 - ✅ `VALUES`.
+- ✅ `DROP TABLE IF EXISTS`.
 
 Not supported:
 - Deep complex nested SubQueries are not supported, because KISS.
 - `TRUNCATE`, because is the same as `DELETE FROM` without a `WHERE`.
 - `WHERE IN`, `WHERE NOT IN`, because is the same as `JOIN`, but `JOIN` is a lot faster.
-- `DROP TABLE` is left to the user.
 
 
 ## API Equivalents
@@ -353,7 +353,7 @@ ORDER BY ASC
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-orderby Asc
+orderby "asc"
 ```
 
 ---
@@ -363,7 +363,7 @@ ORDER BY DESC
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
 ```nim
-orderby Desc
+orderby "desc"
 ```
 
 

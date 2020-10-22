@@ -100,3 +100,9 @@ template withPostgres*(host, user, password, dbname: string; initTableSql: stati
       db_postgres.close(db)
   else:
     when not defined(release): echo "Error executing initTableSql:\n" & initTableSql
+
+
+template dropTable*(name: string): bool =
+  ## Drop a Table if exists, executes `DROP TABLE IF EXISTS ?` and `name` is passed as argument.
+  assert name.len > 0, "Table name must not be empty string"
+  tryExec(db, sql("DROP TABLE IF EXISTS ?" & (when defined(postgres): " CASCADE" else: "")), name)
