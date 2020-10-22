@@ -58,6 +58,7 @@
 - ✅ `UPDATE`, `SET`.
 - ✅ `VALUES`.
 - ✅ `DROP TABLE IF EXISTS`.
+- ✅ `CREATE TABLE IF NOT EXISTS`.
 
 Not supported:
 - Deep complex nested SubQueries are not supported, because KISS.
