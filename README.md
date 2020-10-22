@@ -579,6 +579,31 @@ dropTable "tablename"
 
 ---
 
+### CREATE TABLE
+
+```sql
+CREATE TABLE IF NOT EXISTS kitten(
+  id    INTEGER     PRIMARY KEY,
+  age   INTEGER     NOT NULL  DEFAULT 1,
+  sex   VARCHAR(1)  NOT NULL  DEFAULT 'f',
+  name  TEXT        NOT NULL  DEFAULT 'fluffy',
+  rank  REAL        NOT NULL  DEFAULT 3.14,
+);
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+let myTable = createTable "kitten": [
+  "age"  := 1,
+  "sex"  := 'f',
+  "name" := "fluffy",
+  "rank" := 3.14,
+]
+```
+
+- `createTable` is part of [Gatabase Sugar (Optional).](https://juancarlospaco.github.io/nim-gatabase/sugar.html)
+
+---
+
 ### Wildcards
 
 - Nim `'*'` ➡️ SQL `*`.

@@ -266,7 +266,7 @@ suite "Gatabase ORM Tests":
 
 
   test "dropTable":
-    doAssert dropTable("person")
+    doAssert db.dropTable("person")
 
 
   close db # TearDown.
