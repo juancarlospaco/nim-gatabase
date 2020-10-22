@@ -1,5 +1,7 @@
 ## Gatabase Unittests.
-import unittest, db_sqlite, ../src/gatabase  # Import LOCAL Gatabase
+import unittest, db_sqlite
+import ../src/gatabase  # Import LOCAL Gatabase
+include ../src/gatabase/sugar
 
 
 const exampleTable = sql"""
@@ -261,5 +263,10 @@ suite "Gatabase ORM Tests":
   test "var   DELETE FROM WHERE":
     exec []:
       delete "person"
+
+
+  test "dropTable":
+    doAssert dropTable("person")
+
 
   close db # TearDown.

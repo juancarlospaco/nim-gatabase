@@ -563,6 +563,21 @@ IS NOT NULL
 isnull false
 ```
 
+---
+
+### DROP TABLE
+
+```sql
+DROP TABLE IF EXISTS tablename
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+dropTable "tablename"
+```
+
+- `dropTable` is part of [Gatabase Sugar (Optional).](https://juancarlospaco.github.io/nim-gatabase/sugar.html)
+
+---
 
 ### Wildcards
 
