@@ -601,6 +601,48 @@ let myTable = createTable "kitten": [
 ]
 ```
 
+No default values:
+
+```sql
+CREATE TABLE IF NOT EXISTS kitten(
+  id    INTEGER     PRIMARY KEY,
+  age   INTEGER,
+  sex   VARCHAR(1),
+  name  TEXT,
+  rank  REAL,
+);
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+let myTable = createTable "kitten": [
+  "age"  := int,
+  "sex"  := char,
+  "name" := string,
+  "rank" := float,
+]
+```
+
+More examples:
+
+```sql
+CREATE TABLE IF NOT EXISTS kitten(
+  id    INTEGER     PRIMARY KEY,
+  age   INTEGER     NOT NULL  DEFAULT 1,
+  sex   VARCHAR(1),
+  name  TEXT        UNIQUE,
+);
+```
+ ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
+```nim
+let myTable = createTable "kitten": [
+  "age"  := 1,
+  "sex"  := char,
+  "name".cstring := string,
+]
+```
+
+And more examples: https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1
+
 - `createTable` is part of [Gatabase Sugar (Optional).](https://juancarlospaco.github.io/nim-gatabase/sugar.html)
 
 ---
