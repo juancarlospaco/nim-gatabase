@@ -1,8 +1,11 @@
 ## Gatabase Sugar
 ## ==============
 ##
-## Syntax Sugar for Gatabase using `{.experimental: "dotOperators".}` and `template`,
-## include or import *after* importing `db_sqlite` or `db_postgres` to use it on your code.
+## .. image:: https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/docs/sugar.jpg
+##
+## Syntax Sugar for Gatabase using `template`.
+##
+## `include` or `import` *after* importing `db_sqlite` or `db_postgres` to use it on your code.
 ##
 ## .. code-block::nim
 ##   import db_sqlite
@@ -12,42 +15,169 @@
 ##   import db_postgres
 ##   include gatabase/sugar
 ##
-## This templates are very efficient, no stdlib imports, no object heap alloc,
+## All Gatabase sugar is always optional.
+## The templates are very efficient, no stdlib imports, no object heap alloc,
 ## no string formatting, just primitives, no more than 1 variable used.
 
 import db_common, std/exitprocs
 when defined(postgres): from db_postgres import Row else: from db_sqlite import Row
 
-const
-  dbInt* = "INTEGER NOT NULL DEFAULT 0"      ## Alias for Integer for SQLite and Postgres.
-  dbString* = """TEXT NOT NULL DEFAULT ''""" ## Alias for String for SQLite and Postgres.
-  dbFloat* = "REAL NOT NULL DEFAULT 0.0"     ## Alias for Float for SQLite and Postgres.
-  dbBool* = "BOOLEAN NOT NULL DEFAULT false" ## Alias for Boolean for SQLite and Postgres.
-  dbTimestamp* = "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" ## Alias for Timestamp for SQLite and Postgres.
-
-
 {.push experimental: "dotOperators".}
-template `.`*(indx: int; data: Row): int = parseInt(data[indx])               ## `9.row` alias for `parseInt(row[9])`.
-template `.`*(indx: char; data: Row): char = char(data[parseInt($indx)][0])   ## `'9'.row` alias for `char(row[parseInt($indx)][0])`.
-template `.`*(indx: uint; data: Row): uint = uint(parseInt(data[indx]))       ## `9'u.row` alias for `uint(parseInt(row[9]))`.
-template `.`*(indx: cint; data: Row): cint = cint(parseInt(data[indx]))       ## `cint(9).row` alias for `cint(parseInt(row[9]))`.
-template `.`*(indx: int8; data: Row): int8 = int8(parseInt(data[indx]))       ## `9'i8.row` alias for `int8(parseInt(row[9]))`.
-template `.`*(indx: byte; data: Row): byte = byte(parseInt(data[indx]))       ## `byte(9).row` alias for `byte(parseInt(row[9]))`.
-template `.`*(indx: int16; data: Row): int16 = int16(parseInt(data[indx]))    ## `9'i16.row` alias for `int16(parseInt(row[9]))`.
-template `.`*(indx: int32; data: Row): int32 = int32(parseInt(data[indx]))    ## `9'i32.row` alias for `int32(parseInt(row[9]))`.
-template `.`*(indx: int64; data: Row): int64 = int64(parseInt(data[indx]))    ## `9'i64.row` alias for `int64(parseInt(row[9]))`.
-template `.`*(indx: uint8; data: Row): uint8 = uint8(parseInt(data[indx]))    ## `9'i64.row` alias for `uint8(parseInt(row[9]))`.
-template `.`*(indx: uint16; data: Row): uint16 = uint16(parseInt(data[indx])) ## `9'i64.row` alias for `uint16(parseInt(row[9]))`.
-template `.`*(indx: uint32; data: Row): uint32 = uint32(parseInt(data[indx])) ## `9'i64.row` alias for `uint32(parseInt(row[9]))`.
-template `.`*(indx: uint64; data: Row): uint64 = uint64(parseInt(data[indx])) ## `9'i64.row` alias for `uint64(parseInt(row[9]))`.
-template `.`*(indx: float; data: Row): float = parseFloat(data[int(indx)])              ## `9.0.row` alias for `parseFloat(row[int(9)])`.
-template `.`*(indx: Natural; data: Row): Natural = Natural(parseInt(data[indx]))             ## `Natural(9).row` alias for `Natural(parseInt(row[9]))`.
-template `.`*(indx: cstring; data: Row): cstring = cstring(data[parseInt($indx)])            ## `cstring("9").row` alias for `cstring(row[9])`.
-template `.`*(indx: Positive; data: Row): Positive = Positive(parseInt(data[indx]))          ## `Positive(9).row` alias for `Positive(parseInt(row[9]))`.
-template `.`*(indx: BiggestInt; data: Row): BiggestInt = BiggestInt(parseInt(data[indx]))    ## `BiggestInt(9).row` alias for `BiggestInt(parseInt(row[9]))`.
-template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(data[indx])) ## `BiggestUInt(9).row` alias for `BiggestUInt(parseInt(row[9]))`.
-template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[int(indx)])) ## `9.0'f32.row` alias for `float32(parseFloat(row[int(9)]))`.
+template `.`*(indx: int; data: Row): int = parseInt(data[indx])
+  ## `9.row` convenience alias for `strutils.parseInt(row[9])` (`row` is `Row` type).
+template `.`*(indx: char; data: Row): char = char(data[parseInt($indx)][0])
+  ## `'9'.row` convenience alias for `char(row[strutils.parseInt($indx)][0])` (`row` is `Row` type).
+template `.`*(indx: uint; data: Row): uint = uint(parseInt(data[indx]))
+  ## `9'u.row` convenience alias for `uint(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: cint; data: Row): cint = cint(parseInt(data[indx]))
+  ## `cint(9).row` convenience alias for `cint(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int8; data: Row): int8 = int8(parseInt(data[indx]))
+  ## `9'i8.row` convenience alias for `int8(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: byte; data: Row): byte = byte(parseInt(data[indx]))
+  ## `byte(9).row` convenience alias for `byte(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int16; data: Row): int16 = int16(parseInt(data[indx]))
+  ## `9'i16.row` convenience alias for `int16(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int32; data: Row): int32 = int32(parseInt(data[indx]))
+  ## `9'i32.row` convenience alias for `int32(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int64; data: Row): int64 = int64(parseInt(data[indx]))
+  ## `9'i64.row` convenience alias for `int64(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint8; data: Row): uint8 = uint8(parseInt(data[indx]))
+  ## `9'u8.row` convenience alias for `uint8(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint16; data: Row): uint16 = uint16(parseInt(data[indx]))
+  ## `9'u16.row` convenience alias for `uint16(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint32; data: Row): uint32 = uint32(parseInt(data[indx]))
+  ## `9'u32.row` convenience alias for `uint32(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint64; data: Row): uint64 = uint64(parseInt(data[indx]))
+  ## `9'u64.row` convenience alias for `uint64(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: float; data: Row): float = parseFloat(data[int(indx)])
+  ## `9.0.row` convenience alias for `strutils.parseFloat(row[int(9)])` (`row` is `Row` type).
+template `.`*(indx: Natural; data: Row): Natural = Natural(parseInt(data[indx]))
+  ## `Natural(9).row` convenience alias for `Natural(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: cstring; data: Row): cstring = cstring(data[parseInt($indx)])
+  ## `cstring("9").row` convenience alias for `cstring(row[9])` (`row` is `Row` type).
+template `.`*(indx: Positive; data: Row): Positive = Positive(parseInt(data[indx]))
+  ## `Positive(9).row` convenience alias for `Positive(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: BiggestInt; data: Row): BiggestInt = BiggestInt(parseInt(data[indx]))
+  ## `BiggestInt(9).row` convenience alias for `BiggestInt(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(data[indx]))
+  ## `BiggestUInt(9).row` convenience alias for `BiggestUInt(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[int(indx)]))
+  ## `9.0'f32.row` convenience alias for `float32(strutils.parseFloat(row[int(9)]))` (`row` is `Row` type).
 {.pop.}
+
+
+template createTable*(name: static string; code: untyped): SqlQuery =
+  ## Create a new database table `name` with fields from `code`, returns 1 `SqlQuery`.
+  ## Works with Postgres and Sqlite. `SqlQuery` is pretty-printed when not built for release.
+  ##
+  ## .. code-block::nim
+  ##   import db_sqlite
+  ##   include gatabase/sugar
+  ##   let myTable = createTable "kitten": [
+  ##     "age"    := 1,
+  ##     "sex"    := 'f',
+  ##     "name"   := "unnamed",
+  ##     "rank"   := 3.14,
+  ##     "weight" := int,
+  ##     "color"  := char,
+  ##     "owner"  := string,
+  ##     "food"   := float,
+  ##   ]
+  ##
+  ## Generates the SQL Query:
+  ##
+  ## .. code-block::
+  ##   CREATE TABLE IF NOT EXISTS kitten(
+  ##     id      INTEGER      PRIMARY KEY,
+  ##     age     INTEGER      NOT NULL      DEFAULT 1,
+  ##     sex     VARCHAR(1)   NOT NULL      DEFAULT 'f',
+  ##     name    TEXT         NOT NULL      DEFAULT 'unnamed',
+  ##     rank    REAL         NOT NULL      DEFAULT 3.14,
+  ##     weight  INTEGER,
+  ##     color   VARCHAR(1),
+  ##     owner   TEXT,
+  ##     food    REAL,
+  ##   );
+  ##
+  ## More examples:
+  ## * https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1
+  assert name.len > 0, "Table name must not be empty string"
+  const nl = when defined(release): " " else: "\n"
+
+  template `:=`(dbfield: static string; value: static char): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & dbfield & "\t" & "VARCHAR(1)\tNOT NULL\tDEFAULT '" & $value & "'," & nl
+
+  template `:=`(dbfield: static string; value: static SomeFloat): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & dbfield & "\t" & "REAL\tNOT NULL\tDEFAULT "  & $value & "," & nl
+
+  template `:=`(dbfield: static string; value: static SomeInteger): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & dbfield & "\t" & "INTEGER\tNOT NULL\tDEFAULT "  & $value & "," & nl
+
+  template `:=`(dbfield: static string; value: static bool): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & dbfield & "\t" & "BOOLEAN\tNOT NULL\tDEFAULT "  & (if $value == "true": "1" else: "0") & "," & nl
+
+  template `:=`(dbfield: static string; value: static string): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & dbfield & "\t" & "TEXT\tNOT NULL\tDEFAULT '"  & $value & "'," & nl
+
+  template `:=`(dbfield: static string; value: typedesc[char]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "VARCHAR(1)," & nl
+
+  template `:=`(dbfield: static string; value: typedesc[SomeFloat]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "REAL," & nl
+
+  template `:=`(dbfield: static string; value: typedesc[SomeInteger]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "INTEGER," & nl
+
+  template `:=`(dbfield: static string; value: typedesc[bool]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "BOOLEAN," & nl
+
+  template `:=`(dbfield: static string; value: typedesc[string]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "TEXT," & nl
+
+  template `:=`(dbfield: static cstring; value: typedesc[char]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "VARCHAR(1)\tUNIQUE," & nl
+
+  template `:=`(dbfield: static cstring; value: typedesc[SomeFloat]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "REAL\tUNIQUE," & nl
+
+  template `:=`(dbfield: static cstring; value: typedesc[SomeInteger]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "INTEGER\tUNIQUE," & nl
+
+  template `:=`(dbfield: static cstring; value: typedesc[bool]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "BOOLEAN\tUNIQUE," & nl
+
+  template `:=`(dbfield: static cstring; value: typedesc[string]): string =
+    assert dbfield.len > 0, "Table field name must not be empty string"
+    "\t" & $dbfield & "\t" & "TEXT\tUNIQUE," & nl
+
+  var cueri = "CREATE TABLE IF NOT EXISTS " & name & "(" & nl & (
+    when defined(postgres): "  id\tINTEGER\tGENERATED BY DEFAULT AS IDENTITY,"
+    else: "  id\tINTEGER\tPRIMARY KEY,") & nl
+  for field in code: cueri.add field
+  cueri.add ");" # http://blog.2ndquadrant.com/postgresql-10-identity-columns
+  sql(cueri)
+
+
+template dropTable*(db; name: string): bool =
+  ## Alias for `tryExec(db, sql("DROP TABLE IF EXISTS ?"), name)`.
+  ## Requires a `db` of `DbConn` type. Works with Postgres and Sqlite.
+  ## Deleted tables can not be restored, be careful.
+  assert name.len > 0, "Table name must not be empty string"
+  tryExec(db, sql("DROP TABLE IF EXISTS ?" & (when defined(postgres): " CASCADE" else: "")), name)
 
 
 template withSqlite*(path: static[string]; initTableSql: static[string]; closeOnQuit: static[bool]; closeOnCtrlC: static[bool]; code: untyped): untyped =
@@ -106,57 +236,3 @@ template withPostgres*(host, user, password, dbname: string; initTableSql: stati
       db_postgres.close(db)
   else:
     when not defined(release): echo "Error executing initTableSql:\n" & initTableSql
-
-
-template dropTable*(db; name: string): bool =
-  ## Alias for `tryExec(db, sql("DROP TABLE IF EXISTS ?"), name)`.
-  ## Requires a `db` of `DbConn` type. Works with Postgres and Sqlite.
-  ## Deleted tables can not be restored, be careful.
-  assert name.len > 0, "Table name must not be empty string"
-  tryExec(db, sql("DROP TABLE IF EXISTS ?" & (when defined(postgres): " CASCADE" else: "")), name)
-
-
-template createTable*(name: static string; code: untyped): SqlQuery =
-  ## Create a new database table `name` with fields from `code`, returns 1 `SqlQuery`.
-  ## Works with Postgres and Sqlite. `SqlQuery` is pretty-printed when not built for release.
-  ##
-  ## .. code-block::nim
-  ##   import db_sqlite
-  ##   include gatabase/sugar
-  ##   let myTable = createTable "kitten": [
-  ##     "age"  := 1,
-  ##     "sex"  := 'f',
-  ##     "name" := "fluffy",
-  ##     "rank" := 3.14,
-  ##   ]
-  ##
-  ## Generates the SQL Query:
-  ##
-  ## .. code-block::
-  ##   CREATE TABLE IF NOT EXISTS kitten(
-  ##     id    INTEGER     PRIMARY KEY,
-  ##     age   INTEGER     NOT NULL  DEFAULT 1,
-  ##     sex   VARCHAR(1)  NOT NULL  DEFAULT 'f',
-  ##     name  TEXT        NOT NULL  DEFAULT 'fluffy',
-  ##     rank  REAL        NOT NULL  DEFAULT 3.14,
-  ##   );
-  ##
-  assert name.len > 0, "Table name must not be empty string"
-  const nl = when defined(release): " " else: "\n"
-
-  template `:=`(dbfield: static string; value: static any): string =
-    # Template to create individual database fields with default values.
-    assert dbfield.len > 0, "Table field name must not be empty string"
-    (when defined(release): "" else: "  ") & dbfield & "\t" & (
-      if value is char:          "VARCHAR(1)\tNOT NULL\tDEFAULT '" & $value & "'," & nl
-      elif value is SomeFloat:   "REAL\tNOT NULL\tDEFAULT "  & $value & "," & nl
-      elif value is SomeInteger: "INTEGER\tNOT NULL\tDEFAULT "  & $value & "," & nl
-      elif value is bool:        "BOOLEAN\tNOT NULL\tDEFAULT "  & (if $value == "true": "1" else: "0") & "," & nl
-      else:                      "TEXT\tNOT NULL\tDEFAULT '" & $value & "'," & nl)
-
-  var cueri = "CREATE TABLE IF NOT EXISTS " & name & "(" & nl & (
-    when defined(postgres): "  id\tINTEGER\tGENERATED BY DEFAULT AS IDENTITY,"
-    else: "  id\tINTEGER\tPRIMARY KEY,") & nl
-  for field in code: cueri.add field
-  cueri.add ");" # http://blog.2ndquadrant.com/postgresql-10-identity-columns
-  sql(cueri)
