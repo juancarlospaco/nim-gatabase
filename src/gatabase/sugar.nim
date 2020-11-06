@@ -22,49 +22,6 @@
 import db_common, std/exitprocs
 when defined(postgres): from db_postgres import Row else: from db_sqlite import Row
 
-{.push experimental: "dotOperators".}
-template `.`*(indx: int; data: Row): int = parseInt(data[indx])
-  ## `9.row` convenience alias for `strutils.parseInt(row[9])` (`row` is `Row` type).
-template `.`*(indx: char; data: Row): char = char(data[parseInt($indx)][0])
-  ## `'9'.row` convenience alias for `char(row[strutils.parseInt($indx)][0])` (`row` is `Row` type).
-template `.`*(indx: uint; data: Row): uint = uint(parseInt(data[indx]))
-  ## `9'u.row` convenience alias for `uint(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: cint; data: Row): cint = cint(parseInt(data[indx]))
-  ## `cint(9).row` convenience alias for `cint(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: int8; data: Row): int8 = int8(parseInt(data[indx]))
-  ## `9'i8.row` convenience alias for `int8(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: byte; data: Row): byte = byte(parseInt(data[indx]))
-  ## `byte(9).row` convenience alias for `byte(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: int16; data: Row): int16 = int16(parseInt(data[indx]))
-  ## `9'i16.row` convenience alias for `int16(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: int32; data: Row): int32 = int32(parseInt(data[indx]))
-  ## `9'i32.row` convenience alias for `int32(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: int64; data: Row): int64 = int64(parseInt(data[indx]))
-  ## `9'i64.row` convenience alias for `int64(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: uint8; data: Row): uint8 = uint8(parseInt(data[indx]))
-  ## `9'u8.row` convenience alias for `uint8(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: uint16; data: Row): uint16 = uint16(parseInt(data[indx]))
-  ## `9'u16.row` convenience alias for `uint16(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: uint32; data: Row): uint32 = uint32(parseInt(data[indx]))
-  ## `9'u32.row` convenience alias for `uint32(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: uint64; data: Row): uint64 = uint64(parseInt(data[indx]))
-  ## `9'u64.row` convenience alias for `uint64(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: float; data: Row): float = parseFloat(data[int(indx)])
-  ## `9.0.row` convenience alias for `strutils.parseFloat(row[int(9)])` (`row` is `Row` type).
-template `.`*(indx: Natural; data: Row): Natural = Natural(parseInt(data[indx]))
-  ## `Natural(9).row` convenience alias for `Natural(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: cstring; data: Row): cstring = cstring(data[parseInt($indx)])
-  ## `cstring("9").row` convenience alias for `cstring(row[9])` (`row` is `Row` type).
-template `.`*(indx: Positive; data: Row): Positive = Positive(parseInt(data[indx]))
-  ## `Positive(9).row` convenience alias for `Positive(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: BiggestInt; data: Row): BiggestInt = BiggestInt(parseInt(data[indx]))
-  ## `BiggestInt(9).row` convenience alias for `BiggestInt(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(data[indx]))
-  ## `BiggestUInt(9).row` convenience alias for `BiggestUInt(strutils.parseInt(row[9]))` (`row` is `Row` type).
-template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[int(indx)]))
-  ## `9.0'f32.row` convenience alias for `float32(strutils.parseFloat(row[int(9)]))` (`row` is `Row` type).
-{.pop.}
-
 
 template createTable*(name: static string; code: untyped): SqlQuery =
   ## Create a new database table `name` with fields from `code`, returns 1 `SqlQuery`.
@@ -236,3 +193,47 @@ template withPostgres*(host, user, password, dbname: string; initTableSql: stati
       db_postgres.close(db)
   else:
     when not defined(release): echo "Error executing initTableSql:\n" & initTableSql
+
+
+{.push experimental: "dotOperators".}
+template `.`*(indx: int; data: Row): int = parseInt(data[indx])
+  ## `9.row` convenience alias for `strutils.parseInt(row[9])` (`row` is `Row` type).
+template `.`*(indx: char; data: Row): char = char(data[parseInt($indx)][0])
+  ## `'9'.row` convenience alias for `char(row[strutils.parseInt($indx)][0])` (`row` is `Row` type).
+template `.`*(indx: uint; data: Row): uint = uint(parseInt(data[indx]))
+  ## `9'u.row` convenience alias for `uint(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: cint; data: Row): cint = cint(parseInt(data[indx]))
+  ## `cint(9).row` convenience alias for `cint(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int8; data: Row): int8 = int8(parseInt(data[indx]))
+  ## `9'i8.row` convenience alias for `int8(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: byte; data: Row): byte = byte(parseInt(data[indx]))
+  ## `byte(9).row` convenience alias for `byte(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int16; data: Row): int16 = int16(parseInt(data[indx]))
+  ## `9'i16.row` convenience alias for `int16(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int32; data: Row): int32 = int32(parseInt(data[indx]))
+  ## `9'i32.row` convenience alias for `int32(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: int64; data: Row): int64 = int64(parseInt(data[indx]))
+  ## `9'i64.row` convenience alias for `int64(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint8; data: Row): uint8 = uint8(parseInt(data[indx]))
+  ## `9'u8.row` convenience alias for `uint8(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint16; data: Row): uint16 = uint16(parseInt(data[indx]))
+  ## `9'u16.row` convenience alias for `uint16(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint32; data: Row): uint32 = uint32(parseInt(data[indx]))
+  ## `9'u32.row` convenience alias for `uint32(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: uint64; data: Row): uint64 = uint64(parseInt(data[indx]))
+  ## `9'u64.row` convenience alias for `uint64(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: float; data: Row): float = parseFloat(data[int(indx)])
+  ## `9.0.row` convenience alias for `strutils.parseFloat(row[int(9)])` (`row` is `Row` type).
+template `.`*(indx: Natural; data: Row): Natural = Natural(parseInt(data[indx]))
+  ## `Natural(9).row` convenience alias for `Natural(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: cstring; data: Row): cstring = cstring(data[parseInt($indx)])
+  ## `cstring("9").row` convenience alias for `cstring(row[9])` (`row` is `Row` type).
+template `.`*(indx: Positive; data: Row): Positive = Positive(parseInt(data[indx]))
+  ## `Positive(9).row` convenience alias for `Positive(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: BiggestInt; data: Row): BiggestInt = BiggestInt(parseInt(data[indx]))
+  ## `BiggestInt(9).row` convenience alias for `BiggestInt(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: BiggestUInt; data: Row): BiggestUInt = BiggestUInt(parseInt(data[indx]))
+  ## `BiggestUInt(9).row` convenience alias for `BiggestUInt(strutils.parseInt(row[9]))` (`row` is `Row` type).
+template `.`*(indx: float32; data: Row): float32 = float32(parseFloat(data[int(indx)]))
+  ## `9.0'f32.row` convenience alias for `float32(strutils.parseFloat(row[int(9)]))` (`row` is `Row` type).
+{.pop.}
