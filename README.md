@@ -582,7 +582,7 @@ dropTable "tablename"
 
 ### CREATE TABLE
 
-![](create_table.png)
+![](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/create_table.png)
 
 
 ```sql
@@ -632,7 +632,6 @@ CREATE TABLE IF NOT EXISTS kitten(
   id    INTEGER     PRIMARY KEY,
   age   INTEGER     NOT NULL  DEFAULT 1,
   sex   VARCHAR(1),
-  name  TEXT        UNIQUE,
 );
 ```
  ⬆️ SQL ⬆️ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ⬇️ Nim ⬇️
@@ -640,7 +639,6 @@ CREATE TABLE IF NOT EXISTS kitten(
 let myTable = createTable "kitten": [
   "age"  := 1,
   "sex"  := char,
-  "name".cstring := string,
 ]
 ```
 
