@@ -582,6 +582,9 @@ dropTable "tablename"
 
 ### CREATE TABLE
 
+![](create_table.png)
+
+
 ```sql
 CREATE TABLE IF NOT EXISTS kitten(
   id    INTEGER     PRIMARY KEY,
