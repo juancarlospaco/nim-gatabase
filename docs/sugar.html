@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -83,6 +74,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -99,70 +93,59 @@ function main() {
   <ul class="simple simple-toc" id="toc-list">
 <li><a class="reference" id="gatabase-sugar_toc" href="#gatabase-sugar">Gatabase Sugar</a></li>
 <li>
-  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#dbInt"
-    title="dbInt = &quot;INTEGER NOT NULL DEFAULT 0&quot;"><wbr />db<wbr />Int<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbString"
-    title="dbString = &quot;&quot;&quot;TEXT NOT NULL DEFAULT &apos;&apos;&quot;&quot;&quot;"><wbr />db<wbr />String<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbFloat"
-    title="dbFloat = &quot;REAL NOT NULL DEFAULT 0.0&quot;"><wbr />db<wbr />Float<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbBool"
-    title="dbBool = &quot;BOOLEAN NOT NULL DEFAULT false&quot;"><wbr />db<wbr />Bool<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbTimestamp"
-    title="dbTimestamp = &quot;TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP&quot;"><wbr />db<wbr />Timestamp<span class="attachedType"></span></a></li>
-
-  </ul>
-</li>
-<li>
   <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#..t%2Cint%2CRow"
-    title="`.`(indx: int; data: Row): int"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: int; data: Row): int">`.`</a></li>
   <li><a class="reference" href="#..t%2Cchar%2CRow"
-    title="`.`(indx: char; data: Row): char"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: char; data: Row): char">`.`</a></li>
   <li><a class="reference" href="#..t%2Cuint%2CRow"
-    title="`.`(indx: uint; data: Row): uint"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: uint; data: Row): uint">`.`</a></li>
   <li><a class="reference" href="#..t%2Ccint%2CRow"
-    title="`.`(indx: cint; data: Row): cint"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: cint; data: Row): cint">`.`</a></li>
   <li><a class="reference" href="#..t%2Cint8%2CRow"
-    title="`.`(indx: int8; data: Row): int8"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: int8; data: Row): int8">`.`</a></li>
   <li><a class="reference" href="#..t%2Cbyte%2CRow"
-    title="`.`(indx: byte; data: Row): byte"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: byte; data: Row): byte">`.`</a></li>
   <li><a class="reference" href="#..t%2Cint16%2CRow"
-    title="`.`(indx: int16; data: Row): int16"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: int16; data: Row): int16">`.`</a></li>
   <li><a class="reference" href="#..t%2Cint32%2CRow"
-    title="`.`(indx: int32; data: Row): int32"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: int32; data: Row): int32">`.`</a></li>
   <li><a class="reference" href="#..t%2Cint64%2CRow"
-    title="`.`(indx: int64; data: Row): int64"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: int64; data: Row): int64">`.`</a></li>
   <li><a class="reference" href="#..t%2Cuint8%2CRow"
-    title="`.`(indx: uint8; data: Row): uint8"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: uint8; data: Row): uint8">`.`</a></li>
   <li><a class="reference" href="#..t%2Cuint16%2CRow"
-    title="`.`(indx: uint16; data: Row): uint16"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: uint16; data: Row): uint16">`.`</a></li>
   <li><a class="reference" href="#..t%2Cuint32%2CRow"
-    title="`.`(indx: uint32; data: Row): uint32"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: uint32; data: Row): uint32">`.`</a></li>
   <li><a class="reference" href="#..t%2Cuint64%2CRow"
-    title="`.`(indx: uint64; data: Row): uint64"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: uint64; data: Row): uint64">`.`</a></li>
   <li><a class="reference" href="#..t%2Cfloat%2CRow"
-    title="`.`(indx: float; data: Row): float"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: float; data: Row): float">`.`</a></li>
   <li><a class="reference" href="#..t%2CNatural%2CRow"
-    title="`.`(indx: Natural; data: Row): Natural"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: Natural; data: Row): Natural">`.`</a></li>
   <li><a class="reference" href="#..t%2Ccstring%2CRow"
-    title="`.`(indx: cstring; data: Row): cstring"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: cstring; data: Row): cstring">`.`</a></li>
   <li><a class="reference" href="#..t%2CPositive%2CRow"
-    title="`.`(indx: Positive; data: Row): Positive"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: Positive; data: Row): Positive">`.`</a></li>
   <li><a class="reference" href="#..t%2CBiggestInt%2CRow"
-    title="`.`(indx: BiggestInt; data: Row): BiggestInt"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: BiggestInt; data: Row): BiggestInt">`.`</a></li>
   <li><a class="reference" href="#..t%2CBiggestUInt%2CRow"
-    title="`.`(indx: BiggestUInt; data: Row): BiggestUInt"><wbr />`.`<span class="attachedType"></span></a></li>
+    title="`.`(indx: BiggestUInt; data: Row): BiggestUInt">`.`</a></li>
   <li><a class="reference" href="#..t%2Cfloat32%2CRow"
-    title="`.`(indx: float32; data: Row): float32"><wbr />`.`<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"
+    title="`.`(indx: float32; data: Row): float32">`.`</a></li>
+  <li><a class="reference" href="#createTable.t%2Cstaticstring%2Cuntyped"
+    title="createTable(name: static string; code: untyped): SqlQuery">createTable</a></li>
+  <li><a class="reference" href="#dropTable.t%2C%2Cstring"
+    title="dropTable(db; name: string): bool">dropTable</a></li>
+  <li><a class="reference" href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"
     title="withSqlite(path: static[string]; initTableSql: static[string];
-           closeOnQuit: static[bool]; code: untyped): untyped"><wbr />with<wbr />Sqlite<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"
+           closeOnQuit: static[bool]; closeOnCtrlC: static[bool]; code: untyped): untyped">withSqlite</a></li>
+  <li><a class="reference" href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"
     title="withPostgres(host, user, password, dbname: string; initTableSql: static[string];
-             closeOnQuit: static[bool]; code: untyped): untyped"><wbr />with<wbr />Postgres<span class="attachedType"></span></a></li>
+             closeOnQuit: static[bool]; closeOnCtrlC: static[bool];
+             code: untyped): untyped">withPostgres</a></li>
 
   </ul>
 </li>
@@ -170,205 +153,209 @@ function main() {
 </ul>
 
   </div>
+  
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
   <p class="module-desc">
-<h1><a class="toc-backref" id="gatabase-sugar" href="#gatabase-sugar">Gatabase Sugar</a></h1><p>Syntax Sugar for Gatabase using <tt class="docutils literal"><span class="pre">{.experimental: &quot;dotOperators&quot;.}</span></tt> and <tt class="docutils literal"><span class="pre">template</span></tt>, include or import <em>after</em> importing <tt class="docutils literal"><span class="pre">db_sqlite</span></tt> or <tt class="docutils literal"><span class="pre">db_postgres</span></tt> to use it on your code.</p>
+<h1><a class="toc-backref" id="gatabase-sugar" href="#gatabase-sugar">Gatabase Sugar</a></h1><img src="https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/docs/sugar.jpg"/><p>Syntax Sugar for Gatabase using <tt class="docutils literal"><span class="pre">template</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">include</span></tt> or <tt class="docutils literal"><span class="pre">import</span></tt> <em>after</em> importing <tt class="docutils literal"><span class="pre">db_sqlite</span></tt> or <tt class="docutils literal"><span class="pre">db_postgres</span></tt> to use it on your code.</p>
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
 <span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span></pre><pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_postgres</span>
-<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span></pre></p>
-  <div class="section" id="10">
-<h1><a class="toc-backref" href="#10">Consts</a></h1>
-<dl class="item">
-<a id="dbInt"></a>
-<dt><pre><a href="sugar.html#dbInt"><span class="Identifier">dbInt</span></a> <span class="Other">=</span> <span class="StringLit">&quot;INTEGER NOT NULL DEFAULT 0&quot;</span></pre></dt>
-<dd>
-
-Alias for Integer for SQLite and Postgres.
-
-</dd>
-<a id="dbString"></a>
-<dt><pre><a href="sugar.html#dbString"><span class="Identifier">dbString</span></a> <span class="Other">=</span> <span class="StringLit">&quot;&quot;&quot;TEXT NOT NULL DEFAULT ''&quot;&quot;&quot;</span></pre></dt>
-<dd>
-
-Alias for String for SQLite and Postgres.
-
-</dd>
-<a id="dbFloat"></a>
-<dt><pre><a href="sugar.html#dbFloat"><span class="Identifier">dbFloat</span></a> <span class="Other">=</span> <span class="StringLit">&quot;REAL NOT NULL DEFAULT 0.0&quot;</span></pre></dt>
-<dd>
-
-Alias for Float for SQLite and Postgres.
-
-</dd>
-<a id="dbBool"></a>
-<dt><pre><a href="sugar.html#dbBool"><span class="Identifier">dbBool</span></a> <span class="Other">=</span> <span class="StringLit">&quot;BOOLEAN NOT NULL DEFAULT false&quot;</span></pre></dt>
-<dd>
-
-Alias for Boolean for SQLite and Postgres.
-
-</dd>
-<a id="dbTimestamp"></a>
-<dt><pre><a href="sugar.html#dbTimestamp"><span class="Identifier">dbTimestamp</span></a> <span class="Other">=</span> <span class="StringLit">&quot;TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP&quot;</span></pre></dt>
-<dd>
-
-Alias for Timestamp for SQLite and Postgres.
-
-</dd>
-
-</dl></div>
-<div class="section" id="18">
+<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span></pre><p>All Gatabase sugar is always optional. The templates are very efficient, no stdlib imports, no object heap alloc, no string formatting, just primitives, no more than 1 variable used.</p>
+</p>
+  <div class="section" id="18">
 <h1><a class="toc-backref" href="#18">Templates</a></h1>
 <dl class="item">
 <a id="..t,int,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cint%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9.row</span></tt> alias for <tt class="docutils literal"><span class="pre">parseInt(row[9])</span></tt>.
+<tt class="docutils literal"><span class="pre">9.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">strutils.parseInt(row[9])</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,char,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cchar%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">char</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">'9'.row</span></tt> alias for <tt class="docutils literal"><span class="pre">char(row[9])</span></tt>.
+<tt class="docutils literal"><span class="pre">'9'.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">char(row[strutils.parseInt($indx)][0])</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,uint,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cuint%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">uint</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'u.row</span></tt> alias for <tt class="docutils literal"><span class="pre">uint(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'u.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">uint(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,cint,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Ccint%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">cint</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cint</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">cint(9).row</span></tt> alias for <tt class="docutils literal"><span class="pre">cint(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">cint(9).row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">cint(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,int8,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cint8%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">int8</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int8</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i8.row</span></tt> alias for <tt class="docutils literal"><span class="pre">int8(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'i8.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">int8(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,byte,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cbyte%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">byte</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">byte(9).row</span></tt> alias for <tt class="docutils literal"><span class="pre">byte(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">byte(9).row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">byte(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,int16,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cint16%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">int16</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int16</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i16.row</span></tt> alias for <tt class="docutils literal"><span class="pre">int16(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'i16.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">int16(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,int32,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cint32%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">int32</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int32</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i32.row</span></tt> alias for <tt class="docutils literal"><span class="pre">int32(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'i32.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">int32(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,int64,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cint64%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">int64</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i64.row</span></tt> alias for <tt class="docutils literal"><span class="pre">int64(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'i64.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">int64(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,uint8,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cuint8%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">uint8</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint8</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i64.row</span></tt> alias for <tt class="docutils literal"><span class="pre">uint8(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'u8.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">uint8(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,uint16,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cuint16%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">uint16</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint16</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i64.row</span></tt> alias for <tt class="docutils literal"><span class="pre">uint16(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'u16.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">uint16(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,uint32,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cuint32%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">uint32</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint32</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i64.row</span></tt> alias for <tt class="docutils literal"><span class="pre">uint32(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'u32.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">uint32(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,uint64,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cuint64%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">uint64</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">uint64</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9'i64.row</span></tt> alias for <tt class="docutils literal"><span class="pre">uint64(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9'u64.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">uint64(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,float,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cfloat%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9.0.row</span></tt> alias for <tt class="docutils literal"><span class="pre">parseFloat(row[9])</span></tt>.
+<tt class="docutils literal"><span class="pre">9.0.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">strutils.parseFloat(row[int(9)])</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,Natural,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2CNatural%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">Natural</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Natural</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">Natural(9).row</span></tt> alias for <tt class="docutils literal"><span class="pre">Natural(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">Natural(9).row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">Natural(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,cstring,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Ccstring%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">cstring</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">cstring</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">cstring(&quot;9&quot;).row</span></tt> alias for <tt class="docutils literal"><span class="pre">cstring(row[9])</span></tt>.
+<tt class="docutils literal"><span class="pre">cstring(&quot;9&quot;).row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">cstring(row[9])</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,Positive,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2CPositive%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">Positive</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Positive</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">Positive(9).row</span></tt> alias for <tt class="docutils literal"><span class="pre">Positive(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">Positive(9).row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">Positive(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,BiggestInt,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2CBiggestInt%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">BiggestInt</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">BiggestInt</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">BiggestInt(9).row</span></tt> alias for <tt class="docutils literal"><span class="pre">BiggestInt(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">BiggestInt(9).row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">BiggestInt(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,BiggestUInt,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2CBiggestUInt%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">BiggestUInt</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">BiggestUInt</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">BiggestUInt(9).row</span></tt> alias for <tt class="docutils literal"><span class="pre">BiggestUInt(parseInt(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">BiggestUInt(9).row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">BiggestUInt(strutils.parseInt(row[9]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
 <a id="..t,float32,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cfloat32%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">float32</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float32</span></pre></dt>
 <dd>
 
-<tt class="docutils literal"><span class="pre">9.0'f32.row</span></tt> alias for <tt class="docutils literal"><span class="pre">float32(parseFloat(row[9]))</span></tt>.
+<tt class="docutils literal"><span class="pre">9.0'f32.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">float32(strutils.parseFloat(row[int(9)]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
-<a id="withSqlite.t,static[string],static[string],static[bool],untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withSqlite</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span>
-                   <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<a id="createTable.t,staticstring,untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#createTable.t%2Cstaticstring%2Cuntyped"><span class="Identifier">createTable</span></a><span class="Other">(</span><span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<dd>
+
+Create a new database table <tt class="docutils literal"><span class="pre">name</span></tt> with fields from <tt class="docutils literal"><span class="pre">code</span></tt>, returns 1 <tt class="docutils literal"><span class="pre">SqlQuery</span></tt>. Works with Postgres and Sqlite. <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> is pretty-printed when not built for release.<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
+<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
+<span class="Keyword">let</span> <span class="Identifier">myTable</span> <span class="Operator">=</span> <span class="Identifier">createTable</span> <span class="StringLit">&quot;kitten&quot;</span><span class="Punctuation">:</span> <span class="Punctuation">[</span>
+  <span class="StringLit">&quot;age&quot;</span>    <span class="Punctuation">:</span><span class="Operator">=</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;sex&quot;</span>    <span class="Punctuation">:</span><span class="Operator">=</span> <span class="CharLit">'f'</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;name&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="StringLit">&quot;unnamed&quot;</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;rank&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="FloatNumber">3.14</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;weight&quot;</span> <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">int</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;color&quot;</span>  <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">char</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;owner&quot;</span>  <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">string</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;food&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">float</span><span class="Punctuation">,</span>
+<span class="Punctuation">]</span></pre><p>Generates the SQL Query:</p>
+<pre class="listing"><span class="Identifier">CREATE</span> <span class="Identifier">TABLE</span> <span class="Keyword">IF</span> <span class="Keyword">NOT</span> <span class="Identifier">EXISTS</span> <span class="Identifier">kitten</span><span class="Punctuation">(</span>
+  <span class="Identifier">id</span>      <span class="Identifier">INTEGER</span>      <span class="Identifier">PRIMARY</span> <span class="Identifier">KEY</span><span class="Punctuation">,</span>
+  <span class="Identifier">age</span>     <span class="Identifier">INTEGER</span>      <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="Identifier">sex</span>     <span class="Identifier">VARCHAR</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">)</span>   <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="CharLit">'f'</span><span class="Punctuation">,</span>
+  <span class="Identifier">name</span>    <span class="Identifier">TEXT</span>         <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="CharLit">'unnamed'</span><span class="Punctuation">,</span>
+  <span class="Identifier">rank</span>    <span class="Identifier">REAL</span>         <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="FloatNumber">3.14</span><span class="Punctuation">,</span>
+  <span class="Identifier">weight</span>  <span class="Identifier">INTEGER</span><span class="Punctuation">,</span>
+  <span class="Identifier">color</span>   <span class="Identifier">VARCHAR</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">)</span><span class="Punctuation">,</span>
+  <span class="Identifier">owner</span>   <span class="Identifier">TEXT</span><span class="Punctuation">,</span>
+  <span class="Identifier">food</span>    <span class="Identifier">REAL</span><span class="Punctuation">,</span>
+<span class="Punctuation">)</span><span class="Punctuation">;</span></pre><p>More examples:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1">https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1</a></li>
+</ul>
+
+
+</dd>
+<a id="dropTable.t,,string"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#dropTable.t%2C%2Cstring"><span class="Identifier">dropTable</span></a><span class="Other">(</span><span class="Identifier">db</span><span class="Other">;</span> <span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+Alias for <tt class="docutils literal"><span class="pre">tryExec(db, sql(&quot;DROP TABLE IF EXISTS ?&quot;), name)</span></tt>. Requires a <tt class="docutils literal"><span class="pre">db</span></tt> of <tt class="docutils literal"><span class="pre">DbConn</span></tt> type. Works with Postgres and Sqlite. Deleted tables can not be restored, be careful.
+
+</dd>
+<a id="withSqlite.t,static[string],static[string],static[bool],static[bool],untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withSqlite</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span>
+                    <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnCtrlC</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
+                    <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a SQLite database.<ul class="simple"><li><tt class="docutils literal"><span class="pre">path</span></tt> path to SQLite database file.</li>
 <li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
-<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close()); code</span></tt> is used, if <tt class="docutils literal"><span class="pre">false</span></tt> then <tt class="docutils literal"><span class="pre">try: code finally: db.close()</span></tt> is used.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close())</span></tt> is set.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnCtrlC</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">setControlCHook(db.close())</span></tt> is set.</li>
 </ul>
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
 <span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
@@ -384,10 +371,10 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
   <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">exec</span><span class="Punctuation">(</span><span class="RawData">sql&quot;insert into person(name, active, rank) values('pepe', true, 42.0)&quot;</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<a id="withPostgres.t,string,string,string,string,static[string],static[bool],untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withPostgres</span></a><span class="Other">(</span><span class="Identifier">host</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">dbname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                     <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
-                     <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<a id="withPostgres.t,string,string,string,string,static[string],static[bool],static[bool],untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withPostgres</span></a><span class="Other">(</span><span class="Identifier">host</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">dbname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                      <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
+                      <span class="Identifier">closeOnCtrlC</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a Postgres database. See <tt class="docutils literal"><span class="pre">withSqlite</span></tt> for an example.<ul class="simple"><li><tt class="docutils literal"><span class="pre">host</span></tt> host of Postgres Server, string type, must not be empty string.</li>
@@ -395,7 +382,8 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
 <li><tt class="docutils literal"><span class="pre">password</span></tt> password of Postgres Server, string type, must not be empty string.</li>
 <li><tt class="docutils literal"><span class="pre">dbname</span></tt> database name of Postgres Server, string type, must not be empty string.</li>
 <li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
-<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close()); code</span></tt> is used, if <tt class="docutils literal"><span class="pre">false</span></tt> then <tt class="docutils literal"><span class="pre">try: code finally: db.close()</span></tt> is used.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close())</span></tt> is set.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnCtrlC</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">setControlCHook(db.close())</span></tt> is set.</li>
 </ul>
 
 
@@ -410,7 +398,7 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-06 07:23:03 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-06 17:59:29 UTC</small>
       </div>
     </div>
   </div>
