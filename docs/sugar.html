@@ -95,7 +95,18 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#..t%2Cint%2CRow"
+      <li><a class="reference" href="#createTable.t%2Cstaticstring%2Cuntyped"
+    title="createTable(name: static string; code: untyped): SqlQuery">createTable</a></li>
+  <li><a class="reference" href="#dropTable.t%2C%2Cstring"
+    title="dropTable(db; name: string): bool">dropTable</a></li>
+  <li><a class="reference" href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"
+    title="withSqlite(path: static[string]; initTableSql: static[string];
+           closeOnQuit: static[bool]; closeOnCtrlC: static[bool]; code: untyped): untyped">withSqlite</a></li>
+  <li><a class="reference" href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"
+    title="withPostgres(host, user, password, dbname: string; initTableSql: static[string];
+             closeOnQuit: static[bool]; closeOnCtrlC: static[bool];
+             code: untyped): untyped">withPostgres</a></li>
+  <li><a class="reference" href="#..t%2Cint%2CRow"
     title="`.`(indx: int; data: Row): int">`.`</a></li>
   <li><a class="reference" href="#..t%2Cchar%2CRow"
     title="`.`(indx: char; data: Row): char">`.`</a></li>
@@ -135,17 +146,6 @@ function main() {
     title="`.`(indx: BiggestUInt; data: Row): BiggestUInt">`.`</a></li>
   <li><a class="reference" href="#..t%2Cfloat32%2CRow"
     title="`.`(indx: float32; data: Row): float32">`.`</a></li>
-  <li><a class="reference" href="#createTable.t%2Cstaticstring%2Cuntyped"
-    title="createTable(name: static string; code: untyped): SqlQuery">createTable</a></li>
-  <li><a class="reference" href="#dropTable.t%2C%2Cstring"
-    title="dropTable(db; name: string): bool">dropTable</a></li>
-  <li><a class="reference" href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"
-    title="withSqlite(path: static[string]; initTableSql: static[string];
-           closeOnQuit: static[bool]; closeOnCtrlC: static[bool]; code: untyped): untyped">withSqlite</a></li>
-  <li><a class="reference" href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"
-    title="withPostgres(host, user, password, dbname: string; initTableSql: static[string];
-             closeOnQuit: static[bool]; closeOnCtrlC: static[bool];
-             code: untyped): untyped">withPostgres</a></li>
 
   </ul>
 </li>
@@ -167,6 +167,87 @@ function main() {
   <div class="section" id="18">
 <h1><a class="toc-backref" href="#18">Templates</a></h1>
 <dl class="item">
+<a id="createTable.t,staticstring,untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#createTable.t%2Cstaticstring%2Cuntyped"><span class="Identifier">createTable</span></a><span class="Other">(</span><span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<dd>
+
+Create a new database table <tt class="docutils literal"><span class="pre">name</span></tt> with fields from <tt class="docutils literal"><span class="pre">code</span></tt>, returns 1 <tt class="docutils literal"><span class="pre">SqlQuery</span></tt>. Works with Postgres and Sqlite. <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> is pretty-printed when not built for release.<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
+<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
+<span class="Keyword">let</span> <span class="Identifier">myTable</span> <span class="Operator">=</span> <span class="Identifier">createTable</span> <span class="StringLit">&quot;kitten&quot;</span><span class="Punctuation">:</span> <span class="Punctuation">[</span>
+  <span class="StringLit">&quot;age&quot;</span>    <span class="Punctuation">:</span><span class="Operator">=</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;sex&quot;</span>    <span class="Punctuation">:</span><span class="Operator">=</span> <span class="CharLit">'f'</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;name&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="StringLit">&quot;unnamed&quot;</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;rank&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="FloatNumber">3.14</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;weight&quot;</span> <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">int</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;color&quot;</span>  <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">char</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;owner&quot;</span>  <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">string</span><span class="Punctuation">,</span>
+  <span class="StringLit">&quot;food&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">float</span><span class="Punctuation">,</span>
+<span class="Punctuation">]</span></pre><p>Generates the SQL Query:</p>
+<pre class="listing"><span class="Identifier">CREATE</span> <span class="Identifier">TABLE</span> <span class="Keyword">IF</span> <span class="Keyword">NOT</span> <span class="Identifier">EXISTS</span> <span class="Identifier">kitten</span><span class="Punctuation">(</span>
+  <span class="Identifier">id</span>      <span class="Identifier">INTEGER</span>      <span class="Identifier">PRIMARY</span> <span class="Identifier">KEY</span><span class="Punctuation">,</span>
+  <span class="Identifier">age</span>     <span class="Identifier">INTEGER</span>      <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
+  <span class="Identifier">sex</span>     <span class="Identifier">VARCHAR</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">)</span>   <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="CharLit">'f'</span><span class="Punctuation">,</span>
+  <span class="Identifier">name</span>    <span class="Identifier">TEXT</span>         <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="CharLit">'unnamed'</span><span class="Punctuation">,</span>
+  <span class="Identifier">rank</span>    <span class="Identifier">REAL</span>         <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="FloatNumber">3.14</span><span class="Punctuation">,</span>
+  <span class="Identifier">weight</span>  <span class="Identifier">INTEGER</span><span class="Punctuation">,</span>
+  <span class="Identifier">color</span>   <span class="Identifier">VARCHAR</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">)</span><span class="Punctuation">,</span>
+  <span class="Identifier">owner</span>   <span class="Identifier">TEXT</span><span class="Punctuation">,</span>
+  <span class="Identifier">food</span>    <span class="Identifier">REAL</span><span class="Punctuation">,</span>
+<span class="Punctuation">)</span><span class="Punctuation">;</span></pre><p>More examples:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1">https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1</a></li>
+</ul>
+
+
+</dd>
+<a id="dropTable.t,,string"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#dropTable.t%2C%2Cstring"><span class="Identifier">dropTable</span></a><span class="Other">(</span><span class="Identifier">db</span><span class="Other">;</span> <span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+Alias for <tt class="docutils literal"><span class="pre">tryExec(db, sql(&quot;DROP TABLE IF EXISTS ?&quot;), name)</span></tt>. Requires a <tt class="docutils literal"><span class="pre">db</span></tt> of <tt class="docutils literal"><span class="pre">DbConn</span></tt> type. Works with Postgres and Sqlite. Deleted tables can not be restored, be careful.
+
+</dd>
+<a id="withSqlite.t,static[string],static[string],static[bool],static[bool],untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withSqlite</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span>
+                    <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnCtrlC</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
+                    <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+
+Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a SQLite database.<ul class="simple"><li><tt class="docutils literal"><span class="pre">path</span></tt> path to SQLite database file.</li>
+<li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close())</span></tt> is set.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnCtrlC</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">setControlCHook(db.close())</span></tt> is set.</li>
+</ul>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
+<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
+<span class="Keyword">const</span> <span class="Identifier">exampleTable</span> <span class="Operator">=</span> <span class="LongStringLit">&quot;&quot;&quot;
+  create table if not exists person(
+    id      integer primary key,
+    name    text,
+    active  bool,
+    rank    float
+); &quot;&quot;&quot;</span>
+
+<span class="Identifier">withSqlite</span><span class="Punctuation">(</span><span class="StringLit">&quot;:memory:&quot;</span><span class="Punctuation">,</span> <span class="Identifier">exampleTable</span><span class="Punctuation">,</span> <span class="Identifier">false</span><span class="Punctuation">)</span><span class="Punctuation">:</span>  <span class="Comment">## This is just an example.</span>
+  <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">exec</span><span class="Punctuation">(</span><span class="RawData">sql&quot;insert into person(name, active, rank) values('pepe', true, 42.0)&quot;</span><span class="Punctuation">)</span></pre>
+
+</dd>
+<a id="withPostgres.t,string,string,string,string,static[string],static[bool],static[bool],untyped"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withPostgres</span></a><span class="Other">(</span><span class="Identifier">host</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">dbname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                      <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
+                      <span class="Identifier">closeOnCtrlC</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+
+Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a Postgres database. See <tt class="docutils literal"><span class="pre">withSqlite</span></tt> for an example.<ul class="simple"><li><tt class="docutils literal"><span class="pre">host</span></tt> host of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">user</span></tt> user of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">password</span></tt> password of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">dbname</span></tt> database name of Postgres Server, string type, must not be empty string.</li>
+<li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close())</span></tt> is set.</li>
+<li><tt class="docutils literal"><span class="pre">closeOnCtrlC</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">setControlCHook(db.close())</span></tt> is set.</li>
+</ul>
+
+
+</dd>
 <a id="..t,int,Row"></a>
 <dt><pre><span class="Keyword">template</span> <a href="#..t%2Cint%2CRow"><span class="Identifier">`.`</span></a><span class="Other">(</span><span class="Identifier">indx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
@@ -307,87 +388,6 @@ function main() {
 <tt class="docutils literal"><span class="pre">9.0'f32.row</span></tt> convenience alias for <tt class="docutils literal"><span class="pre">float32(strutils.parseFloat(row[int(9)]))</span></tt> (<tt class="docutils literal"><span class="pre">row</span></tt> is <tt class="docutils literal"><span class="pre">Row</span></tt> type).
 
 </dd>
-<a id="createTable.t,staticstring,untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#createTable.t%2Cstaticstring%2Cuntyped"><span class="Identifier">createTable</span></a><span class="Other">(</span><span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
-<dd>
-
-Create a new database table <tt class="docutils literal"><span class="pre">name</span></tt> with fields from <tt class="docutils literal"><span class="pre">code</span></tt>, returns 1 <tt class="docutils literal"><span class="pre">SqlQuery</span></tt>. Works with Postgres and Sqlite. <tt class="docutils literal"><span class="pre">SqlQuery</span></tt> is pretty-printed when not built for release.<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
-<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
-<span class="Keyword">let</span> <span class="Identifier">myTable</span> <span class="Operator">=</span> <span class="Identifier">createTable</span> <span class="StringLit">&quot;kitten&quot;</span><span class="Punctuation">:</span> <span class="Punctuation">[</span>
-  <span class="StringLit">&quot;age&quot;</span>    <span class="Punctuation">:</span><span class="Operator">=</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
-  <span class="StringLit">&quot;sex&quot;</span>    <span class="Punctuation">:</span><span class="Operator">=</span> <span class="CharLit">'f'</span><span class="Punctuation">,</span>
-  <span class="StringLit">&quot;name&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="StringLit">&quot;unnamed&quot;</span><span class="Punctuation">,</span>
-  <span class="StringLit">&quot;rank&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="FloatNumber">3.14</span><span class="Punctuation">,</span>
-  <span class="StringLit">&quot;weight&quot;</span> <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">int</span><span class="Punctuation">,</span>
-  <span class="StringLit">&quot;color&quot;</span>  <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">char</span><span class="Punctuation">,</span>
-  <span class="StringLit">&quot;owner&quot;</span>  <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">string</span><span class="Punctuation">,</span>
-  <span class="StringLit">&quot;food&quot;</span>   <span class="Punctuation">:</span><span class="Operator">=</span> <span class="Identifier">float</span><span class="Punctuation">,</span>
-<span class="Punctuation">]</span></pre><p>Generates the SQL Query:</p>
-<pre class="listing"><span class="Identifier">CREATE</span> <span class="Identifier">TABLE</span> <span class="Keyword">IF</span> <span class="Keyword">NOT</span> <span class="Identifier">EXISTS</span> <span class="Identifier">kitten</span><span class="Punctuation">(</span>
-  <span class="Identifier">id</span>      <span class="Identifier">INTEGER</span>      <span class="Identifier">PRIMARY</span> <span class="Identifier">KEY</span><span class="Punctuation">,</span>
-  <span class="Identifier">age</span>     <span class="Identifier">INTEGER</span>      <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="DecNumber">1</span><span class="Punctuation">,</span>
-  <span class="Identifier">sex</span>     <span class="Identifier">VARCHAR</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">)</span>   <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="CharLit">'f'</span><span class="Punctuation">,</span>
-  <span class="Identifier">name</span>    <span class="Identifier">TEXT</span>         <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="CharLit">'unnamed'</span><span class="Punctuation">,</span>
-  <span class="Identifier">rank</span>    <span class="Identifier">REAL</span>         <span class="Keyword">NOT</span> <span class="Identifier">NULL</span>      <span class="Identifier">DEFAULT</span> <span class="FloatNumber">3.14</span><span class="Punctuation">,</span>
-  <span class="Identifier">weight</span>  <span class="Identifier">INTEGER</span><span class="Punctuation">,</span>
-  <span class="Identifier">color</span>   <span class="Identifier">VARCHAR</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">)</span><span class="Punctuation">,</span>
-  <span class="Identifier">owner</span>   <span class="Identifier">TEXT</span><span class="Punctuation">,</span>
-  <span class="Identifier">food</span>    <span class="Identifier">REAL</span><span class="Punctuation">,</span>
-<span class="Punctuation">)</span><span class="Punctuation">;</span></pre><p>More examples:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1">https://github.com/juancarlospaco/nim-gatabase/blob/master/examples/database_fields_example.nim#L1</a></li>
-</ul>
-
-
-</dd>
-<a id="dropTable.t,,string"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#dropTable.t%2C%2Cstring"><span class="Identifier">dropTable</span></a><span class="Other">(</span><span class="Identifier">db</span><span class="Other">;</span> <span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-Alias for <tt class="docutils literal"><span class="pre">tryExec(db, sql(&quot;DROP TABLE IF EXISTS ?&quot;), name)</span></tt>. Requires a <tt class="docutils literal"><span class="pre">db</span></tt> of <tt class="docutils literal"><span class="pre">DbConn</span></tt> type. Works with Postgres and Sqlite. Deleted tables can not be restored, be careful.
-
-</dd>
-<a id="withSqlite.t,static[string],static[string],static[bool],static[bool],untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#withSqlite.t%2Cstatic%5Bstring%5D%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withSqlite</span></a><span class="Other">(</span><span class="Identifier">path</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span>
-                    <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnCtrlC</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
-                    <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-
-Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a SQLite database.<ul class="simple"><li><tt class="docutils literal"><span class="pre">path</span></tt> path to SQLite database file.</li>
-<li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
-<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close())</span></tt> is set.</li>
-<li><tt class="docutils literal"><span class="pre">closeOnCtrlC</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">setControlCHook(db.close())</span></tt> is set.</li>
-</ul>
-<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">db_sqlite</span>
-<span class="Keyword">include</span> <span class="Identifier">gatabase</span><span class="Operator">/</span><span class="Identifier">sugar</span>
-<span class="Keyword">const</span> <span class="Identifier">exampleTable</span> <span class="Operator">=</span> <span class="LongStringLit">&quot;&quot;&quot;
-  create table if not exists person(
-    id      integer primary key,
-    name    text,
-    active  bool,
-    rank    float
-); &quot;&quot;&quot;</span>
-
-<span class="Identifier">withSqlite</span><span class="Punctuation">(</span><span class="StringLit">&quot;:memory:&quot;</span><span class="Punctuation">,</span> <span class="Identifier">exampleTable</span><span class="Punctuation">,</span> <span class="Identifier">false</span><span class="Punctuation">)</span><span class="Punctuation">:</span>  <span class="Comment">## This is just an example.</span>
-  <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">exec</span><span class="Punctuation">(</span><span class="RawData">sql&quot;insert into person(name, active, rank) values('pepe', true, 42.0)&quot;</span><span class="Punctuation">)</span></pre>
-
-</dd>
-<a id="withPostgres.t,string,string,string,string,static[string],static[bool],static[bool],untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#withPostgres.t%2Cstring%2Cstring%2Cstring%2Cstring%2Cstatic%5Bstring%5D%2Cstatic%5Bbool%5D%2Cstatic%5Bbool%5D%2Cuntyped"><span class="Identifier">withPostgres</span></a><span class="Other">(</span><span class="Identifier">host</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">dbname</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                      <span class="Identifier">initTableSql</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">closeOnQuit</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span>
-                      <span class="Identifier">closeOnCtrlC</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">bool</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">code</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-
-Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt> and Auto-Close a Postgres database. See <tt class="docutils literal"><span class="pre">withSqlite</span></tt> for an example.<ul class="simple"><li><tt class="docutils literal"><span class="pre">host</span></tt> host of Postgres Server, string type, must not be empty string.</li>
-<li><tt class="docutils literal"><span class="pre">user</span></tt> user of Postgres Server, string type, must not be empty string.</li>
-<li><tt class="docutils literal"><span class="pre">password</span></tt> password of Postgres Server, string type, must not be empty string.</li>
-<li><tt class="docutils literal"><span class="pre">dbname</span></tt> database name of Postgres Server, string type, must not be empty string.</li>
-<li><tt class="docutils literal"><span class="pre">initTableSql</span></tt> SQL query string to initialize the database, <tt class="docutils literal"><span class="pre">create table if not exists</span></tt> alike.</li>
-<li><tt class="docutils literal"><span class="pre">closeOnQuit</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">addQuitProc(db.close())</span></tt> is set.</li>
-<li><tt class="docutils literal"><span class="pre">closeOnCtrlC</span></tt> if <tt class="docutils literal"><span class="pre">true</span></tt> then <tt class="docutils literal"><span class="pre">setControlCHook(db.close())</span></tt> is set.</li>
-</ul>
-
-
-</dd>
 
 </dl></div>
 
@@ -398,7 +398,7 @@ Open, run <tt class="docutils literal"><span class="pre">initTableSql</span></tt
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-06 17:59:29 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-06 18:17:49 UTC</small>
       </div>
     </div>
   </div>
