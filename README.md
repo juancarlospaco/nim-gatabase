@@ -5,14 +5,12 @@
 ![](https://img.shields.io/github/languages/count/juancarlospaco/nim-gatabase?logoColor=green&style=for-the-badge)
 ![](https://img.shields.io/github/languages/top/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/stars/juancarlospaco/nim-gatabase?style=for-the-badge)
-![](https://img.shields.io/maintenance/yes/2020?style=for-the-badge)
 ![](https://img.shields.io/github/languages/code-size/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/issues-raw/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/github/last-commit/juancarlospaco/nim-gatabase?style=for-the-badge)
 ![](https://img.shields.io/liberapay/patrons/juancarlospaco?style=for-the-badge)
 ![](https://img.shields.io/twitch/status/juancarlospaco?style=for-the-badge)
-![](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fjuancarlospaco%2Fnim-gatabase)
 
 ![screenshot](https://raw.githubusercontent.com/juancarlospaco/nim-gatabase/master/temp.jpg "Connection-Pooling Compile-Time ORM for Nim")
 
